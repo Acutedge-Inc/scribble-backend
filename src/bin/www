@@ -1,0 +1,68 @@
+#!/usr/bin/env node
+
+// set time zone to UTC
+process.env.TZ = "UTC";
+
+const http = require("http");
+const nconf = require("nconf");
+
+nconf.use("memory").env({ parseValues: true }).file({ file: "./src/config.json" });
+
+
+
+
+async function startServer() {
+    
+    try {
+        
+
+
+   
+    } catch (err) {
+        console.error("Error on PostgreSQL Connection ::", err);
+    }
+
+    const app = require("../index");
+
+    const port = '3000';
+
+    const server = http.createServer(app);
+
+    server.on("error", (e) => {
+        switch (e.code) {
+            case "EADDRINUSE":
+                console.warn("Address in use, retrying...");
+                setTimeout(() => {
+                    server.close();
+                    server.listen(port);
+                }, 1000);
+                break;
+
+            case "EACCES":
+                console.warn("Elevated privileges required");
+                break;
+
+            default:
+                throw e;
+        }
+    });
+
+    server.on("listening", () => {
+        const addr = server.address();
+        const bind = typeof addr === "string" ? `pipe ${addr}` : `port ${addr.port}`;
+        console.info(`Server listening on ${bind}`);
+    });
+
+    server.listen(port);
+
+    const shutdown = () => {
+        console.error("Received kill signal, shutting down gracefully");
+        console.error("Closed out remaining connections");
+        process.exit(0);
+    };
+
+    process.on("SIGTERM", shutdown);
+    process.on("SIGINT", shutdown);
+}
+
+startServer().catch((err) => console.error(`Error starting server ${err}`));

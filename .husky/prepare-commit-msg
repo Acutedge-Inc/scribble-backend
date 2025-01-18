@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Read PRE_COMMIT_EXECUTED from the temporary file
+PRE_COMMIT_EXECUTED=$(cat /tmp/PRE_COMMIT_EXECUTED 2>/dev/null || echo "")
+
+if [ "$PRE_COMMIT_EXECUTED" = "true" ]; then
+    # Invalidate the flag for the next commit attempt
+    echo "\033[0;32m✔ Good job. Lint and Prettier Checked\033[0m"
+    echo "" > /tmp/PRE_COMMIT_EXECUTED
+else
+    echo "\033[0;31mFix the lint and prettier issue. Don't use --no-verify.\033[0m"
+    echo "❌ Commit blocked: --no-verify flag is not allowed."
+    exit 1
+fi
+
+if [ "$SKIP_CZ" = "true" ]; then
+    exit 0
+fi
+
+exec < /dev/tty && npx cz --hook || true

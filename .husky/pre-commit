@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Reset the flag
+echo "Resetting PRE_COMMIT_EXECUTED"
+rm -f /tmp/PRE_COMMIT_EXECUTED
+
+echo 'Husky pre-commit hook is running' && npm run lint-staged
+
+echo "Setting PRE_COMMIT_EXECUTED to true"
+echo "true" > /tmp/PRE_COMMIT_EXECUTED
