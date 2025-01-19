@@ -78,7 +78,7 @@ export default [
     "no-alert": "error",
     "no-bitwise": "error",
     "no-case-declarations": "error",
-    "no-console": "error",
+    "no-console": "off",
     "no-continue": "error",
     "no-delete-var": "error",
     "no-else-return": "error",
