@@ -17,17 +17,21 @@ nconf
 
 async function connectToDatabase() {
   try {
-    await db.init(process.env.MONGO_URI); // Initialize the database connection
+    await db.init(process.env.MONGO_URI,{
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      poolSize: 10, 
+    }); // Initialize the database connection
     console.log("Database connected successfully.");
   } catch (err) {
     console.error("Error on MongoDB Connection ::", err);
-    process.exit(1); // Exit if connection fails
+    process.exit(1); 
   }
 }
 
 // Start server locally
 async function startServer() {
-  await connectToDatabase(); // Connect to the database
+  await connectToDatabase(); 
 
   const port = process.env.PORT || 3000;
   const app = require("./src/index");
