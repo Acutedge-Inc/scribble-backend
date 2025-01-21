@@ -44,7 +44,7 @@ app.use((req, res, next) => {
 const swaggerDocument = require("./swagger/swagger.json");
 
 swaggerDocument.servers.push({
-  url: `http://localhost:3000/api/`,
+  url: `https://ntitmak4a4r45djrvtdvicvngm0xyujl.lambda-url.us-west-2.on.aws/api/`,
 });
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
