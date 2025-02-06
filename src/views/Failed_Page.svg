@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="649" height="280" viewBox="0 0 649 280">
+    <text data-name="We are sorry, something has gone wrong.Please try again." transform="translate(0 234)" style="fill:#707070;font-size:16px;font-family:Roboto-Regular,Roboto"><tspan x="178.473" y="15">We are sorry, something has gone wrong.</tspan><tspan x="265.77" y="39">Please try again.</tspan></text>
+    <text data-name="Verification Failed" transform="translate(324 202)" style="font-size:28px;font-family:Roboto-Bold,Roboto;font-weight:700"><tspan x="-114.071" y="0">Verification Failed</tspan></text>
+    <g data-name="Ellipse 4" transform="translate(254 10)" style="stroke:#fff;stroke-width:10px;fill:#f3594e">
+        <circle cx="70" cy="70" r="70" style="stroke:none"/>
+        <circle cx="70" cy="70" r="75" style="fill:none"/>
+    </g>
+    <g data-name="Close Icon">
+        <path data-name="Line 57" transform="translate(295.24 51.24)" style="fill:none;stroke:#fff;stroke-width:10px" d="m0 0 60.808 60.808"/>
+        <path data-name="Line 58" transform="translate(295.24 51.24)" style="fill:none;stroke:#fff;stroke-width:10px" d="M60.808 0 0 60.808"/>
+    </g>
+</svg>

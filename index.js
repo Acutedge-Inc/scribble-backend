@@ -7,31 +7,65 @@ const http = require("http");
 const nconf = require("nconf");
 require("dotenv").config();
 const mongoose = require("mongoose");
-const db = require("./src/models");
+const db = require("./src/model/scribble-admin");
+const AdminUser = require("./src/model/scribble-admin/admin-user");
 const serverless = require("serverless-http");
-
+const bcrypt = require("bcryptjs");
+const adminDbUrl= `${process.env.MONGO_URI}/${process.env.ADMIN_DB}`
 nconf
   .use("memory")
   .env({ parseValues: true })
   .file({ file: "./src/config.json" });
 
+const {logger} = require("./src/lib")
+// Connect to MongoDB and initialize admin user
 async function connectToDatabase() {
   try {
-    await db.init(process.env.MONGO_URI,{
+    await db.init(adminDbUrl, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      poolSize: 10, 
-    }); // Initialize the database connection
-    console.log("Database connected successfully.");
+      poolSize: 10,
+    }); 
+    logger.info("Database connected successfully.");
+
+    // Create admin user if it doesn't exist
+    await createAdminUser();
   } catch (err) {
-    console.error("Error on MongoDB Connection ::", err);
-    process.exit(1); 
+    logger.error("Error on MongoDB Connection ::", err);
+    process.exit(1);
+  }
+}
+
+// Function to create admin user if it doesn't exist
+async function createAdminUser() {
+  try {
+    const adminDbConnection = await mongoose.createConnection(adminDbUrl, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+
+    const existingAdmin = await AdminUser.findOne({ username: "admin@gmail.com" });
+
+    if (!existingAdmin) {
+      const hashedPassword = await bcrypt.hash("adminpassword", 10); // Set a default password
+      const newAdmin = new AdminUser({
+        username: "admin@gmail.com",
+        password: hashedPassword,
+      });
+
+      await newAdmin.save();
+      logger.info("Admin user created successfully.");
+    } else {
+      logger.info("Admin user already exists.");
+    }
+  } catch (error) {
+    logger.error("Error creating admin user:", error);
   }
 }
 
 // Start server locally
 async function startServer() {
-  await connectToDatabase(); 
+  await connectToDatabase();
 
   const port = process.env.PORT || 3000;
   const app = require("./src/index");
@@ -60,15 +94,15 @@ async function startServer() {
     const addr = server.address();
     const bind =
       typeof addr === "string" ? `pipe ${addr}` : `port ${addr.port}`;
-    console.info(`Server listening on ${bind}`);
+    logger.warn(`Server listening on ${bind}`);
   });
 
   server.listen(port); // Start listening on the specified port
 
   const shutdown = () => {
-    console.error("Received kill signal, shutting down gracefully");
+    logger.error("Received kill signal, shutting down gracefully");
     server.close(() => {
-      console.error("Closed out remaining connections");
+      logger.error("Closed out remaining connections");
       process.exit(0);
     });
   };
