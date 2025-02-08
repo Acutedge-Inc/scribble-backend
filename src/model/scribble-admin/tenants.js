@@ -1,22 +1,28 @@
 const mongoose = require("mongoose");
 
-const tenantSchema = new mongoose.Schema({
-    organization_name: {
+const tenantSchema = new mongoose.Schema(
+  {
+    tenantName: {
       type: String,
       required: true,
     },
-    database_name: {
+    databaseName: {
       type: String,
       required: true,
     },
-    created_by: {
+    createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false,
     },
-  }, { timestamps: true });
-  
-  const Tenant = mongoose.model("Tenant", tenantSchema);
-  module.exports = Tenant;
-  
-  
+  },
+  {
+    timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" },
+  },
+);
+tenantSchema.pre("save", function (next) {
+  this.updatedAt = new Date();
+  next();
+});
+const Tenant = mongoose.model("Tenant", tenantSchema);
+module.exports = Tenant;

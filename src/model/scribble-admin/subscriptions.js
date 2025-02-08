@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
-const subscriptionSchema = new mongoose.Schema({
+const subscriptionSchema = new mongoose.Schema(
+  {
     tenant: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Tenant",
@@ -16,7 +17,9 @@ const subscriptionSchema = new mongoose.Schema({
       enum: ["active", "expired", "cancelled"],
       default: "active",
     },
-  }, { timestamps: true });
-  
-  const Subscription = mongoose.model("Subscription", subscriptionSchema);
-  module.exports = Subscription;
+  },
+  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
+);
+
+const Subscription = mongoose.model("Subscription", subscriptionSchema);
+module.exports = Subscription;

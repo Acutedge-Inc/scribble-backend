@@ -3,9 +3,9 @@ const nconf = require("nconf");
 const serviceApplicationStatuses = require("../services/application-statuses");
 
 module.exports.appValidationStatusTemplate = (data, status) => {
-    switch (status) {
-        case serviceApplicationStatuses.getStatusByName("approved").id: // TODO- remove this line or add alternative
-            return `<html>
+  switch (status) {
+    case serviceApplicationStatuses.getStatusByName("approved").id: // TODO- remove this line or add alternative
+      return `<html>
 
             <head>
                 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -123,7 +123,7 @@ module.exports.appValidationStatusTemplate = (data, status) => {
                     <h1>${data.message}</h1>
                     <p class="grey-text">Your app has been approved and is ready to be published on the AllGo App Store. Click on the button below for detailed report.</p>
                     <div style="margin:25px;"><a href=${nconf.get(
-                        "WEB_BASE_URL"
+                      "WEB_BASE_URL",
                     )}>VIEW REPORT</a></div>
                     <hr />
                     <p class="grey-text">If you have any questions, simply reply to this email.</p>
@@ -138,8 +138,8 @@ module.exports.appValidationStatusTemplate = (data, status) => {
             </body>
             
             </html>`;
-        case serviceApplicationStatuses.getStatusByName("rejected").id:
-            return `<html>
+    case serviceApplicationStatuses.getStatusByName("rejected").id:
+      return `<html>
               <head>
                   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
                   <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
@@ -257,7 +257,7 @@ module.exports.appValidationStatusTemplate = (data, status) => {
                       <p class="grey-text">We noticed a few issues that need to be addressed before it can be approved on the AllGo App Store.
                       Click on the button below for detailed report.</p>
                       <div style="margin:25px;"><a href=${nconf.get(
-                          "WEB_BASE_URL"
+                        "WEB_BASE_URL",
                       )}>VIEW REPORT</a></div>
                       <hr />
                       <p class="grey-text">If you have any questions, simply reply to this email.</p>
@@ -272,8 +272,8 @@ module.exports.appValidationStatusTemplate = (data, status) => {
               </body>
               
               </html>`;
-        case serviceApplicationStatuses.getStatusByName("published").id:
-            return `<html>
+    case serviceApplicationStatuses.getStatusByName("published").id:
+      return `<html>
 
               <head>
                   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -390,10 +390,10 @@ module.exports.appValidationStatusTemplate = (data, status) => {
                   <div class="fixed-body">
                       <h1>${data.message}</h1>
                       <p class="grey-text">Your app is live on the AllGo App Store by ${
-                          data.company
+                        data.company
                       }. Click on the button below for detailed insights.</p>
                       <div style="margin:25px;"><a href=${nconf.get(
-                          "WEB_BASE_URL"
+                        "WEB_BASE_URL",
                       )}>VIEW INSIGHTS</a></div>
                       <hr />
                       <p class="grey-text">If you have any questions, simply reply to this email.</p>
@@ -408,8 +408,8 @@ module.exports.appValidationStatusTemplate = (data, status) => {
               </body>
               
               </html>`;
-        case serviceApplicationStatuses.getStatusByName("revoked").id:
-            return `<html>
+    case serviceApplicationStatuses.getStatusByName("revoked").id:
+      return `<html>
               <head>
                   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
                   <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
@@ -525,10 +525,10 @@ module.exports.appValidationStatusTemplate = (data, status) => {
                   <div class="fixed-body">
                       <h1>${data.message}!</h1>
                       <p class="grey-text">Your app is revoked on the AllGo App Store by ${
-                          data.company
+                        data.company
                       }. Click on the button below for detailed insights.</p>
                       <div style="margin:25px;"><a href=${nconf.get(
-                          "WEB_BASE_URL"
+                        "WEB_BASE_URL",
                       )}>VIEW INSIGHTS</a></div>
                       <hr />
                       <p class="grey-text">If you have any questions, simply reply to this email.</p>
@@ -543,7 +543,7 @@ module.exports.appValidationStatusTemplate = (data, status) => {
               </body>
               
               </html>`;
-        default:
-            throw new Error("Email Template not defined");
-    }
+    default:
+      throw new Error("Email Template not defined");
+  }
 };

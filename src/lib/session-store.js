@@ -6,20 +6,20 @@ const redisHost = nconf.get("REDIS_ENDPOINT_ADDRESS") || "127.0.0.1";
 const redisPort = Number(nconf.get("REDIS_ENDPOINT_PORT") || 6379);
 
 const client = new Redis({
-    host: nconf.get("NODE_ENV") !== "local" ? redisHost : nconf.get("REDIS_IP"),
-    port: redisPort,
-    options: { db: 0 },
-    ...(nconf.get("NODE_ENV") !== "local" ? { tls: {} } : {}),
+  host: nconf.get("NODE_ENV") !== "local" ? redisHost : nconf.get("REDIS_IP"),
+  port: redisPort,
+  options: { db: 0 },
+  ...(nconf.get("NODE_ENV") !== "local" ? { tls: {} } : {}),
 });
 
 // Listen for the 'connect' event
 client.on("connect", () => {
-    logger.info("Connected to Redis successfully");
+  logger.info("Connected to Redis successfully");
 });
 
 // Optionally, listen for other events like 'error'
 client.on("error", (err) => {
-    logger.error("Redis connection error:", err);
+  logger.error("Redis connection error:", err);
 });
 
 module.exports.redisClient = client;
@@ -37,29 +37,29 @@ const meApiResponseKeyPrefix = "meApiResponse";
  */
 
 module.exports.storeAccessToken = async (userId, accessKey, ttl) => {
-    await client.set(`${accessKeyPrefix}:${userId}`, accessKey, "EX", ttl);
+  await client.set(`${accessKeyPrefix}:${userId}`, accessKey, "EX", ttl);
 };
 
 module.exports.storeRefreshToken = async (userId, refreshKey, ttl) => {
-    await client.set(`${refreshKeyPrefix}:${userId}`, refreshKey, "EX", ttl);
+  await client.set(`${refreshKeyPrefix}:${userId}`, refreshKey, "EX", ttl);
 };
 
 module.exports.checkIfAccessTokenExists = async (userId) =>
-    client.get(`${accessKeyPrefix}:${userId}`);
+  client.get(`${accessKeyPrefix}:${userId}`);
 
 module.exports.checkIfRefreshTokenExists = async (userId) =>
-    client.get(`${refreshKeyPrefix}:${userId}`);
+  client.get(`${refreshKeyPrefix}:${userId}`);
 
 module.exports.removeAccessToken = async (userId) => {
-    await client.del(`${accessKeyPrefix}:${userId}`);
+  await client.del(`${accessKeyPrefix}:${userId}`);
 };
 
 module.exports.removeRefreshToken = async (userId) => {
-    await client.del(`${refreshKeyPrefix}:${userId}`);
+  await client.del(`${refreshKeyPrefix}:${userId}`);
 };
 
 module.exports.removeResponseFromMeApi = async (userId) => {
-    await client.del(`${meApiResponseKeyPrefix}:${userId}`);
+  await client.del(`${meApiResponseKeyPrefix}:${userId}`);
 };
 
 //  Changes on 14/09/2023
@@ -136,36 +136,37 @@ module.exports.removeResponseFromMeApi = async (userId) => {
  * So on that time should remove access token session key as well.
  */
 module.exports.handleSessionExpiry = async () => {
-    try {
-        const expiryHandler = new Redis({
-            host: nconf.get("NODE_ENV") !== "local" ? redisHost : nconf.get("REDIS_IP"),
-            port: redisPort,
-            options: { db: 0, notify_keyspace_events: "KEA" },
-            ...(nconf.get("NODE_ENV") !== "local" ? { tls: {} } : {}),
-        });
-        // expiryHandler.config("set", "notify-keyspace-events", "KEA");
-        await expiryHandler.subscribe("__keyevent@0__:expired");
-        expiryHandler.on("message", async (channel, message) => {
-            if (message.indexOf(refreshKeyPrefix) >= 0) {
-                const userId = message.split(":")[1] || "";
-                this.removeAccessToken(userId);
-            }
-            logger.info("Deleting user accesstoken from session");
-        });
-    } catch (err) {
-        logger.error("Error on handle session expiry", err);
-    }
+  try {
+    const expiryHandler = new Redis({
+      host:
+        nconf.get("NODE_ENV") !== "local" ? redisHost : nconf.get("REDIS_IP"),
+      port: redisPort,
+      options: { db: 0, notify_keyspace_events: "KEA" },
+      ...(nconf.get("NODE_ENV") !== "local" ? { tls: {} } : {}),
+    });
+    // expiryHandler.config("set", "notify-keyspace-events", "KEA");
+    await expiryHandler.subscribe("__keyevent@0__:expired");
+    expiryHandler.on("message", async (channel, message) => {
+      if (message.indexOf(refreshKeyPrefix) >= 0) {
+        const userId = message.split(":")[1] || "";
+        this.removeAccessToken(userId);
+      }
+      logger.info("Deleting user accesstoken from session");
+    });
+  } catch (err) {
+    logger.error("Error on handle session expiry", err);
+  }
 };
 
 // This 'revokeUserSession' method not called anywhere, so didn't done any changes here
 
 // To revoke a users session from background
 module.exports.revokeUserSession = async (user) => {
-    try {
-        const refreshTokens = await client.smembers(`user:${user}`);
-        logger.info(await client.srem(`user:${user}`, refreshTokens));
-        logger.info(await client.del(refreshTokens));
-    } catch (err) {
-        logger.error("Error on revoking user session", err);
-    }
+  try {
+    const refreshTokens = await client.smembers(`user:${user}`);
+    logger.info(await client.srem(`user:${user}`, refreshTokens));
+    logger.info(await client.del(refreshTokens));
+  } catch (err) {
+    logger.error("Error on revoking user session", err);
+  }
 };

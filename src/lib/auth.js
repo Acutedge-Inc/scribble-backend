@@ -8,7 +8,7 @@ const moment = require("moment");
 
 const logger = require("./logger");
 const { ErrorResponse, HTTPError, ERROR_CODES } = require("./responses");
-const session = require("./redis");
+// const session = require("./redis");
 
 const SCOPES = {
   APPLICATIONS_SUBMIT: "applications.submit",
@@ -67,12 +67,7 @@ const jwtVerify = util.promisify(jwt.verify);
  */
 async function verifyToken(token) {
   try {
-    const data = await jwtVerify(
-      token,
-      nconf.get("NODE_ENV") === "local"
-        ? nconf.get("jwtConfig").accessTokenSecret
-        : nconf.get("backendConfig").jwt_accessTokenSecret,
-    );
+    const data = await jwtVerify(token, process.env.JWT_SECRET);
     return _.has(data, "value") ? JSON.parse(data.value) : data;
   } catch (err) {
     switch (err.name) {
@@ -111,7 +106,6 @@ const throwErrorIfMissingRequiredScopes = (requiredScopes, userScopes) => {
 // eslint-disable-next-line no-unused-vars
 function protect(requiredScopes = [], ignoreExpiration = false) {
   return async (req, res, next) => {
-    // verify header
     const rawToken = extractTokenFromRequest(req);
     if (!rawToken) {
       return res
@@ -129,58 +123,57 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
       // query account
       const identity = tokenData.v === 3 ? tokenData.sub : tokenData.id;
 
-      const response = await session.checkIfAccessTokenExists(identity);
-      if (!response || response !== rawToken) {
-        throw new HTTPError(403, "Token invalid", ERROR_CODES.INVALID_TOKEN);
-      }
+      // const response = await session.checkIfAccessTokenExists(identity);
+      // if (!response || response !== rawToken) {
+      //   throw new HTTPError(403, "Token invalid", ERROR_CODES.INVALID_TOKEN);
+      // }
 
-      const meApiResponseFromCache =
-        await session.getResponseFromMeApi(identity);
+      // const meApiResponseFromCache =
+      //   await session.getResponseFromMeApi(identity);
 
-      if (meApiResponseFromCache) {
-        // add in req and return from here
-        req.user = { ...meApiResponseFromCache, token: rawToken };
-        throwErrorIfMissingRequiredScopes(
-          requiredScopes,
-          meApiResponseFromCache.scopes,
-        );
-        return next();
-      }
+      // if (meApiResponseFromCache) {
+      //   // add in req and return from here
+      //   req.user = { ...meApiResponseFromCache, token: rawToken };
+      //   throwErrorIfMissingRequiredScopes(
+      //     requiredScopes,
+      //     meApiResponseFromCache.scopes,
+      //   );
+      //   return next();
+      // }
 
-      const userResponse = await axios({
-        method: "get",
-        url: `${nconf.get("SSO_API_BASE")}/auth/v1/me`,
-        headers: {
-          authorization: `Bearer ${rawToken}`,
-          "content-type": req.headers["content-type"] || "application/json",
-        },
-      });
+      // const userResponse = await axios({
+      //   method: "get",
+      //   url: `${nconf.get("SSO_API_BASE")}/auth/v1/me`,
+      //   headers: {
+      //     authorization: `Bearer ${rawToken}`,
+      //     "content-type": req.headers["content-type"] || "application/json",
+      //   },
+      // });
 
-      if (!userResponse?.data?.data) {
-        throw new HTTPError(401, "Invalid SSO data", ERROR_CODES.INVALID_DATA);
-      }
+      // if (!userResponse?.data?.data) {
+      //   throw new HTTPError(401, "Invalid SSO data", ERROR_CODES.INVALID_DATA);
+      // }
 
-      // const user = await User.findOne({ where: { sso_id: userResponse.data.data.userId } });
+      // // const user = await User.findOne({ where: { sso_id: userResponse.data.data.userId } });
 
-      logger.info(
-        `Received token on endpoint ${req.method} ${req.originalUrl} for user ${userResponse.data.data.userId}`,
-      );
+      // logger.info(
+      //   `Received token on endpoint ${req.method} ${req.originalUrl} for user ${userResponse.data.data.userId}`,
+      // );
 
-      throwErrorIfMissingRequiredScopes(
-        requiredScopes,
-        userResponse.data.data.scopes,
-      );
-      // store user model in request
-      userResponse.data.data.token = rawToken;
+      // throwErrorIfMissingRequiredScopes(
+      //   requiredScopes,
+      //   userResponse.data.data.scopes,
+      // );
+      // // store user model in request
+      // userResponse.data.data.token = rawToken;
 
-      req.user = userResponse.data.data;
-      const { token, ...userDataWithoutToken } = userResponse.data.data;
-      logger.info(`Tokeen: ${token}`);
-      await session.setResponseFromMeApi(
-        identity,
-        userDataWithoutToken,
-        +nconf.get("JWT_VALIDITY"),
-      );
+      req.user = tokenData.id;
+      // const { token, ...userDataWithoutToken } = userResponse.data.data;
+      // await session.setResponseFromMeApi(
+      //   identity,
+      //   userDataWithoutToken,
+      //   +nconf.get("JWT_VALIDITY"),
+      // );
       return next();
     } catch (err) {
       if (err.response) {

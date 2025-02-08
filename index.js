@@ -8,16 +8,15 @@ const nconf = require("nconf");
 require("dotenv").config();
 const mongoose = require("mongoose");
 const db = require("./src/model/scribble-admin");
-const AdminUser = require("./src/model/scribble-admin/admin-user");
 const serverless = require("serverless-http");
-const bcrypt = require("bcryptjs");
-const adminDbUrl= `${process.env.MONGO_URI}/${process.env.ADMIN_DB}`
+const adminDbUrl = `${process.env.MONGO_URI}/${process.env.ADMIN_DB}`;
+const { createAdminUser } = require("./src/controllers/auth");
 nconf
   .use("memory")
   .env({ parseValues: true })
   .file({ file: "./src/config.json" });
+const { logger } = require("./src/lib");
 
-const {logger} = require("./src/lib")
 // Connect to MongoDB and initialize admin user
 async function connectToDatabase() {
   try {
@@ -25,41 +24,14 @@ async function connectToDatabase() {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       poolSize: 10,
-    }); 
+    });
     logger.info("Database connected successfully.");
 
     // Create admin user if it doesn't exist
-    await createAdminUser();
+    await createAdminUser(adminDbUrl);
   } catch (err) {
     logger.error("Error on MongoDB Connection ::", err);
     process.exit(1);
-  }
-}
-
-// Function to create admin user if it doesn't exist
-async function createAdminUser() {
-  try {
-    const adminDbConnection = await mongoose.createConnection(adminDbUrl, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-
-    const existingAdmin = await AdminUser.findOne({ username: "admin@gmail.com" });
-
-    if (!existingAdmin) {
-      const hashedPassword = await bcrypt.hash("adminpassword", 10); // Set a default password
-      const newAdmin = new AdminUser({
-        username: "admin@gmail.com",
-        password: hashedPassword,
-      });
-
-      await newAdmin.save();
-      logger.info("Admin user created successfully.");
-    } else {
-      logger.info("Admin user already exists.");
-    }
-  } catch (error) {
-    logger.error("Error creating admin user:", error);
   }
 }
 

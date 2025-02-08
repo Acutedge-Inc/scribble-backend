@@ -14,11 +14,7 @@ db.init = async (uri) => {
     console.info("MongoDB connected successfully");
 
     // Model loader
-    const models = [
-      "admin-user.js", 
-      "tenants.js",
-      "subscriptions.js"
-    ];
+    const models = ["adminUser.js", "tenants.js", "subscriptions.js"];
 
     models.forEach((file) => {
       const model = require(path.join(__dirname, file));

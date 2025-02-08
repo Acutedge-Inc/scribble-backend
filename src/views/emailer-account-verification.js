@@ -1,19 +1,19 @@
 const nconf = require("nconf");
 
 const getAccountLabel = (APPSTORE_NAME) => {
-    return {
-        dev: `${APPSTORE_NAME} Developers`,
-        tester: `${APPSTORE_NAME} Tester`,
-        oem: `${APPSTORE_NAME} Automaker`,
-        user: `${APPSTORE_NAME} App Store`,
-    };
+  return {
+    dev: `${APPSTORE_NAME} Developers`,
+    tester: `${APPSTORE_NAME} Tester`,
+    oem: `${APPSTORE_NAME} Automaker`,
+    user: `${APPSTORE_NAME} App Store`,
+  };
 };
 
 module.exports = (code, role, oemName) => {
-    const APPSTORE_NAME = oemName === "skoda" ? "Skoda" : "Allgo";
-    const accountLable = getAccountLabel(APPSTORE_NAME);
+  const APPSTORE_NAME = oemName === "skoda" ? "Skoda" : "Allgo";
+  const accountLable = getAccountLabel(APPSTORE_NAME);
 
-    return `<html>
+  return `<html>
 
     <head>
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -123,22 +123,20 @@ module.exports = (code, role, oemName) => {
         <div class="fixed-header">
             <div class="container">
                 <img class="header-image" src=${`${nconf.get(
-                    "API_BASE_URL"
+                  "API_BASE_URL",
                 )}/api/v1/asset/allgo.png`}></img>
             </div>
         </div>
         <div class="fixed-body">
-            <h1 style="color: #e7792b">Thanks for signing up on ${
-                accountLable[role] || `${APPSTORE_NAME} App Store`
-            } Portal!</h1>
+            <h1 style="color: #e7792b">Welcome to Scribble!</h1>
             ${
-                role === "user"
-                    ? `<p class="grey-text">Please click on the button below to verify your email
+              role === "user"
+                ? `<p class="grey-text">Please click on the button below to verify your email
                 address and activate your ${accountLable[role] || `${APPSTORE_NAME} App Store`} account.</p>
                 <a href=${`${nconf.get("WEB_BASE_URL")}/verification/${code}`}>VERIFY NOW</a>
                 <p  class="grey-text" style="margin-bottom: 60px;">Please note, this link expires 24 hours
                 after your original verification request.</p>`
-                    : `<p>Please contact the administrator to activate your ${accountLable[role] || `${APPSTORE_NAME} App Store`} account <p/>`
+                : `<p>Your password is <b>${code}</b>. Please create your new password in scribble<p/>`
             }
             <hr />
             <p class="grey-text bold">We'd love to help!</p>
@@ -146,7 +144,7 @@ module.exports = (code, role, oemName) => {
         <div class="fixed-footer">
             <div class="container">
                 <p>Thanks</p>
-                <p>The ${APPSTORE_NAME} App Store Team</p>
+                <p>The Scribble Team</p>
             </div>
         </div>
     </body>
