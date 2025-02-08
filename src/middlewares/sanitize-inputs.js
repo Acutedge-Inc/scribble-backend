@@ -38,7 +38,7 @@ module.exports = (req, res, next) => {
         }
         break;
 
-      case "username":
+      case "email":
         if (!validator.isEmail(sanitizedValue)) {
           invalidFields.push(key);
         }

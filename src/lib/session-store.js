@@ -5,22 +5,23 @@ const logger = require("./logger");
 const redisHost = nconf.get("REDIS_ENDPOINT_ADDRESS") || "127.0.0.1";
 const redisPort = Number(nconf.get("REDIS_ENDPOINT_PORT") || 6379);
 
-const client = new Redis({
-  host: nconf.get("NODE_ENV") !== "local" ? redisHost : nconf.get("REDIS_IP"),
-  port: redisPort,
-  options: { db: 0 },
-  ...(nconf.get("NODE_ENV") !== "local" ? { tls: {} } : {}),
-});
+const client = ""
+// new Redis({
+//   host: nconf.get("NODE_ENV") !== "local" ? redisHost : nconf.get("REDIS_IP"),
+//   port: redisPort,
+//   options: { db: 0 },
+//   ...(nconf.get("NODE_ENV") !== "local" ? { tls: {} } : {}),
+// });
 
-// Listen for the 'connect' event
-client.on("connect", () => {
-  logger.info("Connected to Redis successfully");
-});
+// // Listen for the 'connect' event
+// client.on("connect", () => {
+//   logger.info("Connected to Redis successfully");
+// });
 
-// Optionally, listen for other events like 'error'
-client.on("error", (err) => {
-  logger.error("Redis connection error:", err);
-});
+// // Optionally, listen for other events like 'error'
+// client.on("error", (err) => {
+//   logger.error("Redis connection error:", err);
+// });
 
 module.exports.redisClient = client;
 

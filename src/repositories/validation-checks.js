@@ -16,9 +16,9 @@ const { MINIMUM_ALLOWED_YEAR } = require("./constants/misc");
 module.exports = {
   "post/api/v1/auth/login": [
     {
-      input: "username",
+      input: "email",
       isInvalid: (input) => typeof input !== "string",
-      messageOnValidationFail: "username is invalid",
+      messageOnValidationFail: "email is invalid",
     },
     {
       input: "password",

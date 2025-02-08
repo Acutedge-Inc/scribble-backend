@@ -36,7 +36,7 @@ async function createAdminUser(adminDbUrl) {
     });
 
     const existingAdmin = await AdminUser.findOne({
-      username: "admin@gmail.com",
+      email: "admin@gmail.com",
     });
 
     if (!existingAdmin) {
@@ -44,7 +44,7 @@ async function createAdminUser(adminDbUrl) {
       const hash = bcrypt.hashSync("adminpassword", salt);
 
       const newAdmin = new AdminUser({
-        username: "admin@gmail.com",
+        email: "admin@gmail.com",
         password: hash,
         scope: JSON.stringify(["sso.write"]),
       });
@@ -61,15 +61,15 @@ async function createAdminUser(adminDbUrl) {
 
 async function adminLogin(req, res) {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    const adminUser = await AdminUser.findOne({ username });
+    const adminUser = await AdminUser.findOne({ email });
     if (!adminUser) return res.status(404).json({ error: "Admin not found" });
 
     const isPasswordValid = bcrypt.compareSync(password, adminUser.password);
 
     if (!isPasswordValid)
-      return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json(new ErrorResponse("Invalid credentials"));
 
     let accessTokenTtl = "6000";
 
@@ -90,7 +90,7 @@ async function adminLogin(req, res) {
     );
 
     const responseInst = {
-      username: adminUser.username,
+      email: adminUser.email,
       userId: adminUser._id,
       firstname: adminUser.firstname,
       lastname: adminUser.lastname,
@@ -111,30 +111,59 @@ async function adminLogin(req, res) {
 async function userLogin(req, res) {
   try {
     const { "x-tenant-id": tenantId } = req.headers;
-    const { username = "", password = "" } = req.body;
+    const { email = "", password = "" } = req.body;
 
-    const adminConnection = await getTenantDB(tenantId);
-    const AdminUser = adminConnection.model(
-      "AdminUser",
-      new mongoose.Schema({
-        username: String,
-        password: String,
-      }),
-    );
+    const tenant = await Tenant.findById(tenantId);
 
-    const adminUser = await AdminUser.findOne({ username });
-    if (!adminUser) return res.status(404).json({ error: "Admin not found" });
+    // If tenant not found, return an error
+    if (!tenant) {
+      return res
+        .status(400)
+        .json(new ErrorResponse({ message: "Tenant not found" }));
+    }
 
-    const isPasswordValid = await bcrypt.compare(password, adminUser.password);
+    const connection = await getTenantDB(tenant.databaseName);
+const UserModel = User(connection);
+
+
+    const user = await UserModel.findOne({ email });
+    if (!user) return res.status(404).json(new ErrorResponse("User not found"));
+    const isPasswordValid = bcrypt.compareSync(password, user.password);
+
     if (!isPasswordValid)
-      return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json(new ErrorResponse("Invalid credentials"));
 
-    const token = jwt.sign(
-      { userId: adminUser._id, username: adminUser.username },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" },
+    let accessTokenTtl = "6000";
+
+    const roles = "scribble_admin";
+    const scopes = ["sso.write"];
+    const accessToken = await tokens.createTokenV2(
+      {
+        user_id: user._id,
+        roles,
+        scopes,
+      },
+      accessTokenTtl,
     );
-    return res.status(200).json({ token });
+
+    const refreshToken = await tokens.createRefreshToken(
+      user._id,
+      accessTokenTtl,
+    );
+
+    const responseInst = {
+      email: user.email,
+      userId: user._id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      roles,
+      scopes,
+      accessToken,
+      refreshToken,
+      created: user.createdAt,
+      updated: user.updatedAt,
+    };
+    return res.json(new SuccessResponse(responseInst));
   } catch (err) {
     if (err?.statusCode !== 401) {
       logger.error(`Error in basicAuthEmail function :`, {
