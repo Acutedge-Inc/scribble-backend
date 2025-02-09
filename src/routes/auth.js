@@ -21,7 +21,7 @@ authRoutes.post("/login", checkMissingInputs, validateInputs, performLogin);
 //Scribble admin to create new tenant
 authRoutes.post(
   "/tenant",
-  auth.protect(["sso.self.write"]),
+  auth.protect(["sso.write"]),
   checkMissingInputs,
   validateInputs,
   createTenant,
@@ -30,7 +30,7 @@ authRoutes.post(
 // Register a user under a tenant's database
 authRoutes.post(
   "/register",
-  auth.protect(["sso.self.write"]),
+  auth.protect(["sso.write"]),
   checkMissingInputs,
   validateInputs,
   register,
@@ -45,7 +45,7 @@ authRoutes.post("/refresh", checkMissingInputs, validateInputs, getAccessToken);
 
 authRoutes.put(
   "/change-password",
-  auth.protect(["sso.self.write"]),
+  auth.protect(["sso.write"]),
   checkMissingInputs,
   validateInputs,
   changePassword,

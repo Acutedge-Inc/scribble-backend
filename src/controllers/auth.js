@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 const AdminUser = require("../model/scribble-admin/adminUser.js");
+const Tenant = require("../model/scribble-admin/tenants");
+
 const fs = require("fs");
 const path = require("path");
-const tenantModels = require("../model/tenant/index");
 
 const { getTenantDB } = require("../lib/dbManager.js");
 const {
@@ -13,9 +14,11 @@ const { sendAccountVerificationEmail } = require("../lib/emails");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-const Tenant = require("../model/scribble-admin/tenants");
+const tenantModels = require("../model/tenant/index");
 const User = require("../model/tenant/user");
-const AssessmentForm = require("../model/tenant/assessmentForm.js");
+const Role = require("../model/tenant/role");
+const Clinitian_Info = require("../model/tenant/clinicianInfo");
+const Admin_Info = require("../model/tenant/adminInfo");
 
 require("dotenv").config();
 const {
@@ -24,6 +27,7 @@ const {
   tokens,
 } = require("../lib");
 const { ErrorResponse } = require("../lib/responses.js");
+const clinicianInfo = require("../model/tenant/clinicianInfo.js");
 
 async function getScope(userId, tenantId) {}
 
@@ -46,7 +50,7 @@ async function createAdminUser(adminDbUrl) {
       const newAdmin = new AdminUser({
         email: "admin@gmail.com",
         password: hash,
-        scope: JSON.stringify(["sso.write"]),
+        scope: ["sso.write"],
       });
 
       await newAdmin.save();
@@ -124,19 +128,35 @@ async function userLogin(req, res) {
 
     const connection = await getTenantDB(tenant.databaseName);
 const UserModel = User(connection);
+const RoleModel = Role(connection);
 
 
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ email }).populate({
+      path: "roleId",
+      select: "roleName scope",
+    });
+    const { roleName, scope } = user.roleId;
+
+
     if (!user) return res.status(404).json(new ErrorResponse("User not found"));
     const isPasswordValid = bcrypt.compareSync(password, user.password);
 
-    if (!isPasswordValid)
-      return res.status(401).json(new ErrorResponse("Invalid credentials"));
+    if (!isPasswordValid){
+      await UserModel.updateOne(
+        { _id: user._id }, // Filter: find the user by ID
+        { $inc: { loginAttempts: 1 } } // Increment loginAttempts by 1
+      );
+      if(user.loginAttempts > 3){
+        return res.status(401).json(new ErrorResponse(`${user.loginAttempts+1} times entered wrong password`));
+      }
+      
+         return res.status(401).json(new ErrorResponse("Invalid credentials"));
+    }
 
     let accessTokenTtl = "6000";
 
-    const roles = "scribble_admin";
-    const scopes = ["sso.write"];
+    const roles = [roleName];
+    const scopes = scope;
     const accessToken = await tokens.createTokenV2(
       {
         user_id: user._id,
@@ -156,6 +176,7 @@ const UserModel = User(connection);
       userId: user._id,
       firstname: user.firstname,
       lastname: user.lastname,
+      tenantId: user.tenantId,
       roles,
       scopes,
       accessToken,
@@ -165,17 +186,8 @@ const UserModel = User(connection);
     };
     return res.json(new SuccessResponse(responseInst));
   } catch (err) {
-    if (err?.statusCode !== 401) {
-      logger.error(`Error in basicAuthEmail function :`, {
-        error: err,
-        apiId: req?.apiId,
-      });
-    }
-    throw new HTTPError(
-      err.statusCode || 500,
-      err.message || "Internal Server Error",
-      ERROR_CODES[err.errorCode] || ERROR_CODES.INVALID_CODE,
-    );
+    return res.json(new ErrorResponse(err));
+
   }
 }
 
@@ -229,10 +241,41 @@ const createTenant = async (req, res) => {
   }
 };
 
+
+/**
+This function creates record in UserInfo table
+*/
+async function createUserInfo(
+req,userId,roleName,connection
+) {
+  const {
+    email,
+    name,
+  firstname,
+  lastname,
+  contact,
+  company,
+  transaction,
+  } = req.body
+
+  switch(roleName){
+    case "user":{
+      const clinicianModel = Clinitian_Info(connection);
+      return await clinicianModel.create({userId,name,contact});
+  
+    }
+    case "useraAdmin":{
+      const adminModel = Admin_Info(connection);
+      return await adminModel.create({userId,name,contact});
+  
+    }
+  }
+
+}
+
 const register = async (req, res) => {
   try {
-    const { email, roleId } = req.body;
-    const { "x-tenant-id": tenantId } = req.headers;
+    const { email, roleId,  "x-tenant-id": tenantId } = req.body;
 
     if (!tenantId) {
       return res
@@ -252,6 +295,15 @@ const register = async (req, res) => {
 
     const connection = await getTenantDB(tenant.databaseName);
 
+    const RoleModel = Role(connection);
+    const role = await RoleModel.findById(roleId);
+
+    if (!role) {
+      return res
+        .status(400)
+        .json(new ErrorResponse({ message: "Role not found" }));
+    }
+
     const UserModel = User(connection);
 
     const existingUser = await UserModel.findOne({ email });
@@ -261,12 +313,15 @@ const register = async (req, res) => {
     const password = generateRandomPassword();
     const hashedPassword = generateHashedPassword(password);
 
-    const newUser = UserModel.create({
+    const newUser = await UserModel.create({
       email,
       password: hashedPassword,
       roleId,
       tenantId,
     });
+
+
+    await createUserInfo(req,newUser.id,role.roleName,connection)
     await sendAccountVerificationEmail(email, password);
 
     res.status(201).json(new SuccessResponse(newUser));
@@ -275,91 +330,8 @@ const register = async (req, res) => {
     res.status(500).json(new ErrorResponse(err.message));
   }
 };
-/**
-This function finds the returns account data from UserAccount Table
-*/
-const fetchAccountDetails = async (username) => {
-  const account = await UserAccount.findOne({
-    attributes: [
-      "user_id",
-      "country_id",
-      "status",
-      "is_verified",
-      "is_locked",
-      "is_deleted",
-      "login_attempts",
-      "login_type_id",
-      "created_at",
-      "updated_at",
-    ],
-    include: [
-      {
-        model: UserInfo,
-        attributes: [
-          [sequelize.fn("initcap", sequelize.col("firstname")), "firstname"],
-          [sequelize.fn("initcap", sequelize.col("lastname")), "lastname"],
-          [sequelize.fn("initcap", sequelize.col("org_name")), "org_name"],
-          "mobile",
-          "email_address",
-        ],
-        where: {
-          email_address: username,
-        },
-      },
-      {
-        model: UserEmailLoginInfo,
-        attributes: ["password"],
-      },
-      { model: UserRequest, attributes: ["request_code"] },
-      {
-        model: LoginType,
-        attributes: ["name"],
-      },
-      {
-        model: UserRole,
-        attributes: ["role_id"],
-        include: [
-          {
-            model: Role,
-            attributes: ["name"],
-            include: [
-              {
-                model: Scope,
-                attributes: ["name"],
-                through: { attributes: [] },
-              },
-            ],
-          },
-        ],
-        distinct: true,
-      },
-    ],
-  });
-  return account;
-};
 
-/**
-This function Validates the account password given is correct or not
-*/
-const validatePwd = async (account, password) => {
-  const bcryptStartDate = new Date().valueOf();
-  const isPasswordValid = bcrypt.compareSync(
-    password,
-    account.UserEmailLoginInfo.password,
-  );
 
-  logger.info(
-    `bcrypt query completed in ${new Date().valueOf() - bcryptStartDate} ms`,
-  );
-
-  if (!isPasswordValid) {
-    throw new HTTPError(
-      401,
-      "Invalid credentials, please try again.",
-      ERROR_CODES.INVALID_DATA,
-    );
-  }
-};
 
 /**
 This function is to reset the login attempts in UserAccount Table
@@ -373,163 +345,6 @@ const resetLoginAttemptsIfNeeded = async (account) => {
   }
 };
 
-/**
-This function send Verification mail to the user
-*/
-async function sendVerificationEmail(email, code, userId, roleScopes) {
-  const queryParams = qs.stringify({ code, user_id: userId });
-  const encrypted = encryptText(queryParams);
-  //   await emails.sendAccountVerificationEmail(email, encrypted, roleScopes[0].name);
-}
-
-/**
-This function creates record in UserInfo table
-*/
-async function createUserInfo(
-  email,
-  firstname,
-  lastname,
-  mobileNumber,
-  company,
-  userId,
-  transaction,
-) {
-  return UserInfo.create(
-    {
-      user_info_id: uuidv4(),
-      user_id: userId,
-      email_address: email,
-      firstname,
-      lastname,
-      mobile: mobileNumber,
-      org_name: company,
-    },
-    { transaction },
-  ).then((data) => data.toJSON());
-}
-
-// const register = async (req, res) => {
-//   try {
-//     const {
-//       username,
-//       password,
-//       firstname,
-//       lastname,
-//       company,
-//       country_code: countryCode,
-//       country,
-//     } = req.body;
-
-//     const currentPath = req.get("X-Current-Path");
-
-//     const role = getRoleFromPath(currentPath);
-
-//     await validateEmail(username);
-
-//     const existingAccount = await UserEmailLoginInfo.findByPk(email);
-//     if (existingAccount) {
-//       throw new HTTPError(
-//         400,
-//         "Account already exists",
-//         ERROR_CODES.INVALID_DATA,
-//       );
-//     }
-
-//     const [loginType, dbRoles] = await fetchLoginTypeAndRoles(roles);
-
-//     const userId =
-//       externalId || (UNIQUE_IDENTITIES ? uuidv4() : email.split("@")[0]);
-//     const { hash, code } = generateHashAndCode(password);
-
-//     const roleIds = [];
-//     const userRoles = createUserRoles(dbRoles, userId, roleIds);
-
-//     const transaction = await sequelize.transaction();
-//     try {
-//       const userAccount = await createUserAccount(
-//         transaction,
-//         loginType,
-//         userId,
-//         country,
-//         verified,
-//       );
-//       const [userVinLoginInfo, userInfo, userRequest, roleScopes] =
-//         await Promise.all([
-//           createUserVinLoginInfo(email, hash, userId, transaction),
-//           createUserInfo(
-//             email,
-//             firstname,
-//             lastname,
-//             mobileNumber,
-//             company,
-//             userId,
-//             transaction,
-//           ),
-//           createUserRequest(userId, code, transaction),
-//           fetchRoleScopes(roleIds),
-//           createUserRolesInDB(userRoles, transaction),
-//         ]);
-//       await transaction.commit();
-
-//       if (!verified) {
-//         await sendVerificationEmail(
-//           email,
-//           code,
-//           userAccount.user_id,
-//           roleScopes,
-//         );
-//       }
-
-//       return formatAccountResponse(
-//         userAccount,
-//         userInfo,
-//         userVinLoginInfo,
-//         userRequest,
-//         roleScopes,
-//       );
-//     } catch (error) {
-//       logger.info(error);
-//       await transaction.rollback();
-//       throw error;
-//     }
-
-//     return res.json(new SuccessResponse(data.data));
-//   } catch (err) {
-//     return handleAxiosErrorMessage(err, req, res);
-//   }
-//   const { username, email, password } = req.body;
-
-//   try {
-//     // Check if the user already exists
-//     const existingUser = await AdminUser.findOne({ username });
-
-//     if (existingUser) {
-//       return res.status(400).json({ message: "Username already exists" });
-//     }
-
-//     // Create a new user instance
-//     const newUser = new AdminUser({
-//       username,
-//       email,
-//       password, // The password will be hashed automatically in the pre-save hook
-//     });
-
-//     // Save the user to the database
-//     await newUser.save();
-
-//     res.status(201).json({
-//       message: "AdminUser registered successfully",
-//       user: {
-//         id: newUser._id,
-//         username: newUser.username,
-//         email: newUser.email,
-//       },
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
 
 const health = async (req, res) => {
   try {
@@ -639,13 +454,11 @@ const getAccessToken = async (req, res) => {
  */
 const changePassword = async (req, res) => {
   try {
-    const { user: account } = req;
     const { newPassword, oldPassword } = req.body;
 
-    restrictIfExternalAuthority(account.UserEmailLoginInfo?.email);
 
     // Current password entered by user should be correct to be allowed to change it
-    if (!bcrypt.compareSync(oldPassword, account.UserEmailLoginInfo?.password))
+    if (!bcrypt.compareSync(oldPassword, req.user.password))
       throw new HTTPError(
         400,
         "Current password entered is incorrect",
@@ -653,7 +466,7 @@ const changePassword = async (req, res) => {
       );
 
     // New password can not be the same as the current password
-    if (bcrypt.compareSync(newPassword, account.UserEmailLoginInfo?.password))
+    if (bcrypt.compareSync(newPassword, req.user.password))
       throw new HTTPError(
         403,
         "Your new password cannot be the same as your current password.",
@@ -666,23 +479,23 @@ const changePassword = async (req, res) => {
     // Update password
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(newPassword, salt);
-    account.password = hash;
-    await UserEmailLoginInfo.update(
-      {
-        password: hash,
-      },
-      {
-        where: {
-          email_address: account.UserEmailLoginInfo?.email_address,
-        },
-      },
+    req.user.password = hash;
+
+
+    const connection = await getTenantDB(req.tenantDb);
+
+    const UserModel = User(connection);
+
+    await UserModel.updateOne(
+      { email: req.user?.email }, // Filter: Find user by email
+      { $set: { password: hash } } // Update password field
     );
 
     res.json(new SuccessResponse({ message: "Password updated." }));
   } catch (err) {
     res
       .status(err.statusCode || 500)
-      .json(new ErrorResponseNew(err, err.errorCode, req?.apiId, err.data));
+      .json(new ErrorResponse(err, err.errorCode, req?.apiId, err.data));
   }
 };
 

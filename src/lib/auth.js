@@ -5,6 +5,11 @@ const jwt = require("jsonwebtoken");
 const jwksClient = require("jwks-rsa");
 const util = require("util");
 const moment = require("moment");
+const { getTenantDB } = require("../lib/dbManager.js");
+const AdminUser = require("../model/scribble-admin/adminUser");
+const Tenant = require("../model/scribble-admin/tenants");
+const Role = require("../model/tenant/role");
+const User = require("../model/tenant/user");
 
 const logger = require("./logger");
 const { ErrorResponse, HTTPError, ERROR_CODES } = require("./responses");
@@ -115,65 +120,57 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
         );
     }
 
-    // verify token
     try {
-      // verify token
+
       const tokenData = await verifyToken(rawToken);
 
-      // query account
       const identity = tokenData.v === 3 ? tokenData.sub : tokenData.id;
 
-      // const response = await session.checkIfAccessTokenExists(identity);
-      // if (!response || response !== rawToken) {
-      //   throw new HTTPError(403, "Token invalid", ERROR_CODES.INVALID_TOKEN);
-      // }
+      const { "x-tenant-id": tenantId } = req.headers;
 
-      // const meApiResponseFromCache =
-      //   await session.getResponseFromMeApi(identity);
+      if (!tenantId) {
+        
+    const user = await AdminUser.findById(identity);
+    req.user = user;
+    throwErrorIfMissingRequiredScopes(
+      requiredScopes,
+      user.scope,
+    );
 
-      // if (meApiResponseFromCache) {
-      //   // add in req and return from here
-      //   req.user = { ...meApiResponseFromCache, token: rawToken };
-      //   throwErrorIfMissingRequiredScopes(
-      //     requiredScopes,
-      //     meApiResponseFromCache.scopes,
-      //   );
-      //   return next();
-      // }
 
-      // const userResponse = await axios({
-      //   method: "get",
-      //   url: `${nconf.get("SSO_API_BASE")}/auth/v1/me`,
-      //   headers: {
-      //     authorization: `Bearer ${rawToken}`,
-      //     "content-type": req.headers["content-type"] || "application/json",
-      //   },
-      // });
+      }else{
+        const tenant = await Tenant.findById(tenantId);
+  
+        // If tenant not found, return an error
+        if (!tenant) {
+          return res
+            .status(400)
+            .json(new ErrorResponse({ message: "Tenant not found" }));
+        }
+    
+        req.tenantDb = tenant.databaseName;
+        const connection = await getTenantDB(tenant.databaseName);
+    
+           const UserModel = User(connection);
+        const RoleModel = Role(connection);
+        
+          
+        const user = await UserModel.findById(identity).populate({
+          path: "roleId",
+          select: "roleName scope",
+        });
+        const { roleName, scope } = user.roleId;
+  
+  
+        throwErrorIfMissingRequiredScopes(
+          requiredScopes,
+          scope,
+        );
+  
+        req.user = user;
+      }
+      
 
-      // if (!userResponse?.data?.data) {
-      //   throw new HTTPError(401, "Invalid SSO data", ERROR_CODES.INVALID_DATA);
-      // }
-
-      // // const user = await User.findOne({ where: { sso_id: userResponse.data.data.userId } });
-
-      // logger.info(
-      //   `Received token on endpoint ${req.method} ${req.originalUrl} for user ${userResponse.data.data.userId}`,
-      // );
-
-      // throwErrorIfMissingRequiredScopes(
-      //   requiredScopes,
-      //   userResponse.data.data.scopes,
-      // );
-      // // store user model in request
-      // userResponse.data.data.token = rawToken;
-
-      req.user = tokenData.id;
-      // const { token, ...userDataWithoutToken } = userResponse.data.data;
-      // await session.setResponseFromMeApi(
-      //   identity,
-      //   userDataWithoutToken,
-      //   +nconf.get("JWT_VALIDITY"),
-      // );
       return next();
     } catch (err) {
       if (err.response) {

@@ -12,8 +12,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    scoper: {
-      type: String,
+    scope: {
+      type: [String],
     },
   },
   {

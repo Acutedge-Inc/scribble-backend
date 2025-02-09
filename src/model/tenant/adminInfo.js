@@ -13,11 +13,9 @@ const adminInfoSchema = new mongoose.Schema(
     },
     dob: {
       type: String,
-      required: true,
     },
     address: {
       type: String,
-      required: true,
     },
     contact: {
       type: String,
