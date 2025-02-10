@@ -7,15 +7,15 @@ const http = require("http");
 const nconf = require("nconf");
 require("dotenv").config();
 const mongoose = require("mongoose");
-const db = require("./src/model/scribble-admin");
+const db = require("./src/model/scribble-admin/index.js");
 const serverless = require("serverless-http");
 const adminDbUrl = process.env.MONGO_URI.replace("ADMIN_DB",process.env.ADMIN_DB);
-const { createAdminUser } = require("./src/controllers/auth");
+const { createAdminUser } = require("./src/controllers/auth.js");
 nconf
   .use("memory")
   .env({ parseValues: true })
   .file({ file: "./src/config.json" });
-const { logger } = require("./src/lib");
+const { logger } = require("./src/lib/index.js");
 
 // Connect to MongoDB and initialize admin user
 async function connectToDatabase() {
@@ -86,7 +86,7 @@ async function startServer() {
 if (process.env.NODE_ENV === "local") {
   startServer(); // Start the server locally
 } else {
-  const app = require("./src/index"); // Import your Express app
+  const app = require("./src/index.js"); // Import your Express app
   connectToDatabase();
   module.exports.handler = serverless(app); // Wrap the express app with serverless-http
 }

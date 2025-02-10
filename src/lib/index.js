@@ -1,10 +1,10 @@
-const logger = require("./logger");
-const responses = require("./responses");
-const auth = require("./auth");
-const utils = require("./utils");
-const morgan = require("./morgan");
+const logger = require("./logger.js");
+const responses = require("./responses.js");
+const auth = require("./auth.js");
+const utils = require("./utils.js");
+const morgan = require("./morgan.js");
 // const emails = require("./emails");
-const tokens = require("./tokens");
+const tokens = require("./tokens.js");
 // const session = require("./session-store");
 
 module.exports = {

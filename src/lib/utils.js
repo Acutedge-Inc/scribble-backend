@@ -4,7 +4,7 @@ const { createCipheriv, randomBytes } = require("crypto");
 const ENCRYPTION_KEY = "B374A26A71490437AA024E4FADD5B497";
 const IV_LENGTH = 16;
 const ALGORITHM = "aes-256-cbc";
-const accountVerificationTemplate = require("../views/emailer-account-verification");
+const accountVerificationTemplate = require("../views/emailer-account-verification.js");
 
 const key = Buffer.from(ENCRYPTION_KEY);
 module.exports = {

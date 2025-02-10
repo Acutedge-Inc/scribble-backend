@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const AdminUser = require("../model/scribble-admin/adminUser.js");
-const Tenant = require("../model/scribble-admin/tenants");
+const Tenant = require("../model/scribble-admin/tenants.js");
 
 const fs = require("fs");
 const path = require("path");
@@ -10,22 +10,22 @@ const {
   generateRandomPassword,
   generateHashedPassword,
 } = require("../lib/utils.js");
-const { sendAccountVerificationEmail } = require("../lib/emails");
+const { sendAccountVerificationEmail } = require("../lib/emails.js");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-const tenantModels = require("../model/tenant/index");
-const User = require("../model/tenant/user");
-const Role = require("../model/tenant/role");
-const Clinitian_Info = require("../model/tenant/clinicianInfo");
-const Admin_Info = require("../model/tenant/adminInfo");
+const tenantModels = require("../model/tenant/index.js");
+const User = require("../model/tenant/user.js");
+const Role = require("../model/tenant/role.js");
+const Clinitian_Info = require("../model/tenant/clinicianInfo.js");
+const Admin_Info = require("../model/tenant/adminInfo.js");
 
 require("dotenv").config();
 const {
   responses: { SuccessResponse, HTTPError, ERROR_CODES },
   logger,
   tokens,
-} = require("../lib");
+} = require("../lib/index.js");
 const { ErrorResponse } = require("../lib/responses.js");
 const clinicianInfo = require("../model/tenant/clinicianInfo.js");
 

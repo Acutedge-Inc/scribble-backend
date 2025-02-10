@@ -1,6 +1,6 @@
 const nconf = require("nconf");
 
-const serviceApplicationStatuses = require("../services/application-statuses");
+const serviceApplicationStatuses = require("../services/application-statuses.js");
 
 module.exports.appValidationStatusTemplate = (data, status) => {
   switch (status) {

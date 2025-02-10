@@ -4,9 +4,9 @@ const moment = require("moment");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
 
-const logger = require("./logger");
-const responses = require("./responses");
-const session = require("./session-store");
+const logger = require("./logger.js");
+const responses = require("./responses.js");
+const session = require("./session-store.js");
 const {
   UserAccount,
   UserInfo,
@@ -15,10 +15,10 @@ const {
   UserRole,
   UserVinLoginInfo,
   UserEmailLoginInfo,
-} = require("../model/scribble-admin");
+} = require("../model/scribble-admin/index.js");
 
 const { ErrorResponseNew, HTTPError, ERROR_CODES } = responses;
-const { SCHEMAS } = require("./utils");
+const { SCHEMAS } = require("./utils.js");
 
 // const LEVELS = {
 //     user: 10,

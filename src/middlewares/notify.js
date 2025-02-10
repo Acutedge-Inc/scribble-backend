@@ -1,10 +1,10 @@
 const nconf = require("nconf");
-const { logger } = require("../lib");
+const { logger } = require("../lib/index.js");
 
 const baseApiUrl = nconf.get("API_BASE_URL");
 const baseVersion = nconf.get("BASE_VERSION");
 
-const { UserInfo } = require("../model/scribble-admin");
+const { UserInfo } = require("../model/scribble-admin/index.js");
 
 // const {
 //   appValidationStatusTemplate,

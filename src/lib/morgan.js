@@ -1,7 +1,7 @@
 const morgan = require("morgan");
 const nconf = require("nconf");
 
-const logger = require("./logger");
+const logger = require("./logger.js");
 
 module.exports = (app) => {
   const originalSend = app.response.send;

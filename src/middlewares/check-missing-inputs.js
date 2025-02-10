@@ -9,8 +9,8 @@ const {
   isArray,
   differenceBy,
 } = require("lodash");
-const { ErrorResponse, ERROR_CODES } = require("../lib/responses");
-const mandatoryInputs = require("../repositories/mandatory-inputs");
+const { ErrorResponse, ERROR_CODES } = require("../lib/responses.js");
+const mandatoryInputs = require("../repositories/mandatory-inputs.js");
 
 module.exports = (req, res, next) => {
   const mandatoryInputsForThisRoute = get(

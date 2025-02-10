@@ -1,6 +1,6 @@
 const Redis = require("ioredis");
 const nconf = require("nconf");
-const logger = require("./logger");
+const logger = require("./logger.js");
 
 const redisHost = nconf.get("REDIS_ENDPOINT_ADDRESS") || "127.0.0.1";
 const redisPort = Number(nconf.get("REDIS_ENDPOINT_PORT") || 6379);

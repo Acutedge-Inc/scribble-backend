@@ -1,6 +1,6 @@
 // const sanitize = require("sanitize")();
 const validator = require("validator");
-const { logger, responses } = require("../lib");
+const { logger, responses } = require("../lib/index.js");
 
 const { ErrorResponse, ERROR_CODES } = responses;
 

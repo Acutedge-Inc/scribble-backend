@@ -1,6 +1,6 @@
 const { get, toLower, forEach } = require("lodash");
-const { ErrorResponse, ERROR_CODES } = require("../lib/responses");
-const validationChecks = require("../repositories/validation-checks");
+const { ErrorResponse, ERROR_CODES } = require("../lib/responses.js");
+const validationChecks = require("../repositories/validation-checks.js");
 
 module.exports = (req, res, next) => {
   const validationChecksForThisRoute = get(

@@ -6,12 +6,12 @@ const AWS = require("aws-sdk");
 const nodemailer = require("nodemailer");
 // const mimemessage = require("mimemessage");
 const { replace } = require("lodash");
-const logger = require("./logger");
+const logger = require("./logger.js");
 
 const EMAIL_PROVIDER = "SMTP";
 const ENABLE_EMAILS = EMAIL_PROVIDER === "SES" || EMAIL_PROVIDER === "SMTP";
-const accountVerificationTemplate = require("../views/emailer-account-verification");
-const { milisecondsToTime } = require("./utils");
+const accountVerificationTemplate = require("../views/emailer-account-verification.js");
+const { milisecondsToTime } = require("./utils.js");
 
 let awsConfig = null;
 

@@ -1,4 +1,4 @@
-const logger = require("./logger");
+const logger = require("./logger.js");
 const ERROR_CODES = {
   GENERAL_ERROR: "GENERAL_ERROR",
   WRONG_INPUT: "WRONG_INPUT",

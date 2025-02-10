@@ -7,7 +7,7 @@ const helmet = require("helmet");
 const methodOverride = require("method-override");
 const { randomUUID } = require("crypto");
 
-const routes = require("./routes");
+const routes = require("./routes/index.js");
 
 const app = express();
 

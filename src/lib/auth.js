@@ -6,13 +6,13 @@ const jwksClient = require("jwks-rsa");
 const util = require("util");
 const moment = require("moment");
 const { getTenantDB } = require("../lib/dbManager.js");
-const AdminUser = require("../model/scribble-admin/adminUser");
-const Tenant = require("../model/scribble-admin/tenants");
-const Role = require("../model/tenant/role");
-const User = require("../model/tenant/user");
+const AdminUser = require("../model/scribble-admin/adminUser.js");
+const Tenant = require("../model/scribble-admin/tenants.js");
+const Role = require("../model/tenant/role.js");
+const User = require("../model/tenant/user.js");
 
-const logger = require("./logger");
-const { ErrorResponse, HTTPError, ERROR_CODES } = require("./responses");
+const logger = require("./logger.js");
+const { ErrorResponse, HTTPError, ERROR_CODES } = require("./responses.js");
 // const session = require("./redis");
 
 const SCOPES = {
