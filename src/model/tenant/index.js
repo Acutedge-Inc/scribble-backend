@@ -12,7 +12,7 @@ tenantdb.init = async (dbName) => {
 
     // Connect to MongoDB
     let connect = await mongoose.createConnection(
-      `${process.env.MONGO_URI}/${dbName}`,
+      process.env.MONGO_URI.replace("ADMIN_DB",dbName)
     );
     console.info("MongoDB connected successfully");
 
