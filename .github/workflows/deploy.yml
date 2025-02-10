@@ -20,7 +20,7 @@ jobs:
 
       - name: Install dependencies for the layer
         run: |
-          npm install
+          npm install --only=production
           mkdir -p my-lambda-layer/nodejs
           mv node_modules my-lambda-layer/nodejs
           cd my-lambda-layer
