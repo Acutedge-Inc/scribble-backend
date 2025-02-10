@@ -127,9 +127,8 @@ async function userLogin(req, res) {
     }
 
     const connection = await getTenantDB(tenant.databaseName);
-const UserModel = User(connection);
-const RoleModel = Role(connection);
-
+    const UserModel = User(connection);
+    const RoleModel = Role(connection);
 
     const user = await UserModel.findOne({ email }).populate({
       path: "roleId",
@@ -137,20 +136,25 @@ const RoleModel = Role(connection);
     });
     const { roleName, scope } = user.roleId;
 
-
     if (!user) return res.status(404).json(new ErrorResponse("User not found"));
     const isPasswordValid = bcrypt.compareSync(password, user.password);
 
-    if (!isPasswordValid){
+    if (!isPasswordValid) {
       await UserModel.updateOne(
         { _id: user._id }, // Filter: find the user by ID
-        { $inc: { loginAttempts: 1 } } // Increment loginAttempts by 1
+        { $inc: { loginAttempts: 1 } }, // Increment loginAttempts by 1
       );
-      if(user.loginAttempts > 3){
-        return res.status(401).json(new ErrorResponse(`${user.loginAttempts+1} times entered wrong password`));
+      if (user.loginAttempts > 3) {
+        return res
+          .status(401)
+          .json(
+            new ErrorResponse(
+              `${user.loginAttempts + 1} times entered wrong password`,
+            ),
+          );
       }
-      
-         return res.status(401).json(new ErrorResponse("Invalid credentials"));
+
+      return res.status(401).json(new ErrorResponse("Invalid credentials"));
     }
 
     let accessTokenTtl = "6000";
@@ -187,7 +191,6 @@ const RoleModel = Role(connection);
     return res.json(new SuccessResponse(responseInst));
   } catch (err) {
     return res.json(new ErrorResponse(err));
-
   }
 }
 
@@ -241,41 +244,28 @@ const createTenant = async (req, res) => {
   }
 };
 
-
 /**
 This function creates record in UserInfo table
 */
-async function createUserInfo(
-req,userId,roleName,connection
-) {
-  const {
-    email,
-    name,
-  firstname,
-  lastname,
-  contact,
-  company,
-  transaction,
-  } = req.body
+async function createUserInfo(req, userId, roleName, connection) {
+  const { email, name, firstname, lastname, contact, company, transaction } =
+    req.body;
 
-  switch(roleName){
-    case "user":{
+  switch (roleName) {
+    case "user": {
       const clinicianModel = Clinitian_Info(connection);
-      return await clinicianModel.create({userId,name,contact});
-  
+      return await clinicianModel.create({ userId, name, contact });
     }
-    case "useraAdmin":{
+    case "userAdmin": {
       const adminModel = Admin_Info(connection);
-      return await adminModel.create({userId,name,contact});
-  
+      return await adminModel.create({ userId, name, contact });
     }
   }
-
 }
 
 const register = async (req, res) => {
   try {
-    const { email, roleId,  "x-tenant-id": tenantId } = req.body;
+    const { email, roleId, "x-tenant-id": tenantId } = req.body;
 
     if (!tenantId) {
       return res
@@ -320,8 +310,7 @@ const register = async (req, res) => {
       tenantId,
     });
 
-
-    await createUserInfo(req,newUser.id,role.roleName,connection)
+    await createUserInfo(req, newUser.id, role.roleName, connection);
     await sendAccountVerificationEmail(email, password);
 
     res.status(201).json(new SuccessResponse(newUser));
@@ -330,8 +319,6 @@ const register = async (req, res) => {
     res.status(500).json(new ErrorResponse(err.message));
   }
 };
-
-
 
 /**
 This function is to reset the login attempts in UserAccount Table
@@ -344,7 +331,6 @@ const resetLoginAttemptsIfNeeded = async (account) => {
     );
   }
 };
-
 
 const health = async (req, res) => {
   try {
@@ -456,7 +442,6 @@ const changePassword = async (req, res) => {
   try {
     const { newPassword, oldPassword } = req.body;
 
-
     // Current password entered by user should be correct to be allowed to change it
     if (!bcrypt.compareSync(oldPassword, req.user.password))
       throw new HTTPError(
@@ -481,14 +466,13 @@ const changePassword = async (req, res) => {
     const hash = bcrypt.hashSync(newPassword, salt);
     req.user.password = hash;
 
-
     const connection = await getTenantDB(req.tenantDb);
 
     const UserModel = User(connection);
 
     await UserModel.updateOne(
       { email: req.user?.email }, // Filter: Find user by email
-      { $set: { password: hash } } // Update password field
+      { $set: { password: hash } }, // Update password field
     );
 
     res.json(new SuccessResponse({ message: "Password updated." }));

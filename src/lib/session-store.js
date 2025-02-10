@@ -5,7 +5,7 @@ const logger = require("./logger");
 const redisHost = nconf.get("REDIS_ENDPOINT_ADDRESS") || "127.0.0.1";
 const redisPort = Number(nconf.get("REDIS_ENDPOINT_PORT") || 6379);
 
-const client = ""
+const client = "";
 // new Redis({
 //   host: nconf.get("NODE_ENV") !== "local" ? redisHost : nconf.get("REDIS_IP"),
 //   port: redisPort,

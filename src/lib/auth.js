@@ -121,7 +121,6 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
     }
 
     try {
-
       const tokenData = await verifyToken(rawToken);
 
       const identity = tokenData.v === 3 ? tokenData.sub : tokenData.id;
@@ -129,53 +128,41 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
       const { "x-tenant-id": tenantId } = req.headers;
 
       if (!tenantId) {
-        
-    const user = await AdminUser.findById(identity);
-    req.user = user;
-    throwErrorIfMissingRequiredScopes(
-      requiredScopes,
-      user.scope,
-    );
-
-
-      }else{
+        const user = await AdminUser.findById(identity);
+        req.user = user;
+        throwErrorIfMissingRequiredScopes(requiredScopes, user.scope);
+      } else {
         const tenant = await Tenant.findById(tenantId);
-  
+
         // If tenant not found, return an error
         if (!tenant) {
           return res
             .status(400)
             .json(new ErrorResponse({ message: "Tenant not found" }));
         }
-    
+
         req.tenantDb = tenant.databaseName;
         const connection = await getTenantDB(tenant.databaseName);
-    
-           const UserModel = User(connection);
+
+        const UserModel = User(connection);
         const RoleModel = Role(connection);
-        
-          
+
         const user = await UserModel.findById(identity).populate({
           path: "roleId",
           select: "roleName scope",
         });
         const { roleName, scope } = user.roleId;
-  
-  
-        throwErrorIfMissingRequiredScopes(
-          requiredScopes,
-          scope,
-        );
-  
+
+        throwErrorIfMissingRequiredScopes(requiredScopes, scope);
+
         req.user = user;
       }
-      
 
       return next();
     } catch (err) {
       if (err.response) {
         const errorObj = {
-          errorMessage: "Invalid token",
+          errorMessage: err?.response || "Invalid token",
           errorCode: "INVALID_TOKEN",
           ...err.response.data,
         };
@@ -193,7 +180,13 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
           );
       return res
         .status(401)
-        .json(new ErrorResponse("Invalid token", req?.apiId, "INVALID_TOKEN"));
+        .json(
+          new ErrorResponse(
+            err?.message || "Invalid token",
+            req?.apiId,
+            "INVALID_TOKEN",
+          ),
+        );
     }
   };
 }

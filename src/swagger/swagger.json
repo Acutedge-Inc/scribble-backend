@@ -1,18 +1,18 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Appstore API spec",
+    "title": "Scribble API spec",
     "version": "1.0"
   },
   "servers": [],
   "tags": [
     {
       "name": "Auth",
-      "description": "Used by all to register & login to system"
+      "description": "Used by user to create user & login to system"
     }   
   ],
   "paths": {
-    "/v1/auth/basic": {
+    "/v1/auth/login": {
       "post": {
         "responses": {
           "200": {
@@ -21,6 +21,89 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "POST_v1-auth-basic",
+        "parameters": [
+        {
+          "in": "header",
+          "name": "content-type",
+          "schema": {
+            "type": "string",
+            "example": "application/json"
+          },
+          "required": true
+        },
+        {
+          "in": "header",
+          "name": "x-tenant-id",
+          "schema": {
+            "type": "string",
+            "example": "67a962c84aa8bc0e4063589e"
+          },
+          "required": false,
+          "description": "Tenant ID (optional)"
+        }
+      ],
+
+      "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    },
+    "/v1/auth/tenant": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
                 }
               }
             }
@@ -90,52 +173,204 @@
                   {
                     "type": "object",
                     "properties": {
-                      "username": {
+                      "tenantName": {
                         "type": "string"
-                      },
-                      "password": {
-                        "type": "string"
-                      },
-                      "keepAlive": {
-                        "type": "boolean"
                       }
                     },
                     "required": [
-                      "username",
-                      "password"
+                      "tenantName"
                     ]
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "android_version": {
-                        "type": "number"
-                      },
-                      "country": {
-                        "type": "string"
-                      },
-                      "oem": {
-                        "type": "string"
-                      },
-                      "model": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "android_version",
-                      "country",
-                      "oem",
-                      "model"
-                    ],
-                    "description": "Requires JWT token with payload containing vin in the Authorization header."
                   }
                 ]
               }
             }
           },
           "required": true
-        }
+        },
+        "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
       }
+    },
+    "/v1/auth/register": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "description": "Perform user registration. If the client passes a redirect URL and the SSO requires verification, the response of the verification call will be redirected to that URL.(Currently used in developer registeration)",
+        "operationId": "POST_v1-auth-register",
+        "parameters": [
+        {
+          "in": "header",
+          "name": "content-type",
+          "schema": {
+            "type": "string",
+            "example": "application/json"
+          },
+          "required": true
+        }
+      ],"requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "thillaimaharajan.g@gmail.com"
+                  },
+                  "roleId": {
+                    "type": "string",
+                    "example": "67a89fad069cd3c52f8cff22"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "thillai"
+                  },
+                  "contact": {
+                    "type": "string",
+                    "example": "9487316396"
+                  },
+                  "x-tenant-id": {
+                    "type": "string",
+                    "example": "67a89fad069cd3c52f8cff22"
+                  }
+                },
+                "required": ["email", "roleId", "name", "contact","x-tenant-id"]
+              }
+            }
+          }
+        },
+        "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+      }
+    },
+    "/v1/auth/change-password": {
+      "put": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangePasswordResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
+        "description": "Change new password",
+        "operationId": "PUT_v1_change_password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "newPassword": {
+                    "type": "string"
+                  },
+                  "oldPassword": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "newPassword",
+                  "oldPassword"
+                ],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "security":[{
+          "Bearer":[]
+        }]
+      },
+      "parameters": []
     },
     "/v1/auth/logout": {
       "post": {
@@ -209,144 +444,156 @@
           "required": true
         }
       }
-    },
-    "/v1/auth/register": {
-      "post": {
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserResponseModel"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Auth"
-        ],
-        "description": "Perform user registration. If the client passes a redirect URL and the SSO requires verification, the response of the verification call will be redirected to that URL.(Currently used in developer registeration)",
-        "operationId": "POST_v1-auth-register",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "type": "string",
-                    "example": "developer@gmail.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "123456v@7"
-                  },
-                  "firstname": {
-                    "type": "string",
-                    "example": "Android"
-                  },
-                  "lastname": {
-                    "type": "string",
-                    "example": "Developer"
-                  },
-                  "mobile_number": {
-                    "type": "string",
-                    "example": "97xxxxxx00"
-                  },
-                  "country_code": {
-                    "type": "string",
-                    "example": "91"
-                  },
-                  "country": {
-                    "type": "string",
-                    "example": "0442a27c-e00d-4ff4-8b5a-284f82562766"
-                  },
-                  "company": {
-                    "type": "string",
-                    "example": "Xyz"
-                  }
-                }
-              }
-            }
-          },
-          "required": true
-        }
-      }
     }
   },
   "components": {
     "schemas": {
-      "LoginResponse": {
+      "ChangePasswordResponse":{
         "type": "object",
         "properties": {
           "status": {
-            "type": "string"
+            "type": "string",
+            "example": "ok"
           },
           "data": {
             "type": "object",
             "properties": {
-              "id": {
-                "type": "number"
+              "message": {
+                "type": "string",
+                "example": "Password updated."
+              }
+            }
+          }
+        }
+      }
+,      
+      "LoginResponse":{
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "admin@gmail.com"
               },
-              "username": {
-                "type": "string"
-              },
-              "firstname": {
-                "type": "string"
-              },
-              "lastname": {
-                "type": "string"
-              },
-              "vin": {
-                "type": "string"
-              },
-              "company": {
-                "type": "string"
+              "userId": {
+                "type": "string",
+                "example": "67a95e6208705766eb2a4619"
               },
               "roles": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
+                "type": "string",
+                "example": "scribble_admin"
               },
               "scopes": {
                 "type": "array",
                 "items": {
                   "type": "string"
-                }
+                },
+                "example": ["sso.write"]
               },
               "accessToken": {
-                "type": "string"
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2IjoyLCJ..."
               },
               "refreshToken": {
-                "type": "string"
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoic..."
+              },
+              "created": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-10T02:03:14.080Z"
+              },
+              "updated": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-10T02:03:14.080Z"
               }
             }
           }
         }
       },
+      
+        "TenantResponse": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "ok"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Tenant created successfully"
+                },
+                "tenant": {
+                  "type": "object",
+                  "properties": {
+                    "tenantName": {
+                      "type": "string",
+                      "example": "amedysis1"
+                    },
+                    "databaseName": {
+                      "type": "string",
+                      "example": "amedysis1"
+                    },
+                    "createdBy": {
+                      "type": "string",
+                      "format": "ObjectId",
+                      "example": "67a89f512d0f29cb9a87c940"
+                    },
+                    "_id": {
+                      "type": "string",
+                      "format": "ObjectId",
+                      "example": "67a89fad069cd3c52f8cff1f"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-02-09T12:29:33.215Z"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2025-02-09T12:29:33.215Z"
+                    },
+                    "__v": {
+                      "type": "integer",
+                      "example": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },      
+        "LoginRequest":{
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "username",
+                "password"
+              ]
+            }
+          ]
+        },
       "LogoutResponse": {
         "type": "object",
         "properties": {
@@ -358,7 +605,7 @@
           }
         }
       },
-      "UserResponseModel": {
+      "UserResponseModel":{
         "type": "object",
         "properties": {
           "status": {
@@ -368,68 +615,58 @@
           "data": {
             "type": "object",
             "properties": {
-              "userId": {
+              "roleId": {
                 "type": "string",
-                "example": "ccc45f31-c009-439d-8ba6-8d93b705e98c"
+                "example": "67a89fad069cd3c52f8cff22"
               },
-              "roles": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "example": [
-                    "dev"
-                  ]
-                }
-              },
-              "scopes": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "example": [
-                    "sso.self.read",
-                    "sso.self.write",
-                    "self.read",
-                    "self.write",
-                    "roles.read",
-                    "scopes.read",
-                    "devices.read",
-                    "application.read",
-                    "application.write",
-                    "application.remove",
-                    "appValidation.read",
-                    "category.read",
-                    "stats.read",
-                    "country.read",
-                    "vehicles.read",
-                    "currency.read",
-                    "analytics.read"
-                  ]
-                }
-              },
-              "firstname": {
+              "tenantId": {
                 "type": "string",
-                "example": "Android"
+                "example": "67a89fad069cd3c52f8cff1f"
               },
-              "lastname": {
+              "email": {
                 "type": "string",
-                "example": "Developer"
+                "format": "email",
+                "example": "thillaimaharajan.g@gmail.com"
               },
-              "country": {
+              "password": {
                 "type": "string",
-                "example": "0442a27c-e00d-4ff4-8b5a-284f82562766"
+                "example": "$2b$10$8/mIZz4SPDAcPkRvrbopUOtZu87JS2dFhnByr4iW5f6fO9EszyV6e"
               },
-              "company": {
+              "isVerified": {
                 "type": "string",
-                "example": "Xyz"
+                "example": "false"
               },
-              "isNewRegistration": {
-                "type": "boolean",
-                "example": true
+              "isDeleted": {
+                "type": "string",
+                "example": "false"
+              },
+              "loginAttempts": {
+                "type": "integer",
+                "example": 0
+              },
+              "_id": {
+                "type": "string",
+                "example": "67a8a17fda90d3413efda928"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-09T12:37:19.762Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-09T12:37:19.763Z"
+              },
+              "__v": {
+                "type": "integer",
+                "example": 0
               }
             }
           }
         }
-      },
+      }
+,      
       "ErrorResponse": {
         "type": "object",
         "properties": {

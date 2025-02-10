@@ -42,9 +42,12 @@ app.use((req, res, next) => {
 });
 
 const swaggerDocument = require("./swagger/swagger.json");
-
+const swaggerUrl =
+  process.env.NODE_ENV === "local"
+    ? `http://localhost:3000/api/`
+    : `https://ntitmak4a4r45djrvtdvicvngm0xyujl.lambda-url.us-west-2.on.aws/api/`;
 swaggerDocument.servers.push({
-  url: `https://ntitmak4a4r45djrvtdvicvngm0xyujl.lambda-url.us-west-2.on.aws/api/`,
+  url: swaggerUrl,
 });
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));

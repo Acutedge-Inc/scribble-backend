@@ -19,7 +19,7 @@ module.exports = {
     }
 
     return password;
-  },  
+  },
 
   generateHashedPassword: (password) => {
     const salt = bcrypt.genSaltSync(saltRounds);
