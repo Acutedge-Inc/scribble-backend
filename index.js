@@ -83,10 +83,4 @@ async function startServer() {
   process.on("SIGINT", shutdown);
 }
 
-if (process.env.NODE_ENV === "local") {
   startServer(); // Start the server locally
-} else {
-  const app = require("./src/index.js"); // Import your Express app
-  connectToDatabase();
-  module.exports.handler = serverless(app); // Wrap the express app with serverless-http
-}
