@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Deploy Scribble API to EC2
 
 on:
   push:
@@ -23,8 +23,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i deploy_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd ${{ secrets.EC2_PATH }}
             git pull origin develop
-            docker stop scribble-api || true
-            docker rm scribble-api || true
-            docker rmi scribble-api-image || true
-            docker build -t scribble-api-image .
-            docker run -d -p 3000:3000 --name scribble-api scribble-api-image
+            docker-compose down
+            docker-compose up -d --build
+            docker ps  # Check if containers are running
+          EOF
