@@ -1,4 +1,4 @@
-name: Deploy to AWS Lambda
+name: Deploy to EC2
 
 on:
   push:
@@ -10,91 +10,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: "22"
-
-      - name: Install dependencies for the layer
+      - name: Setup SSH Key
         run: |
-          npm install --only=production
-          mkdir -p my-lambda-layer/nodejs
-          mv node_modules my-lambda-layer/nodejs
-          cd my-lambda-layer
-          zip -r my-lambda-layer.zip nodejs
+          echo "${{ secrets.EC2_SSH_KEY }}" > deploy_key
+          chmod 600 deploy_key
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Upload Lambda Layer
-        id: upload_layer
+      - name: Deploy to EC2 via SSH
         run: |
-          aws lambda publish-layer-version \
-            --layer-name myLambdaLayer \
-            --zip-file fileb://my-lambda-layer/my-lambda-layer.zip \
-            --compatible-runtimes nodejs22.x \
-            --region ${{ secrets.AWS_REGION }} \
-            --query 'LayerVersionArn' \
-            --output text > layer_arn.txt
-
-      - name: Zip application code
-        run: |
-          rm -rf my-lambda-layer
-          zip -r my-function.zip .
-
-      - name: Deploy to AWS Lambda with retry logic
-        run: |
-          MAX_RETRIES=5
-          RETRY_DELAY=10 # seconds
-
-          for ((i=0; i<MAX_RETRIES; i++)); do
-              aws lambda update-function-code \
-                --function-name ${{ secrets.FUNCTION_NAME }} \
-                --zip-file fileb://my-function.zip \
-                --region ${{ secrets.AWS_REGION }}
-
-              if [ $? -eq 0 ]; then
-                  echo "Function code updated successfully."
-                  break
-              else
-                  echo "Function code update failed, retrying in $RETRY_DELAY seconds..."
-                  sleep $RETRY_DELAY
-              fi
-          done
-
-      - name: Associate Layer with Lambda Function with retry logic
-        run: |
-          MAX_RETRIES=5
-          INITIAL_RETRY_DELAY=10 # seconds
-
-          for ((i=0; i<MAX_RETRIES; i++)); do
-              # Check if the resource is still in progress
-              STATUS=$(aws lambda get-function-configuration --function-name ${{ secrets.FUNCTION_NAME }} --query 'LastUpdateStatus' --output text)
-
-              if [[ "$STATUS" == "InProgress" ]]; then
-                  echo "Update is still in progress, waiting before retrying..."
-                  sleep $((INITIAL_RETRY_DELAY * (2 ** i))) # Exponential backoff
-                  continue
-              fi
-
-              echo "Updating function configuration with layers: $(cat layer_arn.txt)"
-              aws lambda update-function-configuration \
-                --function-name ${{ secrets.FUNCTION_NAME }} \
-                --layers "$(cat layer_arn.txt)" \
-                --region ${{ secrets.AWS_REGION }}
-
-              if [ $? -eq 0 ]; then
-                  echo "Function configuration updated successfully."
-                  break
-              else
-                  echo "Function configuration update failed, retrying in $((INITIAL_RETRY_DELAY * (2 ** i))) seconds..."
-                  sleep $((INITIAL_RETRY_DELAY * (2 ** i))) # Exponential backoff
-              fi
-          done
+          ssh -o StrictHostKeyChecking=no -i deploy_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            cd ${{ secrets.EC2_PATH }}
+            git pull origin main
+            docker stop myapp || true
+            docker rm myapp || true
+            docker rmi myapp-image || true
+            docker build -t myapp-image .
+            docker run -d -p 3000:3000 --name myapp myapp-image
+          EOF
