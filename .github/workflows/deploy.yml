@@ -3,37 +3,28 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - develop # Change this to your branch name
+      - develop
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Setup SSH Key for Git Access
+      - name: Setup SSH Key
         run: |
-          echo "${{ secrets.EC2_GIT_SSH_KEY }}" > ec2_git_key
-          chmod 600 ec2_git_key
-          eval "$(ssh-agent -s)"
-          ssh-add ec2_git_key
-          mkdir -p ~/.ssh
-          echo "Host github.com\n  StrictHostKeyChecking no\n  IdentityFile ec2_git_key" > ~/.ssh/config
+          echo "${{ secrets.EC2_SSH_KEY }}" > deploy_key
+          chmod 600 deploy_key
 
-      - name: Deploy to EC2
+      - name: Deploy to EC2 via SSH
         run: |
-          ssh -o StrictHostKeyChecking=no -i ec2_git_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i deploy_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd ${{ secrets.EC2_PATH }}
-            if [ ! -f "Dockerfile" ]; then
-              echo "Error: Dockerfile not found!"
-              exit 1
-            fi
             git pull origin develop
             docker stop myapp || true
             docker rm myapp || true
             docker rmi myapp-image || true
             docker build -t myapp-image .
             docker run -d -p 3000:3000 --name myapp myapp-image
-          EOF
