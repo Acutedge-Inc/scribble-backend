@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    isFirstLogin:{
+      type: Boolean,
+      required: true,
+      default: true
+    },
     isVerified: {
       type: String,
       required: true,

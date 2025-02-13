@@ -244,6 +244,60 @@ const createTenant = async (req, res) => {
   }
 };
 
+
+
+const getTenant = async (req, res) => {
+
+  try {
+    const existingTenants = await Tenant.find({});
+
+    return res
+      .status(201)
+      .json(
+        new SuccessResponse({ data: existingTenants }),
+      );
+  } catch (error) {
+    console.error("Error on getting tenants:", error);
+    res.status(500).json(new ErrorResponse(error));
+  }
+};
+
+const getRoles = async (req, res) => {
+
+  try {
+    const { "x-tenant-id": tenantId } = req.query;
+
+    const tenant = await Tenant.findById(tenantId);
+
+    // If tenant not found, return an error
+    if (!tenant) {
+      return res
+        .status(400)
+        .json(new ErrorResponse({ message: "Tenant not found" }));
+    }
+
+    const connection = await getTenantDB(tenant.databaseName);
+    
+           const RoleModel = Role(connection);
+   
+    const role = await RoleModel.find();
+
+    if (!role) {
+      return res
+        .status(400)
+        .json(new ErrorResponse({ message: "Role not found" }));
+    }
+    return res
+    .status(201)
+    .json(
+      new SuccessResponse({ data: role }),
+    );
+  } catch (error) {
+    console.error("Error on getting roles:", error);
+    res.status(500).json(new ErrorResponse(error));
+  }
+};
+
 /**
 This function creates record in UserInfo table
 */
@@ -708,5 +762,7 @@ module.exports = {
   sendRecoverPasswordEmail,
   recoverPassword,
   createTenant,
+  getTenant,
   createAdminUser,
+  getRoles
 };

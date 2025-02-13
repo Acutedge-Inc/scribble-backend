@@ -1,7 +1,7 @@
 module.exports = {
   "post/api/v1/auth/login": ["email", "password"],
   "post/api/v1/auth/tenant": ["tenantName"],
-  "post/api/v1/auth/register": [
+  "post/api/v1/auth/create-user": [
     "email",
     "roleId",
     "name",

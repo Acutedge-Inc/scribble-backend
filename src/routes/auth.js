@@ -8,6 +8,8 @@ const {
   sendRecoverPasswordEmail,
   recoverPassword,
   createTenant,
+  getTenant,
+  getRoles
 } = require("../controllers/auth.js");
 const { checkMissingInputs, validateInputs } = require("../middlewares");
 const { auth } = require("../lib/index.js");
@@ -29,15 +31,31 @@ authRoutes.post(
 
 // Register a user under a tenant's database
 authRoutes.post(
-  "/register",
+  "/create-user",
   auth.protect(["sso.write"]),
   checkMissingInputs,
   validateInputs,
   register,
 );
 
-// Registration route
-// authRoutes.post("/register", checkMissingInputs, validateInputs, register);
+
+// Register a user under a tenant's database
+authRoutes.get(
+  "/tenant",
+  auth.protect(["sso.write"]),
+  checkMissingInputs,
+  validateInputs,
+  getTenant,
+);
+
+authRoutes.get(
+  "/roles",
+  auth.protect(["sso.write"]),
+  checkMissingInputs,
+  validateInputs,
+  getRoles,
+);
+
 authRoutes.get("/health", health);
 
 // Get new accesstoken,based on valid refresh token

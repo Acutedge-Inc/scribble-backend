@@ -159,7 +159,7 @@
           "name": "authorization",
           "schema": {
             "type": "string",
-            "example": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjdmYzkwYmU4LTcyNDUtNGZhNy1hM2ZjLTBlNGI3NGZjODc2MCJ9.eyJpZCI6IjY5MmZjZDQ1LTk1YjEtNGIyNS04YmQyLTU5NDIwOTkwMDRiYyIsInNlcmlhbE5vIjoiMkQwNzUxNTAwMDAxMDE5ODQ1NjEiLCJ2aW4iOiI5YTgyOWU0YzIwYTEzMzhiMjlkZDM1Zjk1ODcwYWNhMGYwNzMxMjhiZWY4OWRiYzUxZjA0MmNjZjJmNTI2MjMwIiwicnNDb250cmFjdCI6IlZBTElEIiwidGVsZW1hdGljc0NvbnRyYWN0IjoiVkFMSUQiLCJkYXRhIjoiRU5BQkxFRCIsImlhdCI6MTcyMzUzNDU2NiwiZXhwIjoxNzM5MDg2NTY2LCJpc3MiOiJodHRwczovL2FwaS5tc2lsZGV2LnZpc3Rlb25jbG91ZC5jb20vcm91dGluZy1zZXJ2aWNlIn0.qcX9JLkkXtUMXbExZeTxAbh4syYVbA3s0-iGj50wFkU1SMh8exNA7-5GhPs3M1VENZ-Vigu2IvpI7OBN1b4kkKNhJMlk-xLEBPRPznlZsvamSNZt1eIfsJcH2yhIlnYtzaSrKOIRLvfu_QY7-Y7clG9SHEUSKr-LvVlQx6QlG6rA1sTm1KAplZUx58U8O-ZRonBAPGM8Pbe399MBdHISyJ7qyDJlX7k9BMF7N4Jy6DK16MZIh8d0nZ79-dvN0UznwSnk7Hd793mEI77Z--cCJleSwBIwnmstSEcpfC5puP9Tahjf1EL5VWrDk1rClKHS-pnQ4Pa1YjBojD5IJGBO7w"
+            "example": "Bearer token"
           },
           "required": true
         }
@@ -192,9 +192,158 @@
                         "Bearer": []
                     }
                 ]
+      },
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "POST_v1-auth-basic",
+        "parameters": [
+        {
+          "in": "header",
+          "name": "authorization",
+          "schema": {
+            "type": "string",
+            "example": "Bearer token"
+          },
+          "required": true
+        }
+      ],
+        "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
       }
     },
-    "/v1/auth/register": {
+    "/v1/auth/roles": {
+  
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "POST_v1-auth-basic",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "name": "x-tenant-id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+
+                "x-tenant-id": {
+                  "type": "string",
+                  "example": "67a89fad069cd3c52f8cff22"
+                }
+              },
+              "required": ["x-tenant-id"]
+            }
+        }
+        ],
+        "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+      }
+    },
+    "/v1/auth/create-user": {
       "post": {
         "responses": {
           "200": {
