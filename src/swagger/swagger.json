@@ -343,7 +343,7 @@
                 ]
       }
     },
-    "/v1/auth/create-user": {
+    "/v1/auth/createuser": {
       "post": {
         "responses": {
           "200": {

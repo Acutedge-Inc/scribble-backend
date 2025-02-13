@@ -31,7 +31,7 @@ authRoutes.post(
 
 // Register a user under a tenant's database
 authRoutes.post(
-  "/create-user",
+  "/createuser",
   auth.protect(["sso.write"]),
   checkMissingInputs,
   validateInputs,
