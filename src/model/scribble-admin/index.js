@@ -7,7 +7,8 @@ const db = {};
 
 db.init = async (uri) => {
   try {
-    logger.info("Connecting to Admin MongoDB...",uri);
+    
+    console.info("Connecting to Admin MongoDB...",uri);
 
     // Connect to MongoDB
     await mongoose.connect(uri);
