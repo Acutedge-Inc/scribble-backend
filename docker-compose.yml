@@ -22,7 +22,7 @@ services:
     depends_on:
       - mongodb
     environment:
-      MONGO_URI: "mongodb://admin:adminpassword@mongodb:27017/scribbledb?authSource=admin"
+      MONGO_URI: "mongodb://admin:adminpassword@scribble-mongo:27017/ADMIN_DB?authSource=admin"
 
 volumes:
   mongodb_data:

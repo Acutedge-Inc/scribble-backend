@@ -20,6 +20,7 @@ const { logger } = require("./src/lib/index.js");
 // Connect to MongoDB and initialize admin user
 async function connectToDatabase() {
   try {
+    logger.info(`Connecting to ${adminDbUrl}`)
     await db.init(adminDbUrl, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
