@@ -8,12 +8,11 @@ const tenantdb = {};
 
 tenantdb.init = async (dbName) => {
   try {
-    console.info("Connecting to MongoDB...");
+    const db_url = process.env.MONGO_URI.replace("ADMIN_DB",dbName)
+    console.info("Connecting to MongoDB...",db_url);
 
     // Connect to MongoDB
-    let connect = await mongoose.createConnection(
-      process.env.MONGO_URI.replace("ADMIN_DB",dbName)
-    );
+    let connect = await mongoose.createConnection(db_url);
     console.info("MongoDB connected successfully");
 
     // Model loader
