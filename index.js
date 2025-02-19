@@ -9,7 +9,10 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const db = require("./src/model/scribble-admin/index.js");
 const serverless = require("serverless-http");
-const adminDbUrl = process.env.MONGO_URI.replace("ADMIN_DB",process.env.ADMIN_DB);
+const adminDbUrl = process.env.MONGO_URI.replace(
+  "ADMIN_DB",
+  process.env.ADMIN_DB
+);
 const { createAdminUser } = require("./src/controllers/auth.js");
 nconf
   .use("memory")
@@ -20,10 +23,8 @@ const { logger } = require("./src/lib/index.js");
 // Connect to MongoDB and initialize admin user
 async function connectToDatabase() {
   try {
-    logger.info(`Connecting to ${adminDbUrl}`)
+    logger.info(`Connecting to ${adminDbUrl}`);
     await db.init(adminDbUrl, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       poolSize: 10,
     });
     logger.info("Database connected successfully.");
@@ -84,4 +85,4 @@ async function startServer() {
   process.on("SIGINT", shutdown);
 }
 
-  startServer(); // Start the server locally
+startServer(); // Start the server locally

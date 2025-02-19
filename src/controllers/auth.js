@@ -36,8 +36,8 @@ async function getScope(userId, tenantId) {}
 async function createAdminUser(adminDbUrl) {
   try {
     const adminDbConnection = await mongoose.createConnection(adminDbUrl, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+      // useNewUrlParser: true,
+      // useUnifiedTopology: true,
     });
 
     const existingAdmin = await AdminUser.findOne({
