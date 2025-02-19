@@ -9,7 +9,7 @@
     {
       "name": "Auth",
       "description": "Used by user to create user & login to system"
-    }   
+    }
   ],
   "paths": {
     "/v1/auth/login": {
@@ -56,34 +56,32 @@
             }
           }
         },
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "POST_v1-auth-basic",
+        "operationId": "POST_v1-auth-login",
         "parameters": [
-        {
-          "in": "header",
-          "name": "content-type",
-          "schema": {
-            "type": "string",
-            "example": "application/json"
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
           },
-          "required": true
-        },
-        {
-          "in": "header",
-          "name": "x-tenant-id",
-          "schema": {
-            "type": "string",
-            "example": "67a962c84aa8bc0e4063589e"
-          },
-          "required": false,
-          "description": "Tenant ID (optional)"
-        }
-      ],
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
 
-      "requestBody": {
+        "requestBody": {
           "content": {
             "application/json": {
               "schema": {
@@ -139,33 +137,31 @@
             }
           }
         },
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "POST_v1-auth-basic",
+        "operationId": "POST_v1-auth-tenant",
         "parameters": [
-        {
-          "in": "header",
-          "name": "content-type",
-          "schema": {
-            "type": "string",
-            "example": "application/json"
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
           },
-          "required": true
-        },
-        {
-          "in": "header",
-          "name": "authorization",
-          "schema": {
-            "type": "string",
-            "example": "Bearer token"
-          },
-          "required": true
-        }
-      ],
+          {
+            "in": "header",
+            "name": "authorization",
+            "schema": {
+              "type": "string",
+              "example": "Bearer token"
+            },
+            "required": true
+          }
+        ],
 
-      "requestBody": {
+        "requestBody": {
           "content": {
             "application/json": {
               "schema": {
@@ -177,9 +173,7 @@
                         "type": "string"
                       }
                     },
-                    "required": [
-                      "tenantName"
-                    ]
+                    "required": ["tenantName"]
                   }
                 ]
               }
@@ -188,10 +182,10 @@
           "required": true
         },
         "security": [
-                    {
-                        "Bearer": []
-                    }
-                ]
+          {
+            "Bearer": []
+          }
+        ]
       },
       "get": {
         "responses": {
@@ -200,7 +194,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantResponse"
+                  "$ref": "#/components/schemas/TenantListResponse"
                 }
               }
             }
@@ -236,31 +230,28 @@
             }
           }
         },
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "POST_v1-auth-basic",
+        "operationId": "GET_v1-auth-tenant",
         "parameters": [
-        {
-          "in": "header",
-          "name": "authorization",
-          "schema": {
-            "type": "string",
-            "example": "Bearer token"
-          },
-          "required": true
-        }
-      ],
+          {
+            "in": "header",
+            "name": "authorization",
+            "schema": {
+              "type": "string",
+              "example": "Bearer token"
+            },
+            "required": true
+          }
+        ],
         "security": [
-                    {
-                        "Bearer": []
-                    }
-                ]
+          {
+            "Bearer": []
+          }
+        ]
       }
     },
     "/v1/auth/roles": {
-  
       "get": {
         "responses": {
           "200": {
@@ -304,11 +295,9 @@
             }
           }
         },
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "POST_v1-auth-basic",
+        "operationId": "GET_v1-auth-role",
         "parameters": [
           {
             "in": "header",
@@ -326,7 +315,6 @@
             "schema": {
               "type": "object",
               "properties": {
-
                 "x-tenant-id": {
                   "type": "string",
                   "example": "67a89fad069cd3c52f8cff22"
@@ -334,13 +322,13 @@
               },
               "required": ["x-tenant-id"]
             }
-        }
+          }
         ],
         "security": [
-                    {
-                        "Bearer": []
-                    }
-                ]
+          {
+            "Bearer": []
+          }
+        ]
       }
     },
     "/v1/auth/createuser": {
@@ -377,22 +365,21 @@
             }
           }
         },
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "description": "Perform user registration. If the client passes a redirect URL and the SSO requires verification, the response of the verification call will be redirected to that URL.(Currently used in developer registeration)",
-        "operationId": "POST_v1-auth-register",
+        "operationId": "POST_v1-auth-createuser",
         "parameters": [
-        {
-          "in": "header",
-          "name": "content-type",
-          "schema": {
-            "type": "string",
-            "example": "application/json"
-          },
-          "required": true
-        }
-      ],"requestBody": {
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
           "required": true,
           "content": {
             "application/json": {
@@ -421,16 +408,22 @@
                     "example": "67a89fad069cd3c52f8cff22"
                   }
                 },
-                "required": ["email", "roleId", "name", "contact","x-tenant-id"]
+                "required": [
+                  "email",
+                  "roleId",
+                  "name",
+                  "contact",
+                  "x-tenant-id"
+                ]
               }
             }
           }
         },
         "security": [
-                    {
-                        "Bearer": []
-                    }
-                ]
+          {
+            "Bearer": []
+          }
+        ]
       }
     },
     "/v1/auth/change-password": {
@@ -467,9 +460,7 @@
             }
           }
         },
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "parameters": [
           {
             "in": "header",
@@ -505,19 +496,18 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "newPassword",
-                  "oldPassword"
-                ],
+                "required": ["newPassword", "oldPassword"],
                 "type": "object"
               }
             }
           },
           "required": true
         },
-        "security":[{
-          "Bearer":[]
-        }]
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
       },
       "parameters": []
     },
@@ -565,9 +555,7 @@
             }
           }
         },
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "description": "Clear the data from client and server side.",
         "operationId": "POST_v1-auth-logout",
         "requestBody": {
@@ -582,10 +570,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "userId",
-                  "refreshToken"
-                ],
+                "required": ["userId", "refreshToken"],
                 "type": "object"
               }
             }
@@ -593,11 +578,206 @@
           "required": true
         }
       }
+    },
+    "/v1/assessment/types": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Assessment"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-assessment-types",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/assessment/form": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Assessment"],
+        "description": "Perform user registration. If the client passes a redirect URL and the SSO requires verification, the response of the verification call will be redirected to that URL.(Currently used in developer registeration)",
+        "operationId": "POST_v1-assessment-form",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "formTypeId": {
+                    "type": "string",
+                    "description": "The ID of the form type"
+                  },
+                  "form": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "The unique identifier for the question"
+                        },
+                        "questionCode": {
+                          "type": "string",
+                          "description": "The unique code of the question"
+                        },
+                        "questionType": {
+                          "type": "string",
+                          "description": "The type of the question (e.g., DROPDOWN, DATE, TEXT INPUT)"
+                        },
+                        "questionText": {
+                          "type": "string",
+                          "description": "The text of the question"
+                        },
+                        "description": {
+                          "type": "string",
+                          "description": "A brief description of the question"
+                        },
+                        "required": {
+                          "type": "boolean",
+                          "description": "Whether the question is required"
+                        },
+                        "value": {
+                          "type": "string",
+                          "description": "The value/answer provided for the question",
+                          "example": ""
+                        }
+                      }
+                    },
+                    "description": "A dynamic set of questions, identified by their questionCode"
+                  }
+                },
+                "required": ["formTypeId", "form"]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
     }
   },
   "components": {
     "schemas": {
-      "ChangePasswordResponse":{
+      "ChangePasswordResponse": {
         "type": "object",
         "properties": {
           "status": {
@@ -614,9 +794,8 @@
             }
           }
         }
-      }
-,      
-      "LoginResponse":{
+      },
+      "LoginResponse": {
         "type": "object",
         "properties": {
           "status": {
@@ -668,81 +847,113 @@
           }
         }
       },
-      
-        "TenantResponse": {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "string",
-              "example": "ok"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "example": "Tenant created successfully"
-                },
-                "tenant": {
-                  "type": "object",
-                  "properties": {
-                    "tenantName": {
-                      "type": "string",
-                      "example": "amedysis1"
-                    },
-                    "databaseName": {
-                      "type": "string",
-                      "example": "amedysis1"
-                    },
-                    "createdBy": {
-                      "type": "string",
-                      "format": "ObjectId",
-                      "example": "67a89f512d0f29cb9a87c940"
-                    },
-                    "_id": {
-                      "type": "string",
-                      "format": "ObjectId",
-                      "example": "67a89fad069cd3c52f8cff1f"
-                    },
-                    "createdAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "example": "2025-02-09T12:29:33.215Z"
-                    },
-                    "updatedAt": {
-                      "type": "string",
-                      "format": "date-time",
-                      "example": "2025-02-09T12:29:33.215Z"
-                    },
-                    "__v": {
-                      "type": "integer",
-                      "example": 0
-                    }
+
+      "TenantResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Tenant created successfully"
+              },
+              "tenant": {
+                "type": "object",
+                "properties": {
+                  "tenantName": {
+                    "type": "string",
+                    "example": "amedysis1"
+                  },
+                  "databaseName": {
+                    "type": "string",
+                    "example": "amedysis1"
+                  },
+                  "createdBy": {
+                    "type": "string",
+                    "format": "ObjectId",
+                    "example": "67a89f512d0f29cb9a87c940"
+                  },
+                  "_id": {
+                    "type": "string",
+                    "format": "ObjectId",
+                    "example": "67a89fad069cd3c52f8cff1f"
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-02-09T12:29:33.215Z"
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-02-09T12:29:33.215Z"
+                  },
+                  "__v": {
+                    "type": "integer",
+                    "example": 0
                   }
                 }
               }
             }
           }
-        },      
-        "LoginRequest":{
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "type": "string"
-                },
-                "password": {
-                  "type": "string"
-                }
+        }
+      },
+      "TenantListResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "67b4a43ef61eb03853b863fb"
+          },
+          "tenantName": {
+            "type": "string",
+            "example": "kantime"
+          },
+          "databaseName": {
+            "type": "string",
+            "example": "kantime"
+          },
+          "createdBy": {
+            "type": "string",
+            "example": "67b4a3fdf61eb03853b863f5"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-02-18T15:16:14.100Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-02-18T15:16:14.100Z"
+          },
+          "__v": {
+            "type": "integer",
+            "example": 0
+          }
+        }
+      },
+      "LoginRequest": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string"
               },
-              "required": [
-                "username",
-                "password"
-              ]
-            }
-          ]
-        },
+              "password": {
+                "type": "string"
+              }
+            },
+            "required": ["username", "password"]
+          }
+        ]
+      },
       "LogoutResponse": {
         "type": "object",
         "properties": {
@@ -754,7 +965,7 @@
           }
         }
       },
-      "UserResponseModel":{
+      "UserResponseModel": {
         "type": "object",
         "properties": {
           "status": {
@@ -814,8 +1025,7 @@
             }
           }
         }
-      }
-,      
+      },
       "ErrorResponse": {
         "type": "object",
         "properties": {
@@ -843,11 +1053,7 @@
             "type": "object"
           }
         },
-        "required": [
-          "status",
-          "errorMessage",
-          "data"
-        ]
+        "required": ["status", "errorMessage", "data"]
       }
     },
     "responses": {},

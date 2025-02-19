@@ -9,7 +9,7 @@ const {
   recoverPassword,
   createTenant,
   getTenant,
-  getRoles
+  getRoles,
 } = require("../controllers/auth.js");
 const { checkMissingInputs, validateInputs } = require("../middlewares");
 const { auth } = require("../lib/index.js");
@@ -23,37 +23,36 @@ authRoutes.post("/login", checkMissingInputs, validateInputs, performLogin);
 //Scribble admin to create new tenant
 authRoutes.post(
   "/tenant",
-  auth.protect(["sso.write"]),
+  auth.protect(["tenant.write"]),
   checkMissingInputs,
   validateInputs,
-  createTenant,
+  createTenant
 );
 
 // Register a user under a tenant's database
 authRoutes.post(
   "/createuser",
-  auth.protect(["sso.write"]),
+  auth.protect(["user.write"]),
   checkMissingInputs,
   validateInputs,
-  register,
+  register
 );
-
 
 // Register a user under a tenant's database
 authRoutes.get(
   "/tenant",
-  auth.protect(["sso.write"]),
+  auth.protect(["tenant.read"]),
   checkMissingInputs,
   validateInputs,
-  getTenant,
+  getTenant
 );
 
 authRoutes.get(
   "/roles",
-  auth.protect(["sso.write"]),
+  auth.protect(["role.read"]),
   checkMissingInputs,
   validateInputs,
-  getRoles,
+  getRoles
 );
 
 authRoutes.get("/health", health);
@@ -63,10 +62,10 @@ authRoutes.post("/refresh", checkMissingInputs, validateInputs, getAccessToken);
 
 authRoutes.put(
   "/change-password",
-  auth.protect(["sso.write"]),
+  auth.protect(["self.write"]),
   checkMissingInputs,
   validateInputs,
-  changePassword,
+  changePassword
 );
 
 // Send Email with link to recover password [AG-839]
@@ -74,7 +73,7 @@ authRoutes.post(
   "/recover-password-email",
   checkMissingInputs,
   validateInputs,
-  sendRecoverPasswordEmail,
+  sendRecoverPasswordEmail
 );
 
 // Reset the new password (Triggered from the link mailed on above route) [AG-839]
@@ -83,6 +82,6 @@ authRoutes.post(
   auth.protect(["sso.self.write"]),
   checkMissingInputs,
   validateInputs,
-  recoverPassword,
+  recoverPassword
 );
 module.exports = authRoutes;

@@ -20,6 +20,7 @@ const Role = require("../model/tenant/role.js");
 const Clinitian_Info = require("../model/tenant/clinicianInfo.js");
 const Admin_Info = require("../model/tenant/adminInfo.js");
 
+const { createFolder } = require("../lib/aws.js");
 require("dotenv").config();
 const {
   responses: { SuccessResponse, HTTPError, ERROR_CODES },
@@ -40,17 +41,32 @@ async function createAdminUser(adminDbUrl) {
     });
 
     const existingAdmin = await AdminUser.findOne({
-      email: "admin@gmail.com",
+      email: "sandeepb@acutedge.com",
     });
 
     if (!existingAdmin) {
       const salt = bcrypt.genSaltSync(10);
-      const hash = bcrypt.hashSync("adminpassword", salt);
+      const hash = bcrypt.hashSync("Admin@123", salt);
 
       const newAdmin = new AdminUser({
-        email: "admin@gmail.com",
+        email: "sandeepb@acutedge.com",
         password: hash,
-        scope: ["sso.write"],
+        scope: [
+          "tenant.read",
+          "tenant.write",
+          "tenant.remove",
+          "admin.read",
+          "admin.write",
+          "admin.remove",
+          "user.read",
+          "user.write",
+          "user.remove",
+          "role.read",
+          "role.write",
+          "role.remove",
+          "self.read",
+          "self.write",
+        ],
       });
 
       await newAdmin.save();
@@ -78,19 +94,19 @@ async function adminLogin(req, res) {
     let accessTokenTtl = "6000";
 
     const roles = "scribble_admin";
-    const scopes = ["sso.write"];
+    const scopes = adminUser.scope;
     const accessToken = await tokens.createTokenV2(
       {
         user_id: adminUser._id,
         roles,
         scopes,
       },
-      accessTokenTtl,
+      accessTokenTtl
     );
 
     const refreshToken = await tokens.createRefreshToken(
       adminUser._id,
-      accessTokenTtl,
+      accessTokenTtl
     );
 
     const responseInst = {
@@ -142,15 +158,15 @@ async function userLogin(req, res) {
     if (!isPasswordValid) {
       await UserModel.updateOne(
         { _id: user._id }, // Filter: find the user by ID
-        { $inc: { loginAttempts: 1 } }, // Increment loginAttempts by 1
+        { $inc: { loginAttempts: 1 } } // Increment loginAttempts by 1
       );
       if (user.loginAttempts > 3) {
         return res
           .status(401)
           .json(
             new ErrorResponse(
-              `${user.loginAttempts + 1} times entered wrong password`,
-            ),
+              `${user.loginAttempts + 1} times entered wrong password`
+            )
           );
       }
 
@@ -167,12 +183,12 @@ async function userLogin(req, res) {
         roles,
         scopes,
       },
-      accessTokenTtl,
+      accessTokenTtl
     );
 
     const refreshToken = await tokens.createRefreshToken(
       user._id,
-      accessTokenTtl,
+      accessTokenTtl
     );
 
     const responseInst = {
@@ -215,7 +231,8 @@ const performLogin = async (req, res) => {
 };
 
 const createTenant = async (req, res) => {
-  const { tenantName } = req.body;
+  let { tenantName } = req.body;
+  tenantName = tenantName.toLowerCase();
 
   try {
     const existingTenant = await Tenant.findOne({ tenantName });
@@ -232,11 +249,12 @@ const createTenant = async (req, res) => {
     await tenant.save();
 
     await tenantModels.init(tenantName);
+    await createFolder(tenantName);
 
     return res
       .status(201)
       .json(
-        new SuccessResponse({ message: "Tenant created successfully", tenant }),
+        new SuccessResponse({ message: "Tenant created successfully", tenant })
       );
   } catch (error) {
     console.error("Tenant creation error:", error);
@@ -244,18 +262,11 @@ const createTenant = async (req, res) => {
   }
 };
 
-
-
 const getTenant = async (req, res) => {
-
   try {
     const existingTenants = await Tenant.find({});
 
-    return res
-      .status(201)
-      .json(
-        new SuccessResponse({ data: existingTenants }),
-      );
+    return res.status(201).json(new SuccessResponse({ data: existingTenants }));
   } catch (error) {
     console.error("Error on getting tenants:", error);
     res.status(500).json(new ErrorResponse(error));
@@ -263,7 +274,6 @@ const getTenant = async (req, res) => {
 };
 
 const getRoles = async (req, res) => {
-
   try {
     const { "x-tenant-id": tenantId } = req.query;
 
@@ -277,9 +287,9 @@ const getRoles = async (req, res) => {
     }
 
     const connection = await getTenantDB(tenant.databaseName);
-    
-           const RoleModel = Role(connection);
-   
+
+    const RoleModel = Role(connection);
+
     const role = await RoleModel.find();
 
     if (!role) {
@@ -287,11 +297,7 @@ const getRoles = async (req, res) => {
         .status(400)
         .json(new ErrorResponse({ message: "Role not found" }));
     }
-    return res
-    .status(201)
-    .json(
-      new SuccessResponse({ data: role }),
-    );
+    return res.status(201).json(new SuccessResponse({ data: role }));
   } catch (error) {
     console.error("Error on getting roles:", error);
     res.status(500).json(new ErrorResponse(error));
@@ -325,7 +331,7 @@ const register = async (req, res) => {
       return res
         .status(400)
         .json(
-          new ErrorResponse({ message: "Tenant ID is required in headers" }),
+          new ErrorResponse({ message: "Tenant ID is required in headers" })
         );
     }
     const tenant = await Tenant.findById(tenantId);
@@ -365,7 +371,7 @@ const register = async (req, res) => {
     });
 
     await createUserInfo(req, newUser.id, role.roleName, connection);
-    await sendAccountVerificationEmail(email, password);
+    sendAccountVerificationEmail(email, password);
 
     res.status(201).json(new SuccessResponse(newUser));
   } catch (err) {
@@ -381,7 +387,7 @@ const resetLoginAttemptsIfNeeded = async (account) => {
   if (account.login_attempts !== 0) {
     await UserAccount.update(
       { login_attempts: 0 },
-      { where: { user_id: account.user_id } },
+      { where: { user_id: account.user_id } }
     );
   }
 };
@@ -449,7 +455,7 @@ const getAccessToken = async (req, res) => {
       throw new HTTPError(
         401,
         "Session expired! Login again",
-        ERROR_CODES.EXPIRED_TOKEN,
+        ERROR_CODES.EXPIRED_TOKEN
       );
     }
     const accessToken = await tokens.createTokenV2(
@@ -459,7 +465,7 @@ const getAccessToken = async (req, res) => {
         scopes: utils.getScopeNamesFromRoles(account.UserRoles),
       },
       false,
-      accessTokenTtl,
+      accessTokenTtl
     );
 
     res.cookie("token", accessToken, {
@@ -471,7 +477,7 @@ const getAccessToken = async (req, res) => {
     await session.storeAccessToken(
       account.user_id,
       accessToken,
-      accessTokenTtl,
+      accessTokenTtl
     );
 
     res.json(new SuccessResponse({ accessToken }));
@@ -501,7 +507,7 @@ const changePassword = async (req, res) => {
       throw new HTTPError(
         400,
         "Current password entered is incorrect",
-        "INCORRECT_CURRENT_PASSWORD",
+        "INCORRECT_CURRENT_PASSWORD"
       );
 
     // New password can not be the same as the current password
@@ -509,7 +515,7 @@ const changePassword = async (req, res) => {
       throw new HTTPError(
         403,
         "Your new password cannot be the same as your current password.",
-        "SAME_AS_CURRENT_PASSWORD",
+        "SAME_AS_CURRENT_PASSWORD"
       );
 
     // Commenting below as this has already been taken care of in validateInputs middleware. Still keeping the commented line below in case we might want to reuse this controller somewhere else and would want below logic to run in that case.
@@ -526,7 +532,7 @@ const changePassword = async (req, res) => {
 
     await UserModel.updateOne(
       { email: req.user?.email }, // Filter: Find user by email
-      { $set: { password: hash } }, // Update password field
+      { $set: { password: hash } } // Update password field
     );
 
     res.json(new SuccessResponse({ message: "Password updated." }));
@@ -571,15 +577,15 @@ const sendRecoverPasswordEmail = async (req, res) => {
 
     const { canResend, canResendIn } = await canResendEmailNow(
       email,
-      RECOVER_PASSWORD_EMAIL,
+      RECOVER_PASSWORD_EMAIL
     );
     if (!canResend)
       throw new HTTPError(
         400,
         `Email was recently sent. Can only be resent after ${Math.ceil(
-          canResendIn / 60000,
+          canResendIn / 60000
         )} mins`,
-        ERROR_CODES.FIVE_MINUTES_DELAY_ERROR,
+        ERROR_CODES.FIVE_MINUTES_DELAY_ERROR
       );
 
     // Verify if user is registered
@@ -594,7 +600,7 @@ const sendRecoverPasswordEmail = async (req, res) => {
       },
       false,
       +nconf.get("JWT_VALIDITY_PASSWORD_RECOVERY_LINK"),
-      "recover-password",
+      "recover-password"
     );
 
     let passwordRecoveryLink;
@@ -679,7 +685,7 @@ const recoverPassword = async (req, res) => {
       throw new HTTPError(
         400,
         "Missing Mandatory fields - Email",
-        ERROR_CODES.MISSING_DATA,
+        ERROR_CODES.MISSING_DATA
       );
 
     // Fetch the account by email
@@ -699,7 +705,7 @@ const recoverPassword = async (req, res) => {
       throw new HTTPError(
         500,
         "Password already updated! Generate another one time link if you want to reset again.",
-        ERROR_CODES.GENERAL,
+        ERROR_CODES.GENERAL
       );
 
     // Fetch the new password
@@ -708,7 +714,7 @@ const recoverPassword = async (req, res) => {
       throw new HTTPError(
         400,
         "Missing Mandatory fields - Password",
-        ERROR_CODES.MISSING_DATA,
+        ERROR_CODES.MISSING_DATA
       );
 
     // Do not persist in DB if doNotPersist is true
@@ -718,7 +724,7 @@ const recoverPassword = async (req, res) => {
     const doNotPersist = get(req, ["body", "doNotPersist"], false);
     if (doNotPersist)
       return res.json(
-        "DO NOT PERSIST Request ran successfully without any issue",
+        "DO NOT PERSIST Request ran successfully without any issue"
       );
 
     // Validate the new password
@@ -729,7 +735,7 @@ const recoverPassword = async (req, res) => {
       throw new HTTPError(
         500,
         "Your new password cannot be the same as your current password.",
-        ERROR_CODES.GENERAL,
+        ERROR_CODES.GENERAL
       );
 
     // Hash the password
@@ -764,5 +770,5 @@ module.exports = {
   createTenant,
   getTenant,
   createAdminUser,
-  getRoles
+  getRoles,
 };
