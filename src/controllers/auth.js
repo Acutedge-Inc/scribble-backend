@@ -45,7 +45,7 @@ async function createAdminUser(adminDbUrl) {
     });
 
     if (!existingAdmin) {
-      const salt = bcrypt.genSaltSync(10);
+      const salt = bcrypt.genSaltSync(8);
       adminDetails.password = bcrypt.hashSync(adminDetails.password, salt);
 
       const newAdmin = new AdminUser(adminDetails);
@@ -528,7 +528,7 @@ const changePassword = async (req, res) => {
     // validatePassword(newPassword);
 
     // Update password
-    const salt = bcrypt.genSaltSync(10);
+    const salt = bcrypt.genSaltSync(8);
     const hash = bcrypt.hashSync(newPassword, salt);
     req.user.password = hash;
 
@@ -745,7 +745,7 @@ const recoverPassword = async (req, res) => {
       );
 
     // Hash the password
-    const salt = bcrypt.genSaltSync(10);
+    const salt = bcrypt.genSaltSync(8);
     const hashedPassword = bcrypt.hashSync(newPassword, salt);
 
     // Update the password
