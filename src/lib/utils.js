@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const saltRounds = 10;
 const { createCipheriv, randomBytes } = require("crypto");
 const ENCRYPTION_KEY = "B374A26A71490437AA024E4FADD5B497";

@@ -133,9 +133,10 @@ async function userLogin(req, res) {
       path: "roleId",
       select: "roleName scope",
     });
-    const { roleName, scope } = user.roleId;
 
     if (!user) return res.status(404).json(new ErrorResponse("User not found"));
+    const { roleName, scope } = user.roleId;
+
     const isPasswordValid = bcrypt.compareSync(password, user.password);
 
     if (!isPasswordValid) {
@@ -375,7 +376,7 @@ const register = async (req, res) => {
         session, // ✅ Pass the same session
       });
 
-      sendAccountVerificationEmail(email, password);
+      await sendAccountVerificationEmail(email, password);
       res.status(201).json(new SuccessResponse(newUser));
     });
 

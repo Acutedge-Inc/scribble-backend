@@ -62,7 +62,7 @@ authRoutes.post("/refresh", checkMissingInputs, validateInputs, getAccessToken);
 
 authRoutes.put(
   "/change-password",
-  auth.protect(["self.create"]),
+  auth.protect(["self.update"]),
   checkMissingInputs,
   validateInputs,
   changePassword
@@ -79,7 +79,7 @@ authRoutes.post(
 // Reset the new password (Triggered from the link mailed on above route) [AG-839]
 authRoutes.post(
   "/recover-password",
-  auth.protect(["self.create"]),
+  auth.protect(["self.update"]),
   checkMissingInputs,
   validateInputs,
   recoverPassword
