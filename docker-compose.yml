@@ -89,4 +89,6 @@ services:
       MONGO_URI: "mongodb://admin:adminpassword@mongo1:27017,mongo2:27017,mongo3:27017/ADMIN_DB?authSource=admin&replicaSet=rs0"
 
 volumes:
-  - ./mongo-keyfile:/data/keyfile
+  mongo1_data:
+  mongo2_data:
+  mongo3_data:
