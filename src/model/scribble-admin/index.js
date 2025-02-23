@@ -22,7 +22,7 @@ db.init = async (uri) => {
       db[model.modelName] = model; // Store the model in the db object
     });
   } catch (error) {
-    logger.error("MongoDB connection failed:", error.message);
+    logger.error(`MongoDB admin connection failed: ${error.message}`);
     process.exit(1);
   }
 };

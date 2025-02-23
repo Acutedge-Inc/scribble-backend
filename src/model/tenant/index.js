@@ -44,7 +44,7 @@ tenantdb.init = async (dbName) => {
     await seedTenantData(connect);
     return connect;
   } catch (error) {
-    logger.error("MongoDB connection failed:", error.message);
+    logger.error(`MongoDB tenant connection failed: ${error.message}`);
     throw error;
   }
 };

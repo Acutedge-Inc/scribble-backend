@@ -2,95 +2,55 @@ version: "3.8"
 
 services:
   mongo1:
-    image: mongo:latest
+    image: mongo:6
     container_name: mongo1
-    restart: always
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
     ports:
-      - "27017:27017" # Internal
-      - "27018:27017" # External Access
-    command:
-      [
-        "mongod",
-        "--replSet",
-        "rs0",
-        "--bind_ip_all",
-        "--keyFile",
-        "/data/mongo-keyfile",
-      ]
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: adminpassword
+      - "27017:27017"
+    networks:
+      - mongo-network
     volumes:
       - mongo1_data:/data/db
-      - ./mongo-keyfile:/data/mongo-keyfile
 
   mongo2:
-    image: mongo:latest
+    image: mongo:6
     container_name: mongo2
-    restart: always
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
     ports:
-      - "27019:27017" # External Access
-    command:
-      [
-        "mongod",
-        "--replSet",
-        "rs0",
-        "--bind_ip_all",
-        "--keyFile",
-        "/data/mongo-keyfile",
-      ]
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: adminpassword
+      - "27018:27017"
+    networks:
+      - mongo-network
     volumes:
       - mongo2_data:/data/db
-      - ./mongo-keyfile:/data/mongo-keyfile
 
   mongo3:
-    image: mongo:latest
+    image: mongo:6
     container_name: mongo3
-    restart: always
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
     ports:
-      - "27020:27017" # External Access
-    command:
-      [
-        "mongod",
-        "--replSet",
-        "rs0",
-        "--bind_ip_all",
-        "--keyFile",
-        "/data/mongo-keyfile",
-      ]
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: adminpassword
+      - "27019:27017"
+    networks:
+      - mongo-network
     volumes:
       - mongo3_data:/data/db
-      - ./mongo-keyfile:/data/mongo-keyfile
 
   mongo-init:
-    image: mongo:latest
+    image: mongo:6
     container_name: mongo-init
     depends_on:
       - mongo1
       - mongo2
       - mongo3
-    entrypoint: >
-      bash -c "
-      echo 'Waiting for MongoDB to be ready...';
-      until mongosh --host <PUBLIC_IP>:27017 -u admin -p adminpassword --authenticationDatabase admin --eval 'db.adminCommand(\"ping\")' > /dev/null 2>&1;
-      do sleep 5; done;
-      echo 'MongoDB is up. Initializing replica set...';
-      mongosh --host <PUBLIC_IP>:27017 -u admin -p adminpassword --authenticationDatabase admin --eval '
-      rs.initiate({
-        _id: \"rs0\",
-        members: [
-          { _id: 0, host: \"<PUBLIC_IP>:27017\" },
-          { _id: 1, host: \"<PUBLIC_IP>:27019\" },
-          { _id: 2, host: \"<PUBLIC_IP>:27020\" }
-        ]
-      })'
-      "
+    networks:
+      - mongo-network
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
+    entrypoint:
+      [
+        "bash",
+        "-c",
+        "sleep 10 && mongosh --host mongo1:27017 /docker-entrypoint-initdb.d/init-mongo.js",
+      ]
 
   scribble-api:
     build: .
@@ -101,7 +61,11 @@ services:
     depends_on:
       - mongo-init
     environment:
-      MONGO_URI: "mongodb://admin:adminpassword@<PUBLIC_IP>:27017,<PUBLIC_IP>:27019,<PUBLIC_IP>:27020/ADMIN_DB?authSource=admin&replicaSet=rs0"
+      MONGO_URI: "mongodb://admin:adminpassword@mongo1:27017,mongo2:27017,mongo3:27017/ADMIN_DB?authSource=admin&replicaSet=rs0"
+
+networks:
+  mongo-network:
+    driver: bridge
 
 volumes:
   mongo1_data:
