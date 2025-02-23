@@ -8,19 +8,14 @@ const redisPort = Number(process.env.REDIS_PORT) || 6379;
 const client = new Redis({
   host: redisHost,
   port: redisPort,
-  options: { db: 0 },
-  ...(process.env.NODE_ENV !== "local" ? { tls: {} } : {}),
+  db: 0, // Default database 0
+  retryStrategy: (times) => Math.min(times * 50, 2000), // Retry logic
 });
 
-// Listen for the 'connect' event
-client.on("connect", () => {
-  logger.info("Connected to Redis successfully");
-});
-
-// Optionally, listen for other events like 'error'
-client.on("error", (err) => {
-  logger.error("Redis connection error:", err);
-});
+client.on("connect", () =>
+  console.log(`✅ Connected to Redis at ${redisHost}:${redisPort}`)
+);
+client.on("error", (err) => console.error("❌ Redis connection error:", err));
 
 module.exports.redisClient = client;
 
