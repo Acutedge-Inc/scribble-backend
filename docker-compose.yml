@@ -6,7 +6,7 @@ services:
     container_name: mongo1
     restart: always
     ports:
-      - "27017:27017"  # Expose for external access
+      - "27017:27017"
     command:
       [
         "mongod",
@@ -14,7 +14,7 @@ services:
         "rs0",
         "--bind_ip_all",
         "--keyFile",
-        "/data/mongo-keyfile"
+        "/data/mongo-keyfile",
       ]
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
@@ -28,7 +28,7 @@ services:
     container_name: mongo2
     restart: always
     ports:
-      - "27018:27017"  # Expose for external access
+      - "27018:27017"
     command:
       [
         "mongod",
@@ -36,7 +36,7 @@ services:
         "rs0",
         "--bind_ip_all",
         "--keyFile",
-        "/data/mongo-keyfile"
+        "/data/mongo-keyfile",
       ]
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
@@ -50,7 +50,7 @@ services:
     container_name: mongo3
     restart: always
     ports:
-      - "27019:27017"  # Expose for external access
+      - "27019:27017"
     command:
       [
         "mongod",
@@ -58,7 +58,7 @@ services:
         "rs0",
         "--bind_ip_all",
         "--keyFile",
-        "/data/mongo-keyfile"
+        "/data/mongo-keyfile",
       ]
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
@@ -74,11 +74,13 @@ services:
       - mongo1
       - mongo2
       - mongo3
-    entrypoint: [ "bash", "-c", '
-      echo "Waiting for MongoDB to be ready...";
-      until mongosh --host mongo1:27017 -u admin -p adminpassword --authenticationDatabase admin --eval "db.adminCommand(\'ping\')" > /dev/null 2>&1; do sleep 5; done;
-      echo "MongoDB is up. Initializing replica set...";
-      mongosh --host mongo1:27017 -u admin -p adminpassword --authenticationDatabase admin --eval "
+    entrypoint: >
+      bash -c "
+      echo 'Waiting for MongoDB to be ready...';
+      until mongosh --host mongo1:27017 -u admin -p adminpassword --authenticationDatabase admin --eval 'db.adminCommand(\"ping\")' > /dev/null 2>&1;
+      do sleep 5; done;
+      echo 'MongoDB is up. Initializing replica set...';
+      mongosh --host mongo1:27017 -u admin -p adminpassword --authenticationDatabase admin --eval '
       rs.initiate({
         _id: \"rs0\",
         members: [
@@ -86,8 +88,8 @@ services:
           { _id: 1, host: \"mongo2:27017\" },
           { _id: 2, host: \"mongo3:27017\" }
         ]
-      })"
-      ' ]
+      })'
+      "
 
   scribble-api:
     build: .
