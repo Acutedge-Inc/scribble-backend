@@ -5,7 +5,7 @@ const utils = require("./utils.js");
 const morgan = require("./morgan.js");
 // const emails = require("./emails");
 const tokens = require("./tokens.js");
-// const session = require("./session-store");
+const session = require("./session-store");
 
 module.exports = {
   logger,
@@ -15,5 +15,5 @@ module.exports = {
   morgan,
   // emails,
   tokens,
-  // session,
+  session,
 };

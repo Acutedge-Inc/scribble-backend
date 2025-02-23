@@ -12,6 +12,7 @@ const Role = require("../model/tenant/role.js");
 const User = require("../model/tenant/user.js");
 
 const logger = require("./logger.js");
+const session = require("./session-store.js");
 const { ErrorResponse, HTTPError, ERROR_CODES } = require("./responses.js");
 // const session = require("./redis");
 
@@ -103,7 +104,7 @@ const throwErrorIfMissingRequiredScopes = (requiredScopes, userScopes) => {
     throw new HTTPError(
       401,
       `Missing required scopes ${missingScopes.join(", ")}`,
-      ERROR_CODES.MISSING_REQUIRED_SCOPES,
+      ERROR_CODES.MISSING_REQUIRED_SCOPES
     );
   }
 };
@@ -116,7 +117,7 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
       return res
         .status(401)
         .json(
-          new ErrorResponse("No authorization token was found", req?.apiId),
+          new ErrorResponse("No authorization token was found", req?.apiId)
         );
     }
 
@@ -124,6 +125,11 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
       const tokenData = await verifyToken(rawToken);
 
       const identity = tokenData.v === 3 ? tokenData.sub : tokenData.id;
+
+      const response = await session.checkIfAccessTokenExists(identity);
+      if (!response || response !== rawToken) {
+        throw new HTTPError(403, "Token invalid", ERROR_CODES.INVALID_TOKEN);
+      }
 
       const { "x-tenant-id": tenantId } = req.headers;
 
@@ -175,8 +181,8 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
             new ErrorResponse(
               "Missing required scopes",
               req?.apiId,
-              "INVALID_TOKEN",
-            ),
+              "INVALID_TOKEN"
+            )
           );
       return res
         .status(401)
@@ -184,8 +190,8 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
           new ErrorResponse(
             err?.message || "Invalid token",
             req?.apiId,
-            "INVALID_TOKEN",
-          ),
+            "INVALID_TOKEN"
+          )
         );
     }
   };
@@ -203,7 +209,7 @@ function verify() {
       return res
         .status(401)
         .json(
-          new ErrorResponse("No authorization token was found", req?.apiId),
+          new ErrorResponse("No authorization token was found", req?.apiId)
         );
     }
 
@@ -241,7 +247,7 @@ function verify() {
             } else {
               resolve(decoded);
             }
-          },
+          }
         );
       });
 
@@ -264,8 +270,8 @@ function verify() {
             new ErrorResponse(
               "Missing required scopes",
               req?.apiId,
-              "INVALID_TOKEN",
-            ),
+              "INVALID_TOKEN"
+            )
           );
       return res
         .status(401)

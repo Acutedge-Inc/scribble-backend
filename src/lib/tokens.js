@@ -66,7 +66,7 @@ async function verifyToken(token) {
  */
 async function verifyRefreshToken(token) {
   try {
-    const data = await verify(token, nconf.get("jwtConfig").refreshTokenSecret);
+    const data = await verify(token, process.env.JWT_SECRET);
     return _.has(data, "value") ? JSON.parse(data.value) : data;
   } catch (err) {
     switch (err.name) {
@@ -91,7 +91,7 @@ async function createToken() {
   throw new HTTPError(
     400,
     "This version tokens are no longer supported",
-    ERROR_CODES.INVALID_DATA,
+    ERROR_CODES.INVALID_DATA
   );
 }
 
@@ -107,7 +107,7 @@ async function createTokenV2(user, accessTokenTtl, type = "access") {
     v: 2,
     type,
     id: user.user_id,
-    roles: user.roles,
+    roles: user?.roles,
     scopes: user.scopes,
     issuer: "Scribble",
   };
@@ -159,7 +159,7 @@ function handleTokenV3(tokenData, requiredScopes) {
     throw new HTTPError(
       403,
       `Missing required scopes ${diff.join(", ")}`,
-      ERROR_CODES.MISSING_REQUIRED_SCOPES,
+      ERROR_CODES.MISSING_REQUIRED_SCOPES
     );
   }
 }
@@ -173,7 +173,7 @@ function authenticate(requiredScopes = [], requiredSchemas = [SCHEMAS.BEARER]) {
         throw new HTTPError(
           401,
           "No authorization header",
-          ERROR_CODES.MISSING_DATA,
+          ERROR_CODES.MISSING_DATA
         );
       }
 
@@ -190,7 +190,7 @@ function authenticate(requiredScopes = [], requiredSchemas = [SCHEMAS.BEARER]) {
         // query account
         const identity = tokenData.v === 3 ? tokenData.sub : tokenData.id;
         logger.debug(
-          `Received token V${tokenData.v} on endpoint ${req.method} ${req.originalUrl} for user ${identity}`,
+          `Received token V${tokenData.v} on endpoint ${req.method} ${req.originalUrl} for user ${identity}`
         );
 
         if (tokenData.type !== "recover-password") {
@@ -199,7 +199,7 @@ function authenticate(requiredScopes = [], requiredSchemas = [SCHEMAS.BEARER]) {
             throw new HTTPError(
               403,
               "Token invalid",
-              ERROR_CODES.INVALID_TOKEN,
+              ERROR_CODES.INVALID_TOKEN
             );
           }
         }
@@ -227,7 +227,7 @@ function authenticate(requiredScopes = [], requiredSchemas = [SCHEMAS.BEARER]) {
           throw new HTTPError(
             403,
             "Account does not exist",
-            ERROR_CODES.NOT_FOUND,
+            ERROR_CODES.NOT_FOUND
           );
         }
 
@@ -242,7 +242,7 @@ function authenticate(requiredScopes = [], requiredSchemas = [SCHEMAS.BEARER]) {
             throw new HTTPError(
               403,
               `Unsupported token version: ${tokenData.v}`,
-              ERROR_CODES.INVALID_TOKEN,
+              ERROR_CODES.INVALID_TOKEN
             );
         }
 
@@ -265,9 +265,9 @@ function authenticate(requiredScopes = [], requiredSchemas = [SCHEMAS.BEARER]) {
         throw new HTTPError(
           401,
           `Unsupported authorization schema. Supported schemas: ${requiredSchemas.join(
-            ", ",
+            ", "
           )}`,
-          ERROR_CODES.INVALID_DATA,
+          ERROR_CODES.INVALID_DATA
         );
       }
 

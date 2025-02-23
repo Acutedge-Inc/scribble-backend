@@ -8,6 +8,7 @@ const methodOverride = require("method-override");
 const { randomUUID } = require("crypto");
 
 const routes = require("./routes/index.js");
+const { session } = require("./lib");
 
 const app = express();
 
@@ -17,7 +18,7 @@ app.disable("x-powered-by");
 app.use(
   cors({
     maxAge: 86400,
-  }),
+  })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -30,8 +31,10 @@ app.use(helmet.noSniff());
 app.use(
   helmet.frameguard({
     action: "sameorigin",
-  }),
+  })
 );
+
+session.handleSessionExpiry();
 
 // Sets "X-XSS-Protection: 1; mode=block"
 app.use((req, res, next) => {
@@ -67,7 +70,7 @@ app.use(
       mediaSrc: ["'self'"],
       requireTrustedTypesFor: ["'script'"],
     },
-  }),
+  })
 );
 
 // setup routers

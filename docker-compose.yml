@@ -77,6 +77,16 @@ services:
         'sleep 10 && mongosh --host mongo1:27017 -u admin -p adminpassword --authenticationDatabase admin --eval ''rs.initiate({_id: "rs0", members: [{ _id: 0, host: "mongo1:27017" }, { _id: 1, host: "mongo2:27017" }, { _id: 2, host: "mongo3:27017" }]})''',
       ]
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+
   scribble-api:
     build: .
     container_name: scribble-api
@@ -87,10 +97,14 @@ services:
       - "3000:3000"
     depends_on:
       - mongo-init
+      - redis
     environment:
       MONGO_URI: "mongodb://admin:adminpassword@mongo1:27017,mongo2:27017,mongo3:27017/ADMIN_DB?authSource=admin&replicaSet=rs0"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
 
 volumes:
   mongo1_data:
   mongo2_data:
   mongo3_data:
+  redis_data:

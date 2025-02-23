@@ -26,6 +26,7 @@ const {
   responses: { SuccessResponse, HTTPError, ERROR_CODES },
   logger,
   tokens,
+  session,
 } = require("../lib/index.js");
 const { ErrorResponse } = require("../lib/responses.js");
 const clinicianInfo = require("../model/tenant/clinicianInfo.js");
@@ -74,6 +75,7 @@ async function adminLogin(req, res) {
       return res.status(401).json(new ErrorResponse("Invalid credentials"));
 
     const accessTokenTtl = "6000";
+    const refreshTokenttl = "36000";
 
     const roles = "scribble_admin";
     const scopes = adminUser.scope;
@@ -88,9 +90,14 @@ async function adminLogin(req, res) {
 
     const refreshToken = await tokens.createRefreshToken(
       adminUser._id,
-      accessTokenTtl
+      refreshTokenttl
     );
-
+    await session.storeAccessToken(adminUser._id, accessToken, accessTokenTtl);
+    await session.storeRefreshToken(
+      adminUser._id,
+      refreshToken,
+      refreshTokenttl
+    );
     const responseInst = {
       email: adminUser.email,
       userId: adminUser._id,
@@ -107,7 +114,7 @@ async function adminLogin(req, res) {
     return res.json(new SuccessResponse(responseInst));
   } catch (err) {
     logger.error(`Error on Admin Login ${err}`);
-    return res.json(new ErrorResponse(err));
+    return res.json(new ErrorResponse(err?.message || err));
   }
 }
 
@@ -158,6 +165,7 @@ async function userLogin(req, res) {
     }
 
     const accessTokenTtl = "6000";
+    const refreshTokenttl = "36000";
 
     const roles = [roleName];
     const scopes = scope;
@@ -172,8 +180,11 @@ async function userLogin(req, res) {
 
     const refreshToken = await tokens.createRefreshToken(
       user._id,
-      accessTokenTtl
+      refreshTokenttl
     );
+
+    await session.storeAccessToken(user._id, accessToken, accessTokenTtl);
+    await session.storeRefreshToken(user._id, refreshToken, refreshTokenttl);
 
     const responseInst = {
       email: user.email,
@@ -191,7 +202,7 @@ async function userLogin(req, res) {
     };
     return res.json(new SuccessResponse(responseInst));
   } catch (err) {
-    return res.json(new ErrorResponse(err));
+    return res.json(new ErrorResponse(err?.message || err));
   }
 }
 
@@ -418,48 +429,43 @@ const getAccessToken = async (req, res) => {
   try {
     const { refreshToken } = req.body;
     const tokenDetails = await tokens.verifyRefreshToken(refreshToken);
-    const account = await UserAccount.findOne({
-      where: {
-        user_id: tokenDetails.user,
-      },
-      include: [
-        {
-          model: LoginType,
-          attributes: ["name"],
-        },
-        {
-          model: UserRole,
-          attributes: ["role_id"],
-          include: [
-            {
-              model: Role,
-              attributes: ["name"],
-              include: [
-                {
-                  model: Scope,
-                  attributes: ["name"],
-                  through: { attributes: [] },
-                },
-              ],
-            },
-          ],
-          distinct: true,
-        },
-      ],
-    });
+    // const account = await UserAccount.findOne({
+    //   where: {
+    //     user_id: tokenDetails.user,
+    //   },
+    //   include: [
+    //     {
+    //       model: LoginType,
+    //       attributes: ["name"],
+    //     },
+    //     {
+    //       model: UserRole,
+    //       attributes: ["role_id"],
+    //       include: [
+    //         {
+    //           model: Role,
+    //           attributes: ["name"],
+    //           include: [
+    //             {
+    //               model: Scope,
+    //               attributes: ["name"],
+    //               through: { attributes: [] },
+    //             },
+    //           ],
+    //         },
+    //       ],
+    //       distinct: true,
+    //     },
+    //   ],
+    // });
 
-    if (!account) {
-      throw new HTTPError(400, "Invalid identity", ERROR_CODES.NOT_FOUND);
-    }
-    const accessTokenTtl =
-      account.LoginType.name === "VIN"
-        ? nconf.get("JWT_VIN_VALIDITY")
-        : nconf.get("JWT_VALIDITY");
+    // if (!account) {
+    //   throw new HTTPError(400, "Invalid identity", ERROR_CODES.NOT_FOUND);
+    // }
+    const accessTokenTtl = "6000";
 
-    const response = await session.checkIfRefreshTokenExists(account.user_id);
-    logger.info("checkIfRefreshTokenExists response: ", {
-      response,
-    }); // Validate if it exists in session store
+    const response = await session.checkIfRefreshTokenExists(req.user.id);
+
     if (!response || response !== refreshToken) {
       throw new HTTPError(
         401,
@@ -469,11 +475,10 @@ const getAccessToken = async (req, res) => {
     }
     const accessToken = await tokens.createTokenV2(
       {
-        user_id: account.user_id,
-        roles: account.UserRoles.map((r) => r.Role.name),
-        scopes: utils.getScopeNamesFromRoles(account.UserRoles),
+        user_id: req.user.id,
+        roles: req.user?.roleId?.roleName || "scribble_admin",
+        scopes: req.user,
       },
-      false,
       accessTokenTtl
     );
 
@@ -483,11 +488,7 @@ const getAccessToken = async (req, res) => {
       sameStrict: "strict",
     });
     // Update redis with new accesstoken for particular refreshtoken
-    await session.storeAccessToken(
-      account.user_id,
-      accessToken,
-      accessTokenTtl
-    );
+    await session.storeAccessToken(req.user.id, accessToken, accessTokenTtl);
 
     res.json(new SuccessResponse({ accessToken }));
   } catch (err) {
@@ -768,6 +769,32 @@ const recoverPassword = async (req, res) => {
   }
 };
 
+const logout = async (req, res) => {
+  logger.info("Logging out");
+  try {
+    const { id: identity } = req.user;
+    const { refreshToken } = req.body;
+
+    const response = await session.checkIfRefreshTokenExists(identity);
+    // Validate if it exists in session store
+    if (!response || response !== refreshToken) {
+      throw new HTTPError(
+        401,
+        "Session expired! Login again",
+        ERROR_CODES.EXPIRED_TOKEN
+      );
+    }
+
+    await session.removeAccessToken(identity);
+    await session.removeRefreshToken(identity);
+    res.json(new SuccessResponse());
+  } catch (err) {
+    res
+      .status(err.statusCode || 500)
+      .json(new ErrorResponse(err, err.errorCode, req?.apiId, err.data));
+  }
+};
+
 module.exports = {
   performLogin,
   health,
@@ -780,4 +807,5 @@ module.exports = {
   getTenant,
   createAdminUser,
   getRoles,
+  logout,
 };

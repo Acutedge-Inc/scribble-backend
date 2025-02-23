@@ -10,6 +10,7 @@ const {
   createTenant,
   getTenant,
   getRoles,
+  logout,
 } = require("../controllers/auth.js");
 const { checkMissingInputs, validateInputs } = require("../middlewares");
 const { auth } = require("../lib/index.js");
@@ -19,6 +20,14 @@ const authRoutes = express.Router();
 
 //Login of all the users in scribble
 authRoutes.post("/login", checkMissingInputs, validateInputs, performLogin);
+
+authRoutes.post(
+  "/logout",
+  auth.protect(["self.update"]),
+  checkMissingInputs,
+  validateInputs,
+  logout
+);
 
 //Scribble admin to create new tenant
 authRoutes.post(
@@ -58,7 +67,13 @@ authRoutes.get(
 authRoutes.get("/health", health);
 
 // Get new accesstoken,based on valid refresh token
-authRoutes.post("/refresh", checkMissingInputs, validateInputs, getAccessToken);
+authRoutes.post(
+  "/refresh",
+  auth.protect(["self.read"]),
+  checkMissingInputs,
+  validateInputs,
+  getAccessToken
+);
 
 authRoutes.put(
   "/change-password",
