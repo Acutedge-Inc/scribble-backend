@@ -4,35 +4,64 @@ services:
   mongo1:
     image: mongo:latest
     container_name: mongo1
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    restart: always
     ports:
       - "27017:27017"
-    networks:
-      - mongo-network
+    command:
+      [
+        "mongod",
+        "--replSet",
+        "rs0",
+        "--bind_ip_all",
+        "--keyFile",
+        "/data/mongo-keyfile",
+      ]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: adminpassword
     volumes:
       - mongo1_data:/data/db
+      - ./mongo-keyfile:/data/mongo-keyfile
 
   mongo2:
     image: mongo:latest
     container_name: mongo2
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
-    ports:
-      - "27018:27017"
-    networks:
-      - mongo-network
+    restart: always
+    command:
+      [
+        "mongod",
+        "--replSet",
+        "rs0",
+        "--bind_ip_all",
+        "--keyFile",
+        "/data/mongo-keyfile",
+      ]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: adminpassword
     volumes:
       - mongo2_data:/data/db
+      - ./mongo-keyfile:/data/mongo-keyfile
 
   mongo3:
     image: mongo:latest
     container_name: mongo3
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
-    ports:
-      - "27019:27017"
-    networks:
-      - mongo-network
+    restart: always
+    command:
+      [
+        "mongod",
+        "--replSet",
+        "rs0",
+        "--bind_ip_all",
+        "--keyFile",
+        "/data/mongo-keyfile",
+      ]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: adminpassword
     volumes:
       - mongo3_data:/data/db
+      - ./mongo-keyfile:/data/mongo-keyfile
 
   mongo-init:
     image: mongo:latest
@@ -41,15 +70,11 @@ services:
       - mongo1
       - mongo2
       - mongo3
-    networks:
-      - mongo-network
-    volumes:
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
     entrypoint:
       [
         "bash",
         "-c",
-        "sleep 10 && mongosh --host mongo1:27017 /docker-entrypoint-initdb.d/init-mongo.js",
+        'sleep 10 && mongosh --host mongo1:27017 -u admin -p adminpassword --authenticationDatabase admin --eval ''rs.initiate({_id: "rs0", members: [{ _id: 0, host: "mongo1:27017" }, { _id: 1, host: "mongo2:27017" }, { _id: 2, host: "mongo3:27017" }]})''',
       ]
 
   scribble-api:
@@ -62,10 +87,6 @@ services:
       - mongo-init
     environment:
       MONGO_URI: "mongodb://admin:adminpassword@mongo1:27017,mongo2:27017,mongo3:27017/ADMIN_DB?authSource=admin&replicaSet=rs0"
-
-networks:
-  mongo-network:
-    driver: bridge
 
 volumes:
   mongo1_data:
