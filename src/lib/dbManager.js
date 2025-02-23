@@ -5,7 +5,7 @@ const connections = {}; // Store tenant connections
 const getTenantDB = async (dbName) => {
   if (!connections[dbName]) {
     let dbURI = process.env.MONGO_URI.replace("ADMIN_DB", dbName);
-    dbURI = dbURI.replace("<PUBLIC_IP>", process.env.IP);
+    dbURI = dbURI.replace(/<PUBLIC_IP>/g, process.env.IP);
 
     connections[dbName] = mongoose.createConnection(dbURI, {
       // useNewUrlParser: true,

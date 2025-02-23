@@ -13,7 +13,7 @@ let adminDbUrl = process.env.MONGO_URI.replace(
   "ADMIN_DB",
   process.env.ADMIN_DB
 );
-adminDbUrl = adminDbUrl.replace("<PUBLIC_IP>", process.env.IP);
+adminDbUrl = adminDbUrl.replace(/<PUBLIC_IP>/g, process.env.IP);
 const { createAdminUser } = require("./src/controllers/auth.js");
 nconf
   .use("memory")
