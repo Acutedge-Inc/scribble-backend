@@ -80,6 +80,8 @@ services:
   scribble-api:
     build: .
     container_name: scribble-api
+    mem_limit: 1.5g
+    memswap_limit: 2g
     restart: always
     ports:
       - "3000:3000"
