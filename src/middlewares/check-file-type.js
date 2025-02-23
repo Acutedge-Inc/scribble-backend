@@ -2,7 +2,9 @@ const { unlinkSync, readFileSync } = require("fs");
 
 const { ErrorResponse, ERROR_CODES } = require("../lib/responses.js");
 const logger = require("../lib/logger.js");
-const { getValidationMessageForAllowedMimes } = require("../utils/validation.js");
+const {
+  getValidationMessageForAllowedMimes,
+} = require("../utils/validation.js");
 
 /**
  * @summary Checks if the file is a plain text file by analyzing its content

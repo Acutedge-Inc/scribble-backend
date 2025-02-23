@@ -7,9 +7,16 @@ const adminInfoSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    name: {
+    adminId: {
       type: String,
       required: true,
+    },
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
     },
     dob: {
       type: String,
@@ -17,12 +24,11 @@ const adminInfoSchema = new mongoose.Schema(
     address: {
       type: String,
     },
-    contact: {
+    primaryPhone: {
       type: String,
-      required: true,
     },
   },
-  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
+  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );
 
 adminInfoSchema.pre("save", async function (next) {

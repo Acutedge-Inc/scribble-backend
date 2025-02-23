@@ -7,17 +7,45 @@ const clinitianInfoSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    name: {
+    clinicianId: {
       type: String,
       required: true,
+    },
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+    },
+    age: {
+      type: String,
     },
     dob: {
       type: String,
     },
-    address: {
+    gender: {
       type: String,
     },
-    contact: {
+    address1: {
+      type: String,
+    },
+    address2: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    state: {
+      type: String,
+    },
+    zip: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    primaryPhone: {
       type: String,
     },
   },

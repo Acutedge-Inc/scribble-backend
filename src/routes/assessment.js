@@ -13,10 +13,9 @@ const jwt = require("jsonwebtoken");
 const { ErrorResponse } = require("../lib/responses.js");
 const assessmentRoutes = express.Router();
 
-//Scribble admin to create new tenant
 assessmentRoutes.post(
   "/form",
-  auth.protect(["form.write"]),
+  auth.protect(["form.create"]),
   checkMissingInputs,
   validateInputs,
   createForm

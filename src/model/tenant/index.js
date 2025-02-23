@@ -2,18 +2,19 @@ const mongoose = require("mongoose");
 const path = require("path");
 const fs = require("fs");
 const { getConnection } = require("../../lib/dbManager");
+const { logger } = require("../../lib");
 const seedTenantData = require("../seedTenantData");
 
 const tenantdb = {};
 
 tenantdb.init = async (dbName) => {
   try {
-    const db_url = process.env.MONGO_URI.replace("ADMIN_DB",dbName)
-    console.info("Connecting to MongoDB...",db_url);
+    const db_url = process.env.MONGO_URI.replace("ADMIN_DB", dbName);
+    logger.info("Connecting to MongoDB..." + db_url);
 
     // Connect to MongoDB
-    let connect = await mongoose.createConnection(db_url);
-    console.info("MongoDB connected successfully");
+    const connect = await mongoose.createConnection(db_url);
+    logger.info("MongoDB connected successfully");
 
     // Model loader
     const models = [
@@ -22,7 +23,7 @@ tenantdb.init = async (dbName) => {
       "userSetting.js",
       "clinicianInfo.js",
       "adminInfo.js",
-      "patientInfo.js",
+      "clientInfo.js",
       "notificationType.js",
       "notification.js",
       "assessmentType.js",
@@ -30,18 +31,19 @@ tenantdb.init = async (dbName) => {
       "assessmentForm.js",
       "assessment.js",
       "assessmentHistory.js",
+      "grid.js",
+      "viewSetting.js",
     ];
 
     models.forEach((file) => {
       const model = require(path.join(__dirname, file));
       connect[model.modelName] = model; // Store the model in the db object
     });
-
     await seedTenantData(connect);
     return connect;
   } catch (error) {
-    console.error("MongoDB connection failed:", error.message);
-    process.exit(1);
+    logger.error("MongoDB connection failed:", error.message);
+    throw error;
   }
 };
 

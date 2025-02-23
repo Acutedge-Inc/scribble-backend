@@ -1,13 +1,17 @@
 const mongoose = require("mongoose");
 
-const patientInfoSchema = new mongoose.Schema(
+const clientInfoSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    patientId: {
+    clientId: {
+      type: String,
+      required: true,
+    },
+    clientGroupId: {
       type: String,
       required: true,
     },
@@ -17,59 +21,53 @@ const patientInfoSchema = new mongoose.Schema(
     },
     lastName: {
       type: String,
-      required: true,
+    },
+    age: {
+      type: String,
     },
     dob: {
       type: String,
-      required: true,
     },
-    address1: {
+    email: {
       type: String,
-      required: true,
-    },
-    address2: {
-      type: String,
-      required: true,
-    },
-    city: {
-      type: String,
-      required: true,
-    },
-    state: {
-      type: String,
-      required: true,
-    },
-    zip: {
-      type: String,
-      required: true,
-    },
-    primaryPhone: {
-      type: String,
-      required: true,
-    },
-    homePhone: {
-      type: String,
-      required: true,
-    },
-    workPhone: {
-      type: String,
-      required: true,
-    },
-    cellPhone: {
-      type: String,
-      required: true,
     },
     gender: {
       type: String,
-      required: true,
+    },
+    address1: {
+      type: String,
+    },
+    address2: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    state: {
+      type: String,
+    },
+    zip: {
+      type: String,
+    },
+    country: {
+      type: String,
+    },
+    primaryPhone: {
+      type: String,
+    },
+    emergencyContact: {
+      type: String,
+    },
+    emergencyContactNo: {
+      type: String,
     },
   },
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
 );
 
-patientInfoSchema.pre("save", async function (next) {
+clientInfoSchema.pre("save", async function (next) {
   next();
 });
 
 module.exports = (connection) =>
-  connection.model("Patient_Info", patientInfoSchema);
+  connection.model("Client_Info", clientInfoSchema);

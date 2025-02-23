@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const AdminUser = require("../model/scribble-admin/adminUser.js");
 const Tenant = require("../model/scribble-admin/tenants.js");
-
+const adminDetails = require("../model/default/admin.js");
 const fs = require("fs");
 const path = require("path");
 
@@ -46,28 +46,9 @@ async function createAdminUser(adminDbUrl) {
 
     if (!existingAdmin) {
       const salt = bcrypt.genSaltSync(10);
-      const hash = bcrypt.hashSync("Admin@123", salt);
+      adminDetails.password = bcrypt.hashSync(adminDetails.password, salt);
 
-      const newAdmin = new AdminUser({
-        email: "sandeepb@acutedge.com",
-        password: hash,
-        scope: [
-          "tenant.read",
-          "tenant.write",
-          "tenant.remove",
-          "admin.read",
-          "admin.write",
-          "admin.remove",
-          "user.read",
-          "user.write",
-          "user.remove",
-          "role.read",
-          "role.write",
-          "role.remove",
-          "self.read",
-          "self.write",
-        ],
-      });
+      const newAdmin = new AdminUser(adminDetails);
 
       await newAdmin.save();
       logger.info("Admin user created successfully.");
@@ -84,14 +65,15 @@ async function adminLogin(req, res) {
     const { email, password } = req.body;
 
     const adminUser = await AdminUser.findOne({ email });
-    if (!adminUser) return res.status(404).json({ error: "Admin not found" });
+    if (!adminUser)
+      return res.status(404).json(new ErrorResponse("Admin not found"));
 
     const isPasswordValid = bcrypt.compareSync(password, adminUser.password);
 
     if (!isPasswordValid)
       return res.status(401).json(new ErrorResponse("Invalid credentials"));
 
-    let accessTokenTtl = "6000";
+    const accessTokenTtl = "6000";
 
     const roles = "scribble_admin";
     const scopes = adminUser.scope;
@@ -173,7 +155,7 @@ async function userLogin(req, res) {
       return res.status(401).json(new ErrorResponse("Invalid credentials"));
     }
 
-    let accessTokenTtl = "6000";
+    const accessTokenTtl = "6000";
 
     const roles = [roleName];
     const scopes = scope;
@@ -231,31 +213,28 @@ const performLogin = async (req, res) => {
 };
 
 const createTenant = async (req, res) => {
-  let { tenantName } = req.body;
-  tenantName = tenantName.toLowerCase();
+  const { tenantName } = req.body;
+  const uniqueName = tenantName.toLowerCase().replace(/ /g, "");
 
   try {
-    const existingTenant = await Tenant.findOne({ tenantName });
+    const existingTenant = await Tenant.findOne({ uniqueName });
     if (existingTenant) {
       return res.status(400).json(new ErrorResponse("Tenant already exists"));
     }
 
+    await tenantModels.init(uniqueName);
+
     // Save tenant details in adminDB
     const tenant = new Tenant({
       tenantName: tenantName,
-      databaseName: tenantName,
+      uniqueName: uniqueName,
+      databaseName: uniqueName,
       createdBy: req.user,
     });
     await tenant.save();
+    await createFolder(uniqueName);
 
-    await tenantModels.init(tenantName);
-    await createFolder(tenantName);
-
-    return res
-      .status(201)
-      .json(
-        new SuccessResponse({ message: "Tenant created successfully", tenant })
-      );
+    return res.status(201).json(new SuccessResponse(tenant));
   } catch (error) {
     console.error("Tenant creation error:", error);
     res.status(500).json(new ErrorResponse(error));
@@ -305,24 +284,47 @@ const getRoles = async (req, res) => {
 };
 
 /**
-This function creates record in UserInfo table
-*/
-async function createUserInfo(req, userId, roleName, connection) {
-  const { email, name, firstname, lastname, contact, company, transaction } =
-    req.body;
+ * Creates a record in the appropriate UserInfo table.
+ */
+async function createUserInfo({ userId, roleName, req, connection, session }) {
+  const { employeeId, firstName, lastName, primaryPhone } = req.body;
+  try {
+    if (roleName === "user") {
+      const ClinicianModel = Clinitian_Info(connection);
+      return await ClinicianModel.create(
+        [
+          {
+            userId,
+            clinicianId: employeeId,
+            firstName,
+            lastName,
+            primaryPhone,
+          },
+        ],
+        { session }
+      );
+    }
 
-  switch (roleName) {
-    case "user": {
-      const clinicianModel = Clinitian_Info(connection);
-      return await clinicianModel.create({ userId, name, contact });
+    if (roleName === "userAdmin") {
+      const AdminModel = Admin_Info(connection);
+      return await AdminModel.create(
+        [
+          {
+            userId,
+            adminId: employeeId,
+            firstName,
+            lastName,
+            primaryPhone,
+          },
+        ],
+        { session }
+      );
     }
-    case "userAdmin": {
-      const adminModel = Admin_Info(connection);
-      return await adminModel.create({ userId, name, contact });
-    }
+  } catch (err) {
+    logger.error(`Error creating user info: ${err}`);
+    throw err;
   }
 }
-
 const register = async (req, res) => {
   try {
     const { email, roleId, "x-tenant-id": tenantId } = req.body;
@@ -330,53 +332,57 @@ const register = async (req, res) => {
     if (!tenantId) {
       return res
         .status(400)
-        .json(
-          new ErrorResponse({ message: "Tenant ID is required in headers" })
-        );
+        .json(new ErrorResponse({ message: "Tenant ID is required" }));
     }
-    const tenant = await Tenant.findById(tenantId);
 
-    // If tenant not found, return an error
-    if (!tenant) {
-      return res
-        .status(400)
-        .json(new ErrorResponse({ message: "Tenant not found" }));
-    }
+    // ✅ Get tenant connection first
+    const tenant = await Tenant.findById(tenantId);
+    if (!tenant) throw new Error("Tenant not found");
 
     const connection = await getTenantDB(tenant.databaseName);
 
-    const RoleModel = Role(connection);
-    const role = await RoleModel.findById(roleId);
+    // ✅ Start session from tenant connection, NOT mongoose.startSession()
+    const session = await connection.startSession();
 
-    if (!role) {
-      return res
-        .status(400)
-        .json(new ErrorResponse({ message: "Role not found" }));
-    }
+    await session.withTransaction(async () => {
+      const RoleModel = Role(connection);
+      const role = await RoleModel.findById(roleId).session(session);
+      if (!role) throw new Error("Role not found");
 
-    const UserModel = User(connection);
+      const UserModel = User(connection);
+      const existingUser = await UserModel.findOne({ email }).session(session);
+      if (existingUser) throw new Error("User already exists");
 
-    const existingUser = await UserModel.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json(new ErrorResponse("User already exists"));
-    }
-    const password = generateRandomPassword();
-    const hashedPassword = generateHashedPassword(password);
+      const password = generateRandomPassword();
+      const hashedPassword = await generateHashedPassword(password);
 
-    const newUser = await UserModel.create({
-      email,
-      password: hashedPassword,
-      roleId,
-      tenantId,
+      const newUser = new UserModel({
+        email,
+        password: hashedPassword,
+        roleId,
+        tenantId,
+      });
+
+      await newUser.save({ session });
+
+      await createUserInfo({
+        userId: newUser.id,
+        roleName: role.roleName,
+        req,
+        connection,
+        session, // ✅ Pass the same session
+      });
+
+      sendAccountVerificationEmail(email, password);
+      res.status(201).json(new SuccessResponse(newUser));
     });
 
-    await createUserInfo(req, newUser.id, role.roleName, connection);
-    sendAccountVerificationEmail(email, password);
-
-    res.status(201).json(new SuccessResponse(newUser));
+    session.endSession();
   } catch (err) {
     console.error(err);
-    res.status(500).json(new ErrorResponse(err.message));
+    res
+      .status(500)
+      .json(new ErrorResponse(err?.message || "Internal Server Error"));
   }
 };
 

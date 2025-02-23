@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
-const assessmentFormSchema = new mongoose.Schema(
+const viewSettingSchema = new mongoose.Schema(
   {
-    assessmentTypeId: {
+    gridId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Assessment_Type",
+      ref: "Grid",
       required: true,
     },
-    questionForm: {
+    viewJson: {
       type: String,
       required: true,
     },
@@ -15,10 +15,9 @@ const assessmentFormSchema = new mongoose.Schema(
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
 );
 
-assessmentFormSchema.pre("save", async function (next) {
-  this.updatedAt = new Date();
+viewSettingSchema.pre("save", async function (next) {
   next();
 });
 
 module.exports = (connection) =>
-  connection.model("Assessment_Form", assessmentFormSchema);
+  connection.model("View_Setting", viewSettingSchema);

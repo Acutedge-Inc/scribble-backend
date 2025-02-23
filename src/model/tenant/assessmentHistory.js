@@ -7,7 +7,7 @@ const assessmentHistorySchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    patientId: {
+    clientId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,

@@ -1,6 +1,6 @@
 module.exports = [
   {
-    name: "SOC",
+    name: "Start of Care",
   },
   {
     name: "ROC",

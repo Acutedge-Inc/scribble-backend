@@ -21,10 +21,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    isFirstLogin:{
+    isFirstLogin: {
       type: Boolean,
       required: true,
-      default: true
+      default: true,
     },
     isVerified: {
       type: String,

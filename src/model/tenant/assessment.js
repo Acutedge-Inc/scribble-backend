@@ -7,7 +7,7 @@ const assessmentSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    patientId: {
+    clientId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -17,7 +17,6 @@ const assessmentSchema = new mongoose.Schema(
       ref: "Assessment_Form",
       required: true,
     },
-
     assessmentAnswer: {
       type: String,
       required: true,

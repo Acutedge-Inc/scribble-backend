@@ -1,17 +1,54 @@
 version: "3.8"
 
 services:
-  mongodb:
+  mongo1:
     image: mongo:latest
-    container_name: scribble-mongo
+    container_name: mongo1
     restart: always
     ports:
       - "27017:27017"
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: adminpassword
     volumes:
-      - mongodb_data:/data/db
+      - mongo1_data:/data/db
+
+  mongo2:
+    image: mongo:latest
+    container_name: mongo2
+    restart: always
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: adminpassword
+    volumes:
+      - mongo2_data:/data/db
+
+  mongo3:
+    image: mongo:latest
+    container_name: mongo3
+    restart: always
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: adminpassword
+    volumes:
+      - mongo3_data:/data/db
+
+  mongo-init:
+    image: mongo:latest
+    container_name: mongo-init
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+    entrypoint:
+      [
+        "bash",
+        "-c",
+        'sleep 10 && mongosh --host mongo1:27017 --eval ''rs.initiate({_id: "rs0", members: [{ _id: 0, host: "mongo1:27017" }, { _id: 1, host: "mongo2:27017" }, { _id: 2, host: "mongo3:27017" }]})''',
+      ]
 
   scribble-api:
     build: .
@@ -20,9 +57,11 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - mongodb
+      - mongo-init
     environment:
-      MONGO_URI: "mongodb://admin:adminpassword@scribble-mongo:27017/ADMIN_DB?authSource=admin"
+      MONGO_URI: "mongodb://admin:adminpassword@mongo1:27017, mongo2:27017, mongo3:27017/ADMIN_DB?authSource=admin&replicaSet=rs0"
 
 volumes:
-  mongodb_data:
+  mongo1_data:
+  mongo2_data:
+  mongo3_data:

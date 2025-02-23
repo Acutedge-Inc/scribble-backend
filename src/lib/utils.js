@@ -10,7 +10,7 @@ const key = Buffer.from(ENCRYPTION_KEY);
 module.exports = {
   generateRandomPassword: (length = 12) => {
     const charset =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@!#";
     let password = "";
 
     for (let i = 0; i < length; i++) {
@@ -41,7 +41,7 @@ module.exports = {
 
   getScopeNamesFromRoles: (Roles) => {
     const roleScopes = Roles.flatMap((role) =>
-      role.Role.Scopes.map((scope) => scope.name),
+      role.Role.Scopes.map((scope) => scope.name)
     );
     return Array.from(new Set(roleScopes));
   },
@@ -66,7 +66,7 @@ module.exports = {
       const error = new HTTPError(
         400,
         `Unsupported operation for federated account with authority ${authority.TYPE}`,
-        ERROR_CODES.FEDERATED_ACCOUNT,
+        ERROR_CODES.FEDERATED_ACCOUNT
       );
 
       error.data = authority;

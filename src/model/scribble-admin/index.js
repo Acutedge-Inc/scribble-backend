@@ -2,17 +2,17 @@
 const mongoose = require("mongoose");
 const path = require("path");
 require("dotenv").config();
+const { logger } = require("../../lib");
 
 const db = {};
 
 db.init = async (uri) => {
   try {
-    
-    console.info("Connecting to Admin MongoDB...",uri);
+    logger.info("Connecting to Admin MongoDB..." + uri);
 
     // Connect to MongoDB
     await mongoose.connect(uri);
-    console.info("MongoDB connected successfully");
+    logger.info("MongoDB connected successfully");
 
     // Model loader
     const models = ["adminUser.js", "tenants.js", "subscriptions.js"];
@@ -22,7 +22,7 @@ db.init = async (uri) => {
       db[model.modelName] = model; // Store the model in the db object
     });
   } catch (error) {
-    console.error("MongoDB connection failed:", error.message);
+    logger.error("MongoDB connection failed:", error.message);
     process.exit(1);
   }
 };

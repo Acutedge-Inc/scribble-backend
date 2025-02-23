@@ -23,7 +23,7 @@ authRoutes.post("/login", checkMissingInputs, validateInputs, performLogin);
 //Scribble admin to create new tenant
 authRoutes.post(
   "/tenant",
-  auth.protect(["tenant.write"]),
+  auth.protect(["tenant.create"]),
   checkMissingInputs,
   validateInputs,
   createTenant
@@ -31,8 +31,8 @@ authRoutes.post(
 
 // Register a user under a tenant's database
 authRoutes.post(
-  "/createuser",
-  auth.protect(["user.write"]),
+  "/user",
+  auth.protect(["user.create"]),
   checkMissingInputs,
   validateInputs,
   register
@@ -62,7 +62,7 @@ authRoutes.post("/refresh", checkMissingInputs, validateInputs, getAccessToken);
 
 authRoutes.put(
   "/change-password",
-  auth.protect(["self.write"]),
+  auth.protect(["self.create"]),
   checkMissingInputs,
   validateInputs,
   changePassword
@@ -79,9 +79,18 @@ authRoutes.post(
 // Reset the new password (Triggered from the link mailed on above route) [AG-839]
 authRoutes.post(
   "/recover-password",
-  auth.protect(["sso.self.write"]),
+  auth.protect(["self.create"]),
   checkMissingInputs,
   validateInputs,
   recoverPassword
 );
+
+authRoutes.get(
+  "/viewSetting",
+  auth.protect(["self.create"]),
+  checkMissingInputs,
+  validateInputs,
+  recoverPassword
+);
+
 module.exports = authRoutes;

@@ -11,7 +11,7 @@ const db = require("./src/model/scribble-admin/index.js");
 const serverless = require("serverless-http");
 const adminDbUrl = process.env.MONGO_URI.replace(
   "ADMIN_DB",
-  process.env.ADMIN_DB
+  process.env.ADMIN_DB,
 );
 const { createAdminUser } = require("./src/controllers/auth.js");
 nconf

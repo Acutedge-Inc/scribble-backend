@@ -9,6 +9,14 @@
     {
       "name": "Auth",
       "description": "Used by user to create user & login to system"
+    },
+    {
+      "name": "Assessment",
+      "description": "Used by user to create user & login to system"
+    },
+    {
+      "name": "Settings",
+      "description": "Used by user to create user & login to system"
     }
   ],
   "paths": {
@@ -259,7 +267,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantResponse"
+                  "$ref": "#/components/schemas/RolesResponse"
                 }
               }
             }
@@ -331,7 +339,7 @@
         ]
       }
     },
-    "/v1/auth/createuser": {
+    "/v1/auth/user": {
       "post": {
         "responses": {
           "200": {
@@ -367,7 +375,7 @@
         },
         "tags": ["Auth"],
         "description": "Perform user registration. If the client passes a redirect URL and the SSO requires verification, the response of the verification call will be redirected to that URL.(Currently used in developer registeration)",
-        "operationId": "POST_v1-auth-createuser",
+        "operationId": "POST_v1-auth-user",
         "parameters": [
           {
             "in": "header",
@@ -385,36 +393,48 @@
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "email",
+                  "firstName",
+                  "lastName",
+                  "employeeId",
+                  "primaryPhone",
+                  "x-tenant-id",
+                  "roleId"
+                ],
                 "properties": {
                   "email": {
                     "type": "string",
                     "format": "email",
                     "example": "thillaimaharajan.g@gmail.com"
                   },
-                  "roleId": {
-                    "type": "string",
-                    "example": "67a89fad069cd3c52f8cff22"
-                  },
-                  "name": {
+                  "firstName": {
                     "type": "string",
                     "example": "thillai"
                   },
-                  "contact": {
+                  "lastName": {
+                    "type": "string",
+                    "example": "Maharajan"
+                  },
+                  "employeeId": {
+                    "type": "string",
+                    "example": "VS2891"
+                  },
+                  "primaryPhone": {
                     "type": "string",
                     "example": "9487316396"
                   },
                   "x-tenant-id": {
                     "type": "string",
-                    "example": "67a89fad069cd3c52f8cff22"
+                    "format": "uuid",
+                    "example": "67ba30c60af9a55d9831d4eb"
+                  },
+                  "roleId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "example": "67ba30c60af9a55d9831d4d3"
                   }
-                },
-                "required": [
-                  "email",
-                  "roleId",
-                  "name",
-                  "contact",
-                  "x-tenant-id"
-                ]
+                }
               }
             }
           }
@@ -644,7 +664,7 @@
               "example": "67a962c84aa8bc0e4063589e"
             },
             "required": false,
-            "description": "Tenant ID (optional)"
+            "description": "Tenant ID of the customer"
           }
         ],
         "security": [
@@ -773,10 +793,211 @@
           }
         ]
       }
+    },
+    "/v1/setting/gridView": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Settings"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "POST_v1-settings-gridview",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "schema": {
+              "type": "string",
+              "example": "Bearer token"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          }
+        ],
+
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "tenantName": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["tenantName"]
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Settings"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-settings-gridview",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "schema": {
+              "type": "string",
+              "example": "Bearer token"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "gridName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["clinicianTable", "clientTable", "assessmentTable"],
+              "example": "clinicianTable"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
     }
   },
   "components": {
     "schemas": {
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "data": {
+            "type": "string",
+            "example": "Needs to be developed"
+          }
+        }
+      },
       "ChangePasswordResponse": {
         "type": "object",
         "properties": {
@@ -808,7 +1029,7 @@
               "email": {
                 "type": "string",
                 "format": "email",
-                "example": "admin@gmail.com"
+                "example": "sandeepb@acutedge.com"
               },
               "userId": {
                 "type": "string",
@@ -858,46 +1079,37 @@
           "data": {
             "type": "object",
             "properties": {
-              "message": {
+              "tenantName": {
                 "type": "string",
-                "example": "Tenant created successfully"
+                "example": "amedysis1"
               },
-              "tenant": {
-                "type": "object",
-                "properties": {
-                  "tenantName": {
-                    "type": "string",
-                    "example": "amedysis1"
-                  },
-                  "databaseName": {
-                    "type": "string",
-                    "example": "amedysis1"
-                  },
-                  "createdBy": {
-                    "type": "string",
-                    "format": "ObjectId",
-                    "example": "67a89f512d0f29cb9a87c940"
-                  },
-                  "_id": {
-                    "type": "string",
-                    "format": "ObjectId",
-                    "example": "67a89fad069cd3c52f8cff1f"
-                  },
-                  "createdAt": {
-                    "type": "string",
-                    "format": "date-time",
-                    "example": "2025-02-09T12:29:33.215Z"
-                  },
-                  "updatedAt": {
-                    "type": "string",
-                    "format": "date-time",
-                    "example": "2025-02-09T12:29:33.215Z"
-                  },
-                  "__v": {
-                    "type": "integer",
-                    "example": 0
-                  }
-                }
+              "databaseName": {
+                "type": "string",
+                "example": "amedysis1"
+              },
+              "createdBy": {
+                "type": "string",
+                "format": "ObjectId",
+                "example": "67a89f512d0f29cb9a87c940"
+              },
+              "_id": {
+                "type": "string",
+                "format": "ObjectId",
+                "example": "67a89fad069cd3c52f8cff1f"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-09T12:29:33.215Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-09T12:29:33.215Z"
+              },
+              "__v": {
+                "type": "integer",
+                "example": 0
               }
             }
           }
@@ -944,10 +1156,12 @@
             "type": "object",
             "properties": {
               "email": {
-                "type": "string"
+                "type": "string",
+                "example": "sandeepb@acutedge.com"
               },
               "password": {
-                "type": "string"
+                "type": "string",
+                "example": "Admin@123"
               }
             },
             "required": ["username", "password"]
@@ -1023,6 +1237,64 @@
                 "example": 0
               }
             }
+          }
+        }
+      },
+      "RolesResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Role"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Role": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "67b4b17c9805bd2c1aedbc9e"
+          },
+          "roleName": {
+            "type": "string",
+            "example": "user"
+          },
+          "scope": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "assessment.read",
+              "assessment.write",
+              "assessment.remove"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-02-18T16:12:44.330Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-02-18T16:12:44.331Z"
+          },
+          "__v": {
+            "type": "integer",
+            "example": 0
           }
         }
       },

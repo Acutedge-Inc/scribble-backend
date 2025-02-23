@@ -6,6 +6,10 @@ const tenantSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    uniqueName: {
+      type: String,
+      required: true,
+    },
     databaseName: {
       type: String,
       required: true,
