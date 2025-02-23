@@ -7,34 +7,61 @@ services:
     restart: always
     ports:
       - "27017:27017"
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    command:
+      [
+        "mongod",
+        "--replSet",
+        "rs0",
+        "--bind_ip_all",
+        "--keyFile",
+        "/data/mongo-keyfile",
+      ]
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: adminpassword
     volumes:
       - mongo1_data:/data/db
+      - ./mongo-keyfile:/data/mongo-keyfile
 
   mongo2:
     image: mongo:latest
     container_name: mongo2
     restart: always
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    command:
+      [
+        "mongod",
+        "--replSet",
+        "rs0",
+        "--bind_ip_all",
+        "--keyFile",
+        "/data/mongo-keyfile",
+      ]
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: adminpassword
     volumes:
       - mongo2_data:/data/db
+      - ./mongo-keyfile:/data/mongo-keyfile
 
   mongo3:
     image: mongo:latest
     container_name: mongo3
     restart: always
-    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    command:
+      [
+        "mongod",
+        "--replSet",
+        "rs0",
+        "--bind_ip_all",
+        "--keyFile",
+        "/data/mongo-keyfile",
+      ]
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: adminpassword
     volumes:
       - mongo3_data:/data/db
+      - ./mongo-keyfile:/data/mongo-keyfile
 
   mongo-init:
     image: mongo:latest
@@ -47,7 +74,7 @@ services:
       [
         "bash",
         "-c",
-        'sleep 10 && mongosh --host mongo1:27017 --eval ''rs.initiate({_id: "rs0", members: [{ _id: 0, host: "mongo1:27017" }, { _id: 1, host: "mongo2:27017" }, { _id: 2, host: "mongo3:27017" }]})''',
+        'sleep 10 && mongosh --host mongo1:27017 -u admin -p adminpassword --authenticationDatabase admin --eval ''rs.initiate({_id: "rs0", members: [{ _id: 0, host: "mongo1:27017" }, { _id: 1, host: "mongo2:27017" }, { _id: 2, host: "mongo3:27017" }]})''',
       ]
 
   scribble-api:
@@ -59,7 +86,7 @@ services:
     depends_on:
       - mongo-init
     environment:
-      MONGO_URI: "mongodb://admin:adminpassword@mongo1:27017, mongo2:27017, mongo3:27017/ADMIN_DB?authSource=admin&replicaSet=rs0"
+      MONGO_URI: "mongodb://admin:adminpassword@mongo1:27017,mongo2:27017,mongo3:27017/ADMIN_DB?authSource=admin&replicaSet=rs0"
 
 volumes:
   mongo1_data:
