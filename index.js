@@ -26,6 +26,9 @@ async function connectToDatabase() {
   try {
     logger.info(`Connecting to ${adminDbUrl}`);
     await db.init(adminDbUrl, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      maxPoolSize: 10, // Limits open connections
       poolSize: 10,
     });
     logger.info("Database connected successfully.");

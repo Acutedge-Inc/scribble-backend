@@ -11,7 +11,11 @@ db.init = async (uri) => {
     logger.info("Connecting to Admin MongoDB..." + uri);
 
     // Connect to MongoDB
-    await mongoose.connect(uri);
+    await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      maxPoolSize: 10, // Limits open connections
+    });
     logger.info("MongoDB connected successfully");
 
     // Model loader

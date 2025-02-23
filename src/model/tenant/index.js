@@ -15,7 +15,11 @@ tenantdb.init = async (dbName) => {
     logger.info("Connecting to MongoDB..." + db_url);
 
     // Connect to MongoDB
-    const connect = await mongoose.createConnection(db_url);
+    const connect = await mongoose.createConnection(db_url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      maxPoolSize: 10, // Limits open connections
+    });
     logger.info("MongoDB connected successfully");
 
     // Model loader
