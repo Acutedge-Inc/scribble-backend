@@ -9,22 +9,32 @@ const accountVerificationTemplate = require("../views/emailer-account-verificati
 const key = Buffer.from(ENCRYPTION_KEY);
 module.exports = {
   generateRandomPassword: (length = 12) => {
-    const charset =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@!#";
-    let password = "";
+    try {
+      const charset =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@!#";
+      let password = "";
 
-    for (let i = 0; i < length; i++) {
-      const randomIndex = Math.floor(Math.random() * charset.length);
-      password += charset[randomIndex];
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        password += charset[randomIndex];
+      }
+
+      return password;
+    } catch (e) {
+      console.error(`Error in generateRandomPassword: ${e}`);
+      throw e;
     }
-
-    return password;
   },
 
   generateHashedPassword: (password) => {
-    const salt = bcrypt.genSaltSync(saltRounds);
-    const hash = bcrypt.hashSync(password, salt);
-    return hash;
+    try {
+      const salt = bcrypt.genSaltSync(saltRounds);
+      const hash = bcrypt.hashSync(password, salt);
+      return hash;
+    } catch (e) {
+      console.error(`Error in generating hash: ${e}`);
+      throw e;
+    }
   },
 
   encryptText: (text) => {
