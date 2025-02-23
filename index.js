@@ -11,7 +11,7 @@ const db = require("./src/model/scribble-admin/index.js");
 const serverless = require("serverless-http");
 const adminDbUrl = process.env.MONGO_URI.replace(
   "ADMIN_DB",
-  process.env.ADMIN_DB,
+  process.env.ADMIN_DB
 );
 const { createAdminUser } = require("./src/controllers/auth.js");
 nconf
@@ -80,6 +80,14 @@ async function startServer() {
       process.exit(0);
     });
   };
+
+  process.on("uncaughtException", (err) => {
+    console.error("There was an uncaught error", err);
+  });
+
+  process.on("unhandledRejection", (reason, promise) => {
+    console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  });
 
   process.on("SIGTERM", shutdown);
   process.on("SIGINT", shutdown);
