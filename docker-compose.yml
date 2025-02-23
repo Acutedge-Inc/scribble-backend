@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   mongo1:
-    image: mongo:6
+    image: mongo:latest
     container_name: mongo1
     command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
     ports:
@@ -13,7 +13,7 @@ services:
       - mongo1_data:/data/db
 
   mongo2:
-    image: mongo:6
+    image: mongo:latest
     container_name: mongo2
     command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
     ports:
@@ -24,7 +24,7 @@ services:
       - mongo2_data:/data/db
 
   mongo3:
-    image: mongo:6
+    image: mongo:latest
     container_name: mongo3
     command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
     ports:
@@ -35,7 +35,7 @@ services:
       - mongo3_data:/data/db
 
   mongo-init:
-    image: mongo:6
+    image: mongo:latest
     container_name: mongo-init
     depends_on:
       - mongo1
