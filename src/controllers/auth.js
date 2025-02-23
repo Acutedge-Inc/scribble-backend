@@ -96,7 +96,7 @@ async function adminLogin(req, res) {
       userId: adminUser._id,
       firstname: adminUser.firstname,
       lastname: adminUser.lastname,
-      isFirstLogin: user?.isFirstLogin,
+      isFirstLogin: adminUser?.isFirstLogin,
       roles,
       scopes,
       accessToken,
