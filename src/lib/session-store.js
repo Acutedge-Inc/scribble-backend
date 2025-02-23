@@ -8,8 +8,13 @@ const redisPort = Number(process.env.REDIS_PORT) || 6379;
 const client = new Redis({
   host: redisHost,
   port: redisPort,
-  db: 0, // Default database 0
-  retryStrategy: (times) => Math.min(times * 50, 2000), // Retry logic
+  db: 0,
+  enableReadyCheck: false, // ✅ Disable ready checks
+  retryStrategy: (times) => Math.min(times * 100, 3000), // ✅ Increase retry delay
+  reconnectOnError: (err) => {
+    console.error("Redis reconnecting due to error:", err);
+    return true;
+  },
 });
 
 client.on("connect", () =>
