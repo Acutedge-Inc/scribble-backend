@@ -9,7 +9,9 @@ const tenantdb = {};
 
 tenantdb.init = async (dbName) => {
   try {
-    const db_url = process.env.MONGO_URI.replace("ADMIN_DB", dbName);
+    let db_url = process.env.MONGO_URI.replace("ADMIN_DB", dbName);
+    db_url = db_url.replace("<PUBLIC_IP>", process.env.IP);
+
     logger.info("Connecting to MongoDB..." + db_url);
 
     // Connect to MongoDB

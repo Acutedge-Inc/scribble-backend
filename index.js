@@ -9,10 +9,11 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const db = require("./src/model/scribble-admin/index.js");
 const serverless = require("serverless-http");
-const adminDbUrl = process.env.MONGO_URI.replace(
+let adminDbUrl = process.env.MONGO_URI.replace(
   "ADMIN_DB",
   process.env.ADMIN_DB
 );
+adminDbUrl = adminDbUrl.replace("<PUBLIC_IP>", process.env.IP);
 const { createAdminUser } = require("./src/controllers/auth.js");
 nconf
   .use("memory")
