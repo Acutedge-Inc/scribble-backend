@@ -28,7 +28,7 @@ module.exports = {
 
   generateHashedPassword: (password) => {
     try {
-      const salt = bcrypt.genSaltSync(8);
+      const salt = bcrypt.genSaltSync(10);
       const hash = bcrypt.hashSync(password, salt);
       return hash;
     } catch (e) {

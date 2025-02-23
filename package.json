@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --max-old-space-size=512 index",
+    "start": "nodemon --max-old-space-size=2048 index",
     "lint": "eslint 'src' 'migrations'",
     "lint:fix": "eslint --fix 'src' 'migrations'",
     "prettier": "prettier \"**/*.{js,tsx,ts}\" -l",
