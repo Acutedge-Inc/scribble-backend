@@ -9,12 +9,14 @@ const client = new Redis({
   host: redisHost,
   port: redisPort,
   db: 0,
-  enableReadyCheck: false, // ✅ Disable ready checks
-  retryStrategy: (times) => Math.min(times * 100, 3000), // ✅ Increase retry delay
+  enableReadyCheck: false,
+  retryStrategy: (times) => Math.min(times * 100, 5000),
   reconnectOnError: (err) => {
     console.error("Redis reconnecting due to error:", err);
     return true;
   },
+  connectTimeout: 10000,
+  keepAlive: 1,
 });
 
 client.on("connect", () =>
@@ -63,12 +65,20 @@ module.exports.removeResponseFromMeApi = async (userId) => {
 };
 
 module.exports.handleSessionExpiry = async () => {
+  logger.info(`Connecting to redis inside handleSessionExpiry`);
   try {
     const expiryHandler = new Redis({
       host: redisHost,
       port: redisPort,
-      options: { db: 0, notify_keyspace_events: "KEA" },
-      ...(process.env.NODE_ENV !== "local" ? { tls: {} } : {}),
+      db: 0,
+      enableReadyCheck: false,
+      retryStrategy: (times) => Math.min(times * 100, 5000),
+      reconnectOnError: (err) => {
+        console.error("Redis reconnecting due to error:", err);
+        return true;
+      },
+      connectTimeout: 10000,
+      keepAlive: 1,
     });
     // expiryHandler.config("set", "notify-keyspace-events", "KEA");
     await expiryHandler.subscribe("__keyevent@0__:expired");
