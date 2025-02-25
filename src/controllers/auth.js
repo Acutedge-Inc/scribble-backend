@@ -17,7 +17,7 @@ const bcrypt = require("bcryptjs");
 const tenantModels = require("../model/tenant/index.js");
 const User = require("../model/tenant/user.js");
 const Role = require("../model/tenant/role.js");
-const Clinitian_Info = require("../model/tenant/clinicianInfo.js");
+const Clinician_Info = require("../model/tenant/clinicianInfo.js");
 const Admin_Info = require("../model/tenant/adminInfo.js");
 
 const { createFolder } = require("../lib/aws.js");
@@ -246,7 +246,7 @@ const createTenant = async (req, res) => {
       createdBy: req.user,
     });
     await tenant.save();
-    await createFolder(uniqueName);
+    createFolder(uniqueName);
 
     return res.status(201).json(new SuccessResponse(tenant));
   } catch (error) {
@@ -304,12 +304,12 @@ async function createUserInfo({ userId, roleName, req, connection, session }) {
   const { employeeId, firstName, lastName, primaryPhone } = req.body;
   try {
     if (roleName === "user") {
-      const ClinicianModel = Clinitian_Info(connection);
+      const ClinicianModel = Clinician_Info(connection);
       return await ClinicianModel.create(
         [
           {
             userId,
-            clinicianId: employeeId,
+            clinicianNo: employeeId,
             firstName,
             lastName,
             primaryPhone,
@@ -367,7 +367,8 @@ const register = async (req, res) => {
       const existingUser = await UserModel.findOne({ email }).session(session);
       if (existingUser) throw new Error("User already exists");
 
-      const password = generateRandomPassword();
+      // const password = generateRandomPassword();
+      const password = "Admin@123";
       const hashedPassword = await generateHashedPassword(password);
 
       const newUser = new UserModel({
@@ -562,17 +563,10 @@ const changePassword = async (req, res) => {
 const sendRecoverPasswordEmail = async (req, res) => {
   try {
     // Fetch the input Email
-    const email = get(req, ["body", "email"], "");
+    const { email } = req.body;
 
-    // Get isPortalUser from the request body; default to false if not provided
-    const isPortalUser = get(req, ["body", "isPortalUser"], false);
-
-    // Email should not be empty / missing
     if (isEmpty(email))
       throw new HTTPError(400, "Email is required", ERROR_CODES.MISSING_DATA);
-
-    // Restrict if there is external authority for domain
-    restrictIfExternalAuthority(email);
 
     // Fetch the account by email
     const account = await UserEmailLoginInfo.findByPk(email);

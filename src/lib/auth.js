@@ -157,6 +157,14 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
           path: "roleId",
           select: "roleName scope",
         });
+
+        if (!user) {
+          throw new HTTPError(
+            403,
+            "User not registered to this tenant",
+            ERROR_CODES.GENERAL_ERROR
+          );
+        }
         const { roleName, scope } = user.roleId;
 
         throwErrorIfMissingRequiredScopes(requiredScopes, scope);

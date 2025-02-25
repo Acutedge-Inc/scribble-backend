@@ -7,7 +7,7 @@ const clinitianInfoSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    clinicianId: {
+    clinicianNo: {
       type: String,
       required: true,
     },
@@ -18,6 +18,16 @@ const clinitianInfoSchema = new mongoose.Schema(
     lastName: {
       type: String,
     },
+    status: {
+      type: String,
+    },
+    discipline: {
+      type: String,
+    },
+    jobTitle: {
+      type: String,
+    },
+
     age: {
       type: String,
     },
@@ -49,7 +59,7 @@ const clinitianInfoSchema = new mongoose.Schema(
       type: String,
     },
   },
-  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
+  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );
 
 clinitianInfoSchema.pre("save", async function (next) {
@@ -58,4 +68,4 @@ clinitianInfoSchema.pre("save", async function (next) {
 });
 
 module.exports = (connection) =>
-  connection.model("Clinitian_Info", clinitianInfoSchema);
+  connection.model("Clinician_Info", clinitianInfoSchema);

@@ -100,12 +100,4 @@ authRoutes.post(
   recoverPassword
 );
 
-authRoutes.get(
-  "/viewSetting",
-  auth.protect(["self.create"]),
-  checkMissingInputs,
-  validateInputs,
-  recoverPassword
-);
-
 module.exports = authRoutes;

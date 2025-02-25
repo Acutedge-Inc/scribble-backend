@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
 const Role = require("../model/tenant/role");
-const Assessment_Type = require("../model/tenant/assessmentType");
+const Form_Type = require("./tenant/formType");
 const Grid = require("../model/tenant/grid");
 const View_Setting = require("../model/tenant/viewSetting");
 const RoleData = require("./default/role");
-const AssessmentTypeData = require("./default/assessmentType");
+const FormTypeData = require("./default/formType");
 let GridSettingData = require("./default/grid");
 const { indexOf } = require("lodash");
 const { ErrorResponse } = require("../lib/responses");
@@ -18,12 +18,12 @@ const seedTenantData = async (connection) => {
 
     // Get model instances from the provided connection
     const RoleModel = Role(connection);
-    const AssessmentTypeModel = Assessment_Type(connection);
+    const FormTypeModel = Form_Type(connection);
     const GridModel = Grid(connection);
     const ViewSettingModel = View_Setting(connection);
 
     await RoleModel.create(RoleData);
-    await AssessmentTypeModel.create(AssessmentTypeData);
+    await FormTypeModel.create(FormTypeData);
     const grid = await GridModel.create(GridSettingData);
 
     GridSettingData = await Promise.all(
@@ -32,12 +32,13 @@ const seedTenantData = async (connection) => {
         element.gridId =
           grid.find((item) => item.gridName === element.gridName)?.id || null;
         return element;
-      }),
+      })
     );
 
     await ViewSettingModel.create(GridSettingData);
 
     logger.info("Seeding completed successfully!");
+    return true;
   } catch (error) {
     logger.error("Seeding failed:" + error.message);
     throw error;

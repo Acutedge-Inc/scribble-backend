@@ -2,12 +2,7 @@ const mongoose = require("mongoose");
 
 const clientInfoSchema = new mongoose.Schema(
   {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    clientId: {
+    clientNo: {
       type: String,
       required: true,
     },
@@ -62,7 +57,7 @@ const clientInfoSchema = new mongoose.Schema(
       type: String,
     },
   },
-  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
+  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );
 
 clientInfoSchema.pre("save", async function (next) {

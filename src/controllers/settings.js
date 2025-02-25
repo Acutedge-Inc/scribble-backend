@@ -33,9 +33,9 @@ const clinicianInfo = require("../model/tenant/clinicianInfo.js");
 const createForm = async (req, res) => {
   const { formTypeId, form } = req.body;
   const connection = await getTenantDB(req.tenantDb);
-  const Assessment_FormModel = Assessment_Form(connection);
+  const FormModel = Form(connection);
 
-  let assessmentForm = await Assessment_FormModel.find({
+  let assessmentForm = await FormModel.find({
     assessmentTypeId: formTypeId,
   });
   if (assessmentForm.length) {
@@ -43,7 +43,7 @@ const createForm = async (req, res) => {
       .status(401)
       .json(new ErrorResponse("Assessment Form already available"));
   }
-  assessmentForm = await Assessment_FormModel.create({
+  assessmentForm = await FormModel.create({
     assessmentTypeId: formTypeId,
     questionForm: JSON.stringify(form),
   });
@@ -52,9 +52,9 @@ const createForm = async (req, res) => {
 
 const getUserSettings = async (req, res) => {
   const connection = await getTenantDB(req.tenantDb);
-  const Assessment_TypeModel = Assessment_Type(connection);
+  const Form_TypeModel = Form_Type(connection);
 
-  const assessmentTypes = await Assessment_TypeModel.find();
+  const assessmentTypes = await Form_TypeModel.find();
 
   return res.status(404).json(new SuccessResponse(assessmentTypes));
 };

@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-const assessmentTypeSchema = new mongoose.Schema(
+const formTypeSchema = new mongoose.Schema(
   {
-    name: {
+    formName: {
       type: String,
       required: true,
       unique: true,
@@ -11,13 +11,12 @@ const assessmentTypeSchema = new mongoose.Schema(
   },
   {
     timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" },
-  },
+  }
 );
 
-assessmentTypeSchema.pre("save", function (next) {
+formTypeSchema.pre("save", function (next) {
   this.updatedAt = new Date();
   next();
 });
 
-module.exports = (connection) =>
-  connection.model("Assessment_Type", assessmentTypeSchema);
+module.exports = (connection) => connection.model("Form_Type", formTypeSchema);

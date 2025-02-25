@@ -2,19 +2,14 @@ const mongoose = require("mongoose");
 
 const assessmentSchema = new mongoose.Schema(
   {
-    clinicianId: {
+    visitId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Visit",
       required: true,
     },
-    clientId: {
+    formId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    assessmentFormId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Assessment_Form",
+      ref: "Form",
       required: true,
     },
     assessmentAnswer: {
@@ -27,7 +22,7 @@ const assessmentSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
+  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );
 assessmentSchema.pre("save", async function (next) {
   this.updatedAt = new Date();

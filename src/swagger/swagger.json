@@ -11,7 +11,7 @@
       "description": "Used by user to create user & login to system"
     },
     {
-      "name": "Assessment",
+      "name": "Visit",
       "description": "Used by user to create user & login to system"
     },
     {
@@ -531,6 +531,168 @@
       },
       "parameters": []
     },
+    "/v1/auth/recover-password-email": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseRecoverPassword"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseRecoverPassword"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseRecoverPassword"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth"],
+        "description": "Request to resend recover password email",
+        "operationId": "POST_v1_resend_recover_password_email",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                },
+                "required": ["email"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        }
+      },
+      "parameters": []
+    },
+    "/v1/auth/recover-password": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
+        "tags": ["Auth"],
+        "description": "Request to recover password email. This request should contain the authorization token in the header. User will get the auth token as a result of /recover-password-email api",
+        "operationId": "POST_v1_recover_password",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string"
+                  }
+                },
+                "required": ["email", "newPassword"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        }
+      },
+      "parameters": []
+    },
     "/v1/auth/logout": {
       "post": {
         "security": [
@@ -703,7 +865,7 @@
         ]
       }
     },
-    "/v1/assessment/types": {
+    "/v1/visit/formtypes": {
       "get": {
         "responses": {
           "200": {
@@ -747,7 +909,7 @@
             }
           }
         },
-        "tags": ["Assessment"],
+        "tags": ["Visit"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
         "operationId": "GET_v1-assessment-types",
         "parameters": [
@@ -778,7 +940,7 @@
         ]
       }
     },
-    "/v1/assessment/form": {
+    "/v1/visit/form": {
       "post": {
         "responses": {
           "200": {
@@ -812,7 +974,7 @@
             }
           }
         },
-        "tags": ["Assessment"],
+        "tags": ["Visit"],
         "description": "Perform user registration. If the client passes a redirect URL and the SSO requires verification, the response of the verification call will be redirected to that URL.(Currently used in developer registeration)",
         "operationId": "POST_v1-assessment-form",
         "parameters": [
@@ -887,6 +1049,81 @@
                   }
                 },
                 "required": ["formTypeId", "form"]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/visit": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VisitResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform user registration. If the client passes a redirect URL and the SSO requires verification, the response of the verification call will be redirected to that URL.(Currently used in developer registeration)",
+        "operationId": "POST_v1-visit",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Visit"
               }
             }
           }
@@ -1402,6 +1639,79 @@
           }
         }
       },
+      "VisitResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "episodeId": {
+                "type": "string",
+                "format": "uuid",
+                "example": "67bd8382c5ae4cbd95965ee1"
+              },
+              "clinicianId": {
+                "type": "string",
+                "format": "uuid",
+                "example": "67bd80867756b55693740021"
+              },
+              "clientId": {
+                "type": "string",
+                "format": "uuid",
+                "example": "67bd8383c5ae4cbd95965ee5"
+              },
+              "visitNo": {
+                "type": "string",
+                "example": "4192052"
+              },
+              "visitDate": {
+                "type": "string",
+                "format": "date",
+                "example": "02/13/2025"
+              },
+              "week": {
+                "type": "string",
+                "example": "02/09/2025 - 02/15/2025"
+              },
+              "visitType": {
+                "type": "string",
+                "example": "Normal"
+              },
+              "service": {
+                "type": "string",
+                "example": "PT SOC OASIS"
+              },
+              "serviceCode": {
+                "type": "string",
+                "example": "PT SOC"
+              },
+              "_id": {
+                "type": "string",
+                "format": "uuid",
+                "example": "67bd8386c5ae4cbd95965ee7"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-25T08:47:02.177Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-25T08:47:02.177Z"
+              },
+              "__v": {
+                "type": "integer",
+                "example": 0
+              }
+            }
+          }
+        }
+      },
       "ErrorResponse": {
         "type": "object",
         "properties": {
@@ -1430,6 +1740,146 @@
           }
         },
         "required": ["status", "errorMessage", "data"]
+      },
+      "ErrorResponseRecoverPassword": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "errorCode": {
+            "enum": [
+              "GENERAL",
+              "NOT_FOUND",
+              "MISSING_DATA",
+              "INVALID_DATA",
+              "EXPIRED_TOKEN",
+              "INVALID_TOKEN",
+              "INVALID_CODE",
+              "VERIFIED_ACCOUNT",
+              "FEDERATED_ACCOUNT",
+              "FIVE_MINUTES_DELAY_ERROR"
+            ],
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "errorCode": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": ["status", "errorMessage", "data"]
+      },
+      "Visit": {
+        "type": "object",
+        "properties": {
+          "Care Type": { "type": "string", "example": "Intermitent" },
+          "Classification": {
+            "type": "string",
+            "example": "Home Safety Check,Skin Check"
+          },
+          "Client First Name": { "type": "string", "example": "Connie" },
+          "Client Last Name": { "type": "string", "example": "Wimpee" },
+          "Client Address 1": {
+            "type": "string",
+            "example": "6331 W Cholla St"
+          },
+          "Client Address 2": { "type": "string", "nullable": true },
+          "Client Age": { "type": "string", "example": "72 years" },
+          "Client Cell": { "type": "string", "nullable": true },
+          "Client City": { "type": "string", "example": "Glendale" },
+          "Client County": { "type": "string", "example": "Maricopa" },
+          "Client DOB": { "type": "string", "example": "10/10/1952" },
+          "Client Email": { "type": "string", "nullable": true },
+          "Client Emergency Contact": {
+            "type": "string",
+            "example": "Wimpee, William"
+          },
+          "Client Emergency Contact #": {
+            "type": "string",
+            "example": "(623) 235-6301"
+          },
+          "Client ID": { "type": "integer", "example": 71251 },
+          "Client Group ID": { "type": "integer", "example": 71251 },
+          "Client LOB": { "type": "string", "example": "Adult Skilled" },
+          "Client Notes": { "type": "string", "nullable": true },
+          "Client Phone": { "type": "string", "example": "(623) 235-6301" },
+          "Client Signed": { "type": "string", "example": "No" },
+          "Client Signed Date": { "type": "string", "nullable": true },
+          "Client State": { "type": "string", "example": "AZ" },
+          "Clinician First Name": { "type": "string", "example": "Amber" },
+          "Clinician Last Name": { "type": "string", "example": "Miller" },
+          "Clinician Address 1": {
+            "type": "string",
+            "example": "409 E. Colter Street"
+          },
+          "Clinician Cell": { "type": "string", "example": "(602) 363-6358" },
+          "Clinician City": { "type": "string", "example": "Phoenix" },
+          "Clinician Confirmed": { "type": "string", "example": "No" },
+          "Clinician Date of Birth": {
+            "type": "string",
+            "example": "11/11/1976"
+          },
+          "Clinician Discipline": { "type": "string", "example": "PT" },
+          "Clinician Email": {
+            "type": "string",
+            "example": "ambermmillerpt@gmail.com"
+          },
+          "Clinician Gender": { "type": "string", "example": "Female" },
+          "Clinician ID": { "type": "integer", "example": 1027 },
+          "Clinician SSN": { "type": "string", "example": "474-30-2711" },
+          "Clinician State": { "type": "string", "example": "AZ" },
+          "Clinician Status": { "type": "string", "example": "Active" },
+          "Clinician Zip": { "type": "integer", "example": 85012 },
+          "eChart Status": { "type": "string", "example": "Open" },
+          "Episode Duration": { "type": "integer", "example": 60 },
+          "Episode Number": { "type": "integer", "example": 1 },
+          "Episode Start Date": { "type": "string", "example": "02/13/2025" },
+          "Episode End Date": { "type": "string", "example": "04/13/2025" },
+          "EVV Visit": { "type": "string", "example": "No" },
+          "Intake Status": { "type": "string", "example": "Ready to Schedule" },
+          "Month": { "type": "string", "example": "2025 - February" },
+          "Non-Billable Hours": { "type": "number", "example": 0.0 },
+          "Referral Date": { "type": "string", "example": "02/11/2025" },
+          "Schedule Status": { "type": "string", "example": "Planned" },
+          "Service": { "type": "string", "example": "PT SOC OASIS" },
+          "Service Code": { "type": "string", "example": "PT SOC" },
+          "SOC Date": { "type": "string", "example": "02/13/2025" },
+          "Visit Date": { "type": "string", "example": "02/13/2025" },
+          "Visit ID": { "type": "integer", "example": 4192052 },
+          "Visit Type": { "type": "string", "example": "Normal" },
+          "Week": { "type": "string", "example": "02/09/2025 - 02/15/2025" },
+          "Weekday": { "type": "string", "example": "Thursday" }
+        }
+      },
+      "SuccessResponseRecoverPassword": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "errorCode": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "errorCode": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": ["status", "data"]
       }
     },
     "responses": {},

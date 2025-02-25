@@ -1,16 +1,21 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
-const assessmentFormTemplateSchema = new mongoose.Schema(
+const episodeSchema = new mongoose.Schema(
   {
-    name: {
+    episodeNo: {
       type: String,
       required: true,
       unique: true,
     },
-    assessmentForm: {
+    episodeDuration: {
       type: String,
-      required: true,
+    },
+    startDate: {
+      type: String,
+    },
+    endDate: {
+      type: String,
     },
   },
   {
@@ -18,10 +23,9 @@ const assessmentFormTemplateSchema = new mongoose.Schema(
   }
 );
 
-assessmentFormTemplateSchema.pre("save", function (next) {
+episodeSchema.pre("save", function (next) {
   this.updatedAt = new Date();
   next();
 });
 
-module.exports = (connection) =>
-  connection.model("Form_Template", assessmentFormTemplateSchema);
+module.exports = (connection) => connection.model("Episode", episodeSchema);

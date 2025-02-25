@@ -14,7 +14,7 @@ const assessmentHistorySchema = new mongoose.Schema(
     },
     assessmentFormId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Assessment_Form",
+      ref: "Form",
       required: true,
     },
 
@@ -28,7 +28,7 @@ const assessmentHistorySchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
+  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );
 assessmentHistorySchema.pre("save", async function (next) {
   this.updatedAt = new Date();

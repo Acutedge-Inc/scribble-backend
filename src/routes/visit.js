@@ -1,9 +1,9 @@
 const express = require("express");
 const {
   createForm,
-  createAssessment,
-  listTypes,
-} = require("../controllers/assessment.js");
+  createVisit,
+  formTypes,
+} = require("../controllers/visit.js");
 const {
   checkMissingInputs,
   validateInputs,
@@ -11,9 +11,9 @@ const {
 const { auth } = require("../lib/index.js");
 const jwt = require("jsonwebtoken");
 const { ErrorResponse } = require("../lib/responses.js");
-const assessmentRoutes = express.Router();
+const visitRoutes = express.Router();
 
-assessmentRoutes.post(
+visitRoutes.post(
   "/form",
   auth.protect(["form.create"]),
   checkMissingInputs,
@@ -21,12 +21,20 @@ assessmentRoutes.post(
   createForm
 );
 
-assessmentRoutes.get(
+visitRoutes.post(
+  "/",
+  auth.protect(["form.create"]),
+  checkMissingInputs,
+  validateInputs,
+  createVisit
+);
+
+visitRoutes.get(
   "/types",
   auth.protect(["form.read"]),
   checkMissingInputs,
   validateInputs,
-  listTypes
+  formTypes
 );
 
-module.exports = assessmentRoutes;
+module.exports = visitRoutes;
