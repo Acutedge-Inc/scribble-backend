@@ -14,12 +14,9 @@ const assessmentSchema = new mongoose.Schema(
     },
     assessmentAnswer: {
       type: String,
-      required: true,
-      unique: true,
     },
     s3Path: {
       type: String,
-      required: true,
     },
   },
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }

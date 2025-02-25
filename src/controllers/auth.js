@@ -325,7 +325,7 @@ async function createUserInfo({ userId, roleName, req, connection, session }) {
         [
           {
             userId,
-            adminId: employeeId,
+            adminNo: employeeId,
             firstName,
             lastName,
             primaryPhone,

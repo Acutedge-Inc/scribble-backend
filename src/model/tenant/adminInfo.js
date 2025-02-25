@@ -7,9 +7,10 @@ const adminInfoSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    adminId: {
+    adminNo: {
       type: String,
       required: true,
+      unique: true,
     },
     firstName: {
       type: String,

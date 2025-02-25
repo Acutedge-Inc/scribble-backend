@@ -865,6 +865,81 @@
         ]
       }
     },
+    "/v1/user/client": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["User"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-user-client",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
     "/v1/visit/formtypes": {
       "get": {
         "responses": {
@@ -1061,6 +1136,79 @@
       }
     },
     "/v1/visit": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-visit",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
       "post": {
         "responses": {
           "200": {
@@ -1128,6 +1276,81 @@
             }
           }
         },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/visit/episode": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-visit-episode",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          }
+        ],
         "security": [
           {
             "Bearer": []

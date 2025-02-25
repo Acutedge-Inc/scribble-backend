@@ -3,6 +3,8 @@ const {
   createForm,
   createVisit,
   formTypes,
+  listVisit,
+  listEpisode,
 } = require("../controllers/visit.js");
 const {
   checkMissingInputs,
@@ -30,7 +32,23 @@ visitRoutes.post(
 );
 
 visitRoutes.get(
-  "/types",
+  "/",
+  auth.protect(["form.create"]),
+  checkMissingInputs,
+  validateInputs,
+  listVisit
+);
+
+visitRoutes.get(
+  "/episode",
+  auth.protect(["form.create"]),
+  checkMissingInputs,
+  validateInputs,
+  listEpisode
+);
+
+visitRoutes.get(
+  "/formtypes",
   auth.protect(["form.read"]),
   checkMissingInputs,
   validateInputs,

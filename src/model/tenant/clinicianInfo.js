@@ -10,6 +10,7 @@ const clinitianInfoSchema = new mongoose.Schema(
     clinicianNo: {
       type: String,
       required: true,
+      unique: true,
     },
     firstName: {
       type: String,

@@ -9,7 +9,6 @@ const formSchema = new mongoose.Schema(
     },
     questionForm: {
       type: String,
-      required: true,
     },
   },
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }

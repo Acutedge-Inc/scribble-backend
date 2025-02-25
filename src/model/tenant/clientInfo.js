@@ -5,6 +5,7 @@ const clientInfoSchema = new mongoose.Schema(
     clientNo: {
       type: String,
       required: true,
+      unique: true,
     },
     clientGroupId: {
       type: String,
