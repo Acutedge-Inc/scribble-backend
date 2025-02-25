@@ -105,8 +105,8 @@ const createVisit = async (req, res) => {
     const visit = await createVisitRecord(
       requestData,
       clinician.userId,
-      episode._id,
-      client._id,
+      episode[0]._id,
+      client[0]._id,
       connection,
       session
     );
