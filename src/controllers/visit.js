@@ -105,8 +105,8 @@ const createVisit = async (req, res) => {
     const visit = await createVisitRecord(
       requestData,
       clinician.userId,
-      episode[0]._id,
-      client[0]._id,
+      episode._id,
+      client._id,
       connection,
       session
     );
@@ -114,7 +114,7 @@ const createVisit = async (req, res) => {
       return res.status(400).json(new ErrorResponse("Visit already exists"));
 
     const form = await getOrCreateForm(connection, session);
-    await createAssessment(form[0].id, visit[0].id, connection, session);
+    await createAssessment(form.id, visit.id, connection, session);
 
     await session.commitTransaction();
     return res.status(201).json(new SuccessResponse(visit));
@@ -212,6 +212,7 @@ const getOrCreateEpisode = async (data, connection, session) => {
       ],
       { session }
     );
+    episode = episode[0];
   }
 
   return episode;
@@ -225,7 +226,7 @@ const getOrUpdateClient = async (data, connection, session) => {
     clientNo: data.clientNo,
   }).session(session);
   if (!client) {
-    return await Client_InfoModel.create(
+    client = await Client_InfoModel.create(
       [
         {
           clientNo: data.clientNo,
@@ -243,6 +244,7 @@ const getOrUpdateClient = async (data, connection, session) => {
       ],
       { session }
     );
+    return client[0];
   }
 
   return await Client_InfoModel.findOneAndUpdate(
@@ -277,9 +279,9 @@ const createVisitRecord = async (
   const existingVisit = await VisitModel.findOne({
     visitNo: data.visitNo,
   }).session(session);
-  if (existingVisit) return null;
+  if (existingVisit) return existingVisit;
 
-  return await VisitModel.create(
+  let visit = await VisitModel.create(
     [
       {
         episodeId,
@@ -295,6 +297,7 @@ const createVisitRecord = async (
     ],
     { session }
   );
+  return visit[0];
 };
 
 /** Get or create a form */
@@ -313,6 +316,7 @@ const getOrCreateForm = async (connection, session) => {
       [{ formTypeId: formType.id, questionForm: "hello" }],
       { session }
     );
+    form = form[0];
   }
 
   return form;
