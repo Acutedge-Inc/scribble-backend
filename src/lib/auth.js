@@ -140,6 +140,13 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
         tenantId = tenantIdBody || tenantIdQuery;
         req.tenantId = tenantId;
 
+        const tenant = await Tenant.findById(tenantId);
+        if (!tenant) {
+          return res.status(404).json(new ErrorResponse("Tenant not found"));
+        }
+
+        req.tenantDb = tenant.databaseName;
+
         req.user = await AdminUser.findById(identity);
         if (!req.user) {
           throw new HTTPError(403, "Admin not found", ERROR_CODES.INVALID_USER);
@@ -158,7 +165,7 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
             .json(new ErrorResponse("Tenant ID is required in headers"));
         }
         req.tenantId = tenantId;
-        // Fetch Tenant
+
         const tenant = await Tenant.findById(tenantId);
         if (!tenant) {
           return res.status(404).json(new ErrorResponse("Tenant not found"));
