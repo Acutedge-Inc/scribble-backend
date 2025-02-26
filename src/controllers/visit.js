@@ -86,9 +86,82 @@ const listVisit = async (req, res) => {
     const connection = await getTenantDB(req.tenantDb);
     const VisitModel = Visit(connection);
     let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
-    let visit = await VisitModel.find(query)
-      .limit(parsedLimit)
-      .skip(parsedOffset);
+
+    let visit = await VisitModel.aggregate([
+      { $match: query },
+
+      // 🔹 Join with episodes table
+      {
+        $lookup: {
+          from: "episodes",
+          localField: "episodeId",
+          foreignField: "_id",
+          as: "episode",
+        },
+      },
+      { $unwind: { path: "$episode", preserveNullAndEmptyArrays: true } },
+
+      // 🔹 Join with client_infos table
+      {
+        $lookup: {
+          from: "client_infos",
+          localField: "clientId",
+          foreignField: "_id",
+          as: "client",
+        },
+      },
+      { $unwind: { path: "$client", preserveNullAndEmptyArrays: true } },
+
+      // 🔹 Join with users table to get clinician details
+      {
+        $lookup: {
+          from: "users",
+          localField: "clinicianId",
+          foreignField: "_id",
+          as: "clinician",
+        },
+      },
+      { $unwind: { path: "$clinician", preserveNullAndEmptyArrays: true } },
+
+      // 🔹 Join with clinician_infos table to get clinician name
+      {
+        $lookup: {
+          from: "clinician_infos",
+          localField: "clinician._id",
+          foreignField: "userId",
+          as: "clinicianInfo",
+        },
+      },
+      { $unwind: { path: "$clinicianInfo", preserveNullAndEmptyArrays: true } },
+
+      // 🔹 Project only necessary fields
+      {
+        $project: {
+          _id: 1,
+          visitNo: 1,
+          visitDate: 1,
+          week: 1,
+          visitType: 1,
+          service: 1,
+          serviceCode: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          episodeId: "$episode._id",
+          episodeNo: "$episode.episodeNo",
+          clientId: "$client._id",
+          clientFirstName: "$client.firstName",
+          clientLastName: "$client.lastName",
+          clinicianId: "$clinician._id",
+          clinicianEmail: "$clinician.email",
+          clinicianFirstName: "$clinicianInfo.firstName",
+          clinicianLastName: "$clinicianInfo.lastName",
+        },
+      },
+
+      { $skip: parsedOffset },
+      { $limit: parsedLimit },
+    ]);
+
     const totalCount = await VisitModel.countDocuments(query);
     return res.status(201).json(new SuccessResponse(visit, totalCount));
   } catch (error) {

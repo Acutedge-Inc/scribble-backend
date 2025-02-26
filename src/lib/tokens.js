@@ -6,24 +6,8 @@ const _ = require("lodash");
 
 const logger = require("./logger.js");
 const responses = require("./responses.js");
-const session = require("./session-store.js");
-const {
-  UserAccount,
-  UserInfo,
-  Role,
-  Scope,
-  UserRole,
-  UserVinLoginInfo,
-  UserEmailLoginInfo,
-} = require("../model/scribble-admin/index.js");
 
 const { ErrorResponseNew, HTTPError, ERROR_CODES } = responses;
-const { SCHEMAS } = require("./utils.js");
-
-// const LEVELS = {
-//     user: 10,
-//     admin: 20,
-// };
 
 const verify = util.promisify(jwt.verify);
 
@@ -164,130 +148,11 @@ function handleTokenV3(tokenData, requiredScopes) {
   }
 }
 
-function authenticate(requiredScopes = [], requiredSchemas = [SCHEMAS.BEARER]) {
-  return async (req, res, next) => {
-    // return next()
-    try {
-      // verify header
-      if (!req.headers.authorization) {
-        throw new HTTPError(
-          401,
-          "No authorization header",
-          ERROR_CODES.MISSING_DATA
-        );
-      }
-
-      if (
-        requiredSchemas.includes(SCHEMAS.BEARER) &&
-        req.headers.authorization.startsWith(`${SCHEMAS.BEARER} `)
-      ) {
-        const parts = req.headers.authorization.split(" ");
-        const rawToken = parts[1];
-
-        // verify token
-        const tokenData = await verifyToken(rawToken);
-
-        // query account
-        const identity = tokenData.v === 3 ? tokenData.sub : tokenData.id;
-        logger.debug(
-          `Received token V${tokenData.v} on endpoint ${req.method} ${req.originalUrl} for user ${identity}`
-        );
-
-        if (tokenData.type !== "recover-password") {
-          const response = await session.checkIfAccessTokenExists(identity);
-          if (!response || response !== rawToken) {
-            throw new HTTPError(
-              403,
-              "Token invalid",
-              ERROR_CODES.INVALID_TOKEN
-            );
-          }
-        }
-
-        const account = await UserAccount.findByPk(identity, {
-          include: [
-            { model: UserInfo },
-            { model: UserVinLoginInfo },
-            { model: UserEmailLoginInfo },
-            {
-              model: UserRole,
-              attributes: ["role_id"],
-              include: [
-                {
-                  model: Role,
-                  attributes: ["name"],
-                  include: [{ model: Scope, attributes: ["name"] }],
-                },
-              ],
-              distinct: true,
-            },
-          ],
-        });
-        if (!account || account?.is_deleted) {
-          throw new HTTPError(
-            403,
-            "Account does not exist",
-            ERROR_CODES.NOT_FOUND
-          );
-        }
-
-        switch (tokenData.v) {
-          case 2:
-            handleTokenV3(tokenData, requiredScopes);
-            break;
-          case 3:
-            handleTokenV3(tokenData, requiredScopes);
-            break;
-          default:
-            throw new HTTPError(
-              403,
-              `Unsupported token version: ${tokenData.v}`,
-              ERROR_CODES.INVALID_TOKEN
-            );
-        }
-
-        // TODO: store user information instead of account
-        req.user = account;
-      } else if (
-        requiredSchemas.includes(SCHEMAS.KEY) &&
-        req.headers.authorization.startsWith(`${SCHEMAS.KEY} `)
-      ) {
-        const parts = req.headers.authorization.split(" ");
-        const key = parts[1];
-
-        // verify key
-        if (key !== "super-secret-vcs") {
-          throw new HTTPError(403, "Invalid VCS Key", ERROR_CODES.INVALID_DATA);
-        }
-
-        req.user = null;
-      } else {
-        throw new HTTPError(
-          401,
-          `Unsupported authorization schema. Supported schemas: ${requiredSchemas.join(
-            ", "
-          )}`,
-          ERROR_CODES.INVALID_DATA
-        );
-      }
-
-      return next();
-    } catch (err) {
-      logger.error(`err: ${JSON.stringify(err)}`);
-      res
-        .status(err.statusCode || 403)
-        .json(new ErrorResponseNew(err, err.errorCode, req?.apiId));
-      return res.end();
-    }
-  };
-}
-
 module.exports = {
   createToken,
   createTokenV2,
   createTokenV3,
   verifyToken,
-  authenticate,
   createRefreshToken,
   verifyRefreshToken,
 };

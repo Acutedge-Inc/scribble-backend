@@ -16,36 +16,6 @@ const session = require("./session-store.js");
 const { ErrorResponse, HTTPError, ERROR_CODES } = require("./responses.js");
 // const session = require("./redis");
 
-const SCOPES = {
-  APPLICATIONS_SUBMIT: "applications.submit",
-  APPLICATIONS_LIST_SELF: "applications.list.self",
-  APPLICATIONS_WRITE_SELF: "applications.write.self",
-  APPLICATIONS_REMOVE_SELF: "applications.remove.self",
-
-  APPLICATIONS_LIST: "applications.list",
-  APPLICATIONS_WRITE: "applications.write",
-  APPLICATIONS_REMOVE: "applications.remove",
-
-  CATEGORIES_LIST: "categories.list",
-  CATEGORIES_WRITE: "categories.write",
-  CATEGORIES_REMOVE: "categories.remove",
-
-  REGIONS_LIST: "regions.list",
-  REGIONS_WRITE: "regions.write",
-  REGIONS_REMOVE: "regions.remove",
-
-  LIST_LIST: "list.list",
-  LIST_APPLICATION: "list.application",
-  SEARCH_LIST: "search.list",
-
-  HEALTH_LIST: "health.list",
-  STATS_LIST: "stats.list",
-
-  SETTINGS_LIST: "settings.list",
-  SETTINGS_WRITE: "settings.write",
-  SETTINGS_REMOVE: "settings.remove",
-};
-
 function extractTokenFromRequest(req) {
   if (
     req.headers.authorization &&
@@ -230,91 +200,6 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
   };
 }
 
-/**
- *This function verify the token from the request whether it is generated with 
- our cognito pool or not and secure the APIs without login
- * 
- */
-function verify() {
-  return async (req, res, next) => {
-    const rawToken = extractTokenFromRequest(req);
-    if (!rawToken) {
-      return res
-        .status(401)
-        .json(
-          new ErrorResponse("No authorization token was found", req?.apiId)
-        );
-    }
-
-    try {
-      const region = nconf.get("AWS_DEFAULT_REGION");
-      const { userPoolId } = nconf.get("backendConfig");
-
-      const jwksUrl = `https://cognito-idp.${region}.amazonaws.com/${userPoolId}/.well-known/jwks.json`;
-      logger.info(`Verifying Token with ${jwksUrl}`);
-      const client = jwksClient({ jwksUri: jwksUrl });
-
-      const getKey = (header, callback) => {
-        client.getSigningKey(header.kid, (err, key) => {
-          if (err) {
-            callback(err);
-          } else {
-            const signingKey = key.publicKey || key.rsaPublicKey;
-            callback(null, signingKey);
-          }
-        });
-      };
-
-      // Verify the token
-      await new Promise((resolve, reject) => {
-        jwt.verify(
-          rawToken,
-          getKey,
-          {
-            algorithms: ["RS256"],
-            issuer: `https://cognito-idp.${region}.amazonaws.com/${userPoolId}`,
-          },
-          (err, decoded) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(decoded);
-            }
-          }
-        );
-      });
-
-      return next();
-    } catch (err) {
-      logger.error(`Error Verifying Cognito Token: ${err}`);
-
-      if (err.response) {
-        const errorObj = {
-          errorMessage: "Invalid token",
-          errorCode: "INVALID_TOKEN",
-          ...err.response.data,
-        };
-        return res.status(err.response.status).json(errorObj);
-      }
-      if (err.message.startsWith("Missing required scopes"))
-        return res
-          .status(401)
-          .json(
-            new ErrorResponse(
-              "Missing required scopes",
-              req?.apiId,
-              "INVALID_TOKEN"
-            )
-          );
-      return res
-        .status(401)
-        .json(new ErrorResponse("Invalid token", req?.apiId, "INVALID_TOKEN"));
-    }
-  };
-}
-
 module.exports = {
   protect,
-  verify,
-  SCOPES,
 };

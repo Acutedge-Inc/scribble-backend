@@ -799,7 +799,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantResponse"
+                  "$ref": "#/components/schemas/ClientResponse"
                 }
               }
             }
@@ -867,7 +867,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantResponse"
+                  "$ref": "#/components/schemas/ClinicianResponse"
                 }
               }
             }
@@ -1264,7 +1264,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantResponse"
+                  "$ref": "#/components/schemas/VisitListResponse"
                 }
               }
             }
@@ -1551,7 +1551,138 @@
           }
         }
       },
-
+      "VisitListResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": { "type": "string" },
+                "visitNo": { "type": "string" },
+                "visitDate": { "type": "string", "format": "date" },
+                "week": { "type": "string" },
+                "visitType": { "type": "string" },
+                "service": { "type": "string" },
+                "serviceCode": { "type": "string" },
+                "createdAt": { "type": "string", "format": "date-time" },
+                "updatedAt": { "type": "string", "format": "date-time" },
+                "episodeId": { "type": "string" },
+                "episodeNo": { "type": "string" },
+                "clientId": { "type": "string" },
+                "clientFirstName": { "type": "string" },
+                "clientLastName": { "type": "string" },
+                "clinicianId": { "type": "string" },
+                "clinicianEmail": { "type": "string", "format": "email" },
+                "clinicianFirstName": { "type": "string" },
+                "clinicianLastName": { "type": "string" }
+              },
+              "required": [
+                "_id",
+                "visitNo",
+                "visitDate",
+                "week",
+                "visitType",
+                "service",
+                "serviceCode",
+                "createdAt",
+                "updatedAt",
+                "episodeId",
+                "episodeNo",
+                "clientId",
+                "clientFirstName",
+                "clientLastName",
+                "clinicianId",
+                "clinicianEmail",
+                "clinicianFirstName",
+                "clinicianLastName"
+              ]
+            }
+          },
+          "total_records_available": { "type": "integer" }
+        },
+        "required": ["status", "data", "total_records_available"]
+      },
+      "ClinicianResponse": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "userId": { "type": "string" },
+          "clinicianNo": { "type": "string" },
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "primaryPhone": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "__v": { "type": "integer" },
+          "address1": { "type": "string" },
+          "city": { "type": "string" },
+          "discipline": { "type": "string" },
+          "dob": { "type": "string", "format": "date" },
+          "state": { "type": "string", "minLength": 2, "maxLength": 2 },
+          "status": { "type": "string" },
+          "zip": { "type": "string", "pattern": "^[0-9]{5}$" }
+        },
+        "required": [
+          "_id",
+          "userId",
+          "clinicianNo",
+          "firstName",
+          "lastName",
+          "primaryPhone",
+          "createdAt",
+          "updatedAt",
+          "__v",
+          "address1",
+          "city",
+          "discipline",
+          "dob",
+          "state",
+          "status",
+          "zip"
+        ]
+      },
+      "ClientResponse": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string" },
+          "clientNo": { "type": "string" },
+          "clientGroupId": { "type": "string" },
+          "firstName": { "type": "string" },
+          "lastName": { "type": "string" },
+          "age": { "type": "string", "pattern": "^[0-9]+ years$" },
+          "dob": { "type": "string", "format": "date" },
+          "address1": { "type": "string" },
+          "address2": { "type": "string" },
+          "city": { "type": "string" },
+          "state": { "type": "string", "minLength": 2, "maxLength": 2 },
+          "primaryPhone": {
+            "type": "string",
+            "pattern": "^\\(\\d{3}\\) \\d{3}-\\d{4}$"
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "__v": { "type": "integer" }
+        },
+        "required": [
+          "_id",
+          "clientNo",
+          "clientGroupId",
+          "firstName",
+          "lastName",
+          "age",
+          "dob",
+          "address1",
+          "city",
+          "state",
+          "primaryPhone",
+          "createdAt",
+          "updatedAt",
+          "__v"
+        ]
+      },
       "TenantResponse": {
         "type": "object",
         "properties": {
