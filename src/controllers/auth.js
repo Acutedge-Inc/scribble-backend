@@ -3,7 +3,8 @@ const AdminUser = require("../model/scribble-admin/adminUser.js");
 const Tenant = require("../model/scribble-admin/tenants.js");
 const adminDetails = require("../model/default/admin.js");
 const fs = require("fs");
-const path = require("path");
+const validator = require("validator");
+const { isEmpty } = require("lodash");
 
 const { getTenantDB } = require("../lib/dbManager.js");
 const { getFilterQuery, generateHashedPassword } = require("../lib/utils.js");
@@ -544,107 +545,88 @@ const sendRecoverPasswordEmail = async (req, res) => {
     // Fetch the input Email
     const { email } = req.body;
 
-    // if (isEmpty(email))
-    //   throw new HTTPError(400, "Email is required", ERROR_CODES.MISSING_DATA);
+    if (isEmpty(email))
+      throw new HTTPError(400, "Email is required", ERROR_CODES.MISSING_DATA);
 
-    const connection = await getTenantDB(req.tenantDb);
+    const { "x-tenant-id": tenantId } = req.headers;
+    const tenant = await Tenant.findById(tenantId);
+
+    // If tenant not found, return an error
+    if (!tenant) {
+      return res
+        .status(400)
+        .json(new ErrorResponse({ message: "Tenant not found" }));
+    }
+
+    const connection = await getTenantDB(tenant.databaseName);
     const UserModel = User(connection);
-    const RoleModel = Role(connection);
 
     const user = await UserModel.findOne({ email });
 
-    const { canResend, canResendIn } = await canResendEmailNow(
-      email,
-      RECOVER_PASSWORD_EMAIL
-    );
-    if (!canResend)
-      throw new HTTPError(
-        400,
-        `Email was recently sent. Can only be resent after ${Math.ceil(
-          canResendIn / 60000
-        )} mins`,
-        ERROR_CODES.FIVE_MINUTES_DELAY_ERROR
-      );
-
     // Verify if user is registered
-    if (!account)
-      throw new HTTPError(400, "Account does not exist", ERROR_CODES.NOT_FOUND);
+    if (!user)
+      throw new HTTPError(400, "User does not exist", ERROR_CODES.NOT_FOUND);
 
     const token = await tokens.createTokenV2(
       {
-        user_id: account.user_id,
+        user_id: user._id,
         roles: ["user"],
         scopes: ["sso.self.write"],
       },
-      false,
-      +nconf.get("JWT_VALIDITY_PASSWORD_RECOVERY_LINK"),
-      "recover-password"
+      "6000"
     );
 
-    let passwordRecoveryLink;
-    if (isPortalUser) {
-      passwordRecoveryLink = `${nconf.get("WEB_BASE_URL")}/forgot-password/${
-        account.email_address
-      }/${token}/`;
-    } else {
-      passwordRecoveryLink = `${nconf.get("WEB_BASE_URL")}/recover-password/${
-        account.email_address
-      }/${token}/`;
-    }
-
-    // Send the Email containing password recovery link to the user's email
-    emails
-      .sendPasswordResetEmail(
-        account.email_address,
-        passwordRecoveryLink,
-        isPortalUser,
-        username
-      )
-      .then(async (data) => {
-        logger.info(data.MessageId);
-        // Add a new password recovery request [AG-892]
-        const userRequest = await UserRequest.findOne({
-          where: {
-            request_type: RECOVER_PASSWORD_EMAIL,
-          },
-          include: [
-            {
-              model: UserAccount,
-              required: true,
-              include: [
-                {
-                  model: UserEmailLoginInfo,
-                  required: true,
-                  where: {
-                    email_address: email,
-                  },
-                },
-              ],
-            },
-          ],
-        });
-
-        // eslint-disable-next-line promise/always-return
-        if (userRequest) await userRequest.destroy();
-        await UserRequest.create({
-          user_id: account.user_id,
-          status: "PENDING",
-          request_type: RECOVER_PASSWORD_EMAIL,
-        });
-        res.status(200).json(new SuccessResponse(`RECOVER_PASSWORD`));
-      })
-      .catch((err) => {
-        logger.error("Error on sending password reset email", {
-          error: err,
-          apiId: req?.apiId,
-        });
-        res.status(500).json("Could not send password recovery link.");
-      });
+    let passwordRecoveryLink = `${process.env.API_URL}/recover-password/${user.email}/${token}/`;
+    await sendAccountVerificationEmail(email, passwordRecoveryLink);
+    res.json(new SuccessResponse({ message: "Link sent to your email" }));
   } catch (err) {
     res
       .status(err.statusCode || 500)
       .json(new ErrorResponse(err, err.errorCode, req?.apiId, err.data));
   }
+};
+
+/**
+ * Validate password. Throws if invalid.
+ * @param {String} password
+ * @returns {Boolean}
+ */
+const validatePassword = async (password) => {
+  // const englishWords = wordlist.english;
+
+  // Validate password min and max length
+  if (!validator.isLength(password, { min: 8, max: 20 })) {
+    throw new HTTPError(
+      400,
+      "Please, enter a valid password (min 8 and max 20 characters)",
+      ERROR_CODES.INVALID_DATA
+    );
+  }
+
+  // Validate password should contains atleast one lowercase, one uppercase, one number and any one of the special characters ! @ # / _ -.
+  if (
+    !/[!@#/_-]/.test(password) ||
+    !/[0-9]/.test(password) ||
+    !/[A-Z]/.test(password) ||
+    !/[a-z]/.test(password)
+  ) {
+    throw new HTTPError(
+      400,
+      "Password should contain atleast one lowercase, uppercase, number and special character",
+      ERROR_CODES.INVALID_DATA
+    );
+  } else {
+    const anyOtherCharacter = /[`~$₹%^&*()+=|}{;:'<>?/]/.test(password);
+
+    if (anyOtherCharacter)
+      throw new HTTPError(
+        400,
+        "Password shouldn't contain special character other than ! @ # / _ -",
+        ERROR_CODES.INVALID_DATA
+      );
+  }
+
+  return true;
 };
 
 /**
@@ -658,7 +640,7 @@ const sendRecoverPasswordEmail = async (req, res) => {
 const recoverPassword = async (req, res) => {
   try {
     // Fetch the email
-    const email = get(req, ["body", "email"], "");
+    const { email, newPassword } = req.body;
     if (isEmpty(email))
       throw new HTTPError(
         400,
@@ -666,28 +648,21 @@ const recoverPassword = async (req, res) => {
         ERROR_CODES.MISSING_DATA
       );
 
-    // Fetch the account by email
-    const account = await UserEmailLoginInfo.findByPk(email);
+    const { "x-tenant-id": tenantId } = req.headers;
+    const tenant = await Tenant.findById(tenantId);
 
-    // Verify if user is registered
-    if (!account)
-      throw new HTTPError(400, "Account does not exist", ERROR_CODES.NOT_FOUND);
+    // If tenant not found, return an error
+    if (!tenant) {
+      return res
+        .status(400)
+        .json(new ErrorResponse({ message: "Tenant not found" }));
+    }
 
-    // If password already reset using the one time link then terminate the request [AG-892]
-    const userRequest = await UserRequest.findOne({
-      where: { user_id: account.user_id, request_type: RECOVER_PASSWORD_EMAIL },
-    });
-    if (!userRequest)
-      throw new HTTPError(500, "Email not sent yet!", ERROR_CODES.GENERAL);
-    if (userRequest.status === "COMPLETE")
-      throw new HTTPError(
-        500,
-        "Password already updated! Generate another one time link if you want to reset again.",
-        ERROR_CODES.GENERAL
-      );
+    const connection = await getTenantDB(tenant.databaseName);
+    const UserModel = User(connection);
 
-    // Fetch the new password
-    const newPassword = get(req, ["body", "newPassword"], "");
+    const user = await UserModel.findOne({ email });
+
     if (isEmpty(newPassword))
       throw new HTTPError(
         400,
@@ -695,21 +670,11 @@ const recoverPassword = async (req, res) => {
         ERROR_CODES.MISSING_DATA
       );
 
-    // Do not persist in DB if doNotPersist is true
-    // Will be triggered by FE (Before rendering the form to reset password) to check things like -
-    // - If the One Time Link has already been used
-    // - If the token has expired
-    const doNotPersist = get(req, ["body", "doNotPersist"], false);
-    if (doNotPersist)
-      return res.json(
-        "DO NOT PERSIST Request ran successfully without any issue"
-      );
-
     // Validate the new password
     await validatePassword(newPassword);
 
     // New password can not be same as existing password [AG-892]
-    if (bcrypt.compareSync(newPassword, account.password))
+    if (bcrypt.compareSync(newPassword, user.password))
       throw new HTTPError(
         500,
         "Your new password cannot be the same as your current password.",
@@ -720,16 +685,15 @@ const recoverPassword = async (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(newPassword, salt);
 
-    // Update the password
-    account.password = hashedPassword;
-    await account.save();
-
-    // Mark the request as COMPLETE [AG-892]
-    userRequest.status = "COMPLETE";
-    await userRequest.save();
+    await UserModel.updateOne(
+      { email: req.user?.email }, // Filter: Find user by email
+      { $set: { password: hashedPassword } } // Update password field
+    );
 
     // Send response
-    return res.json("Password updated successfully");
+    return res
+      .status(200)
+      .json(new SuccessResponse({ message: "Password updated successfully" }));
   } catch (err) {
     return res
       .status(err.statusCode || 500)
