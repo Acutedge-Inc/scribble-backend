@@ -5,10 +5,7 @@ const fs = require("fs");
 const path = require("path");
 
 const { getTenantDB } = require("../lib/dbManager.js");
-const {
-  generateRandomPassword,
-  generateHashedPassword,
-} = require("../lib/utils.js");
+const { getFilterQuery } = require("../lib/utils.js");
 const { sendAccountVerificationEmail } = require("../lib/emails.js");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
@@ -29,19 +26,36 @@ const {
   tokens,
 } = require("../lib/index.js");
 const { ErrorResponse } = require("../lib/responses.js");
-const clinicianInfo = require("../model/tenant/clinicianInfo.js");
-const assessment = require("../model/tenant/assessment.js");
 
-const listEpisode = async (req, res) => {
-  return res.status(404).json(new SuccessResponse("Needs to be developed"));
+const listClinician = async (req, res) => {
+  try {
+    const connection = await getTenantDB(req.tenantDb);
+    const Clinician_InfoModel = Clinician_Info(connection);
+
+    let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    const clinicians = await Clinician_InfoModel.find(query)
+      .limit(parsedLimit)
+      .skip(parsedOffset);
+
+    const totalCount = await Clinician_InfoModel.countDocuments(query);
+
+    return res.status(200).json(new SuccessResponse(clinicians, totalCount));
+  } catch (error) {
+    return res.status(500).json(new ErrorResponse(error.message));
+  }
 };
 
 const listClient = async (req, res) => {
   try {
     const connection = await getTenantDB(req.tenantDb);
     const Client_InfoModel = Client_Info(connection);
-    let client = await Client_InfoModel.find({});
-    return res.status(201).json(new SuccessResponse(client));
+    let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    let client = await Client_InfoModel.find(query)
+      .limit(parsedLimit)
+      .skip(parsedOffset);
+    const totalCount = await Client_InfoModel.countDocuments(query);
+
+    return res.status(201).json(new SuccessResponse(client, totalCount));
   } catch (error) {
     return res.status(500).json(new ErrorResponse(error.message));
   }
@@ -49,4 +63,5 @@ const listClient = async (req, res) => {
 
 module.exports = {
   listClient,
+  listClinician,
 };

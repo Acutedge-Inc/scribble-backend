@@ -74,6 +74,11 @@ async function adminLogin(req, res) {
     if (!isPasswordValid)
       return res.status(401).json(new ErrorResponse("Invalid credentials"));
 
+    await AdminUser.updateOne(
+      { _id: adminUser._id },
+      { $set: { lastLoginTime: new Date() } }
+    );
+
     const accessTokenTtl = "6000";
     const refreshTokenttl = "36000";
 
@@ -104,6 +109,7 @@ async function adminLogin(req, res) {
       firstname: adminUser.firstname,
       lastname: adminUser.lastname,
       isFirstLogin: adminUser?.isFirstLogin,
+      lastLoginTime: new Date(),
       roles,
       scopes,
       accessToken,
@@ -164,6 +170,11 @@ async function userLogin(req, res) {
       return res.status(401).json(new ErrorResponse("Invalid credentials"));
     }
 
+    await UserModel.updateOne(
+      { _id: user._id }, // Filter: find the user by ID
+      { $set: { lastLoginTime: new Date() } }
+    );
+
     const accessTokenTtl = "6000";
     const refreshTokenttl = "36000";
 
@@ -193,6 +204,7 @@ async function userLogin(req, res) {
       lastname: user.lastname,
       tenantId: user.tenantId,
       isFirstLogin: user?.isFirstLogin,
+      lastLoginTime: user?.lastLoginTime || new Date(),
       roles,
       scopes,
       accessToken,
@@ -268,8 +280,7 @@ const getTenant = async (req, res) => {
 
 const getRoles = async (req, res) => {
   try {
-    const { "x-tenant-id": tenantId } = req.query;
-
+    const { tenantId } = req;
     const tenant = await Tenant.findById(tenantId);
 
     // If tenant not found, return an error
@@ -339,9 +350,12 @@ async function createUserInfo({ userId, roleName, req, connection, session }) {
     throw err;
   }
 }
+
 const register = async (req, res) => {
+  let session;
   try {
-    const { email, roleId, "x-tenant-id": tenantId } = req.body;
+    let { email, roleId, "x-tenant-id": tenantId } = req.body;
+    tenantId = tenantId || req.tenantId;
 
     if (!tenantId) {
       return res
@@ -349,55 +363,56 @@ const register = async (req, res) => {
         .json(new ErrorResponse({ message: "Tenant ID is required" }));
     }
 
-    // ✅ Get tenant connection first
     const tenant = await Tenant.findById(tenantId);
     if (!tenant) throw new Error("Tenant not found");
 
     const connection = await getTenantDB(tenant.databaseName);
+    session = await connection.startSession();
+    session.startTransaction();
 
-    // ✅ Start session from tenant connection, NOT mongoose.startSession()
-    const session = await connection.startSession();
+    const RoleModel = Role(connection);
+    const role = await RoleModel.findById(roleId).session(session);
+    if (!role) throw new Error("Role not found");
 
-    await session.withTransaction(async () => {
-      const RoleModel = Role(connection);
-      const role = await RoleModel.findById(roleId).session(session);
-      if (!role) throw new Error("Role not found");
+    const UserModel = User(connection);
+    const existingUser = await UserModel.findOne({ email }).session(session);
+    if (existingUser) throw new Error("User already exists");
 
-      const UserModel = User(connection);
-      const existingUser = await UserModel.findOne({ email }).session(session);
-      if (existingUser) throw new Error("User already exists");
+    const password = "Admin@123";
+    const hashedPassword = await generateHashedPassword(password);
 
-      // const password = generateRandomPassword();
-      const password = "Admin@123";
-      const hashedPassword = await generateHashedPassword(password);
+    const newUser = await UserModel.create(
+      [
+        {
+          email,
+          password: hashedPassword,
+          roleId,
+          tenantId,
+          isFirstLogin: true,
+        },
+      ],
+      { session }
+    );
 
-      const newUser = new UserModel({
-        email,
-        password: hashedPassword,
-        roleId,
-        tenantId,
-      });
-
-      await newUser.save({ session });
-
-      await createUserInfo({
-        userId: newUser.id,
-        roleName: role.roleName,
-        req,
-        connection,
-        session, // ✅ Pass the same session
-      });
-
-      await sendAccountVerificationEmail(email, password);
-      res.status(201).json(new SuccessResponse(newUser));
+    await createUserInfo({
+      userId: newUser[0]._id,
+      roleName: role.roleName,
+      req,
+      connection,
+      session,
     });
 
-    session.endSession();
+    await sendAccountVerificationEmail(email, password);
+    await session.commitTransaction();
+
+    res.status(201).json(new SuccessResponse(newUser[0]));
   } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json(new ErrorResponse(err?.message || "Internal Server Error"));
+    if (session && session.inTransaction()) {
+      await session.abortTransaction();
+    }
+    res.status(500).json(new ErrorResponse(err.message));
+  } finally {
+    if (session) await session.endSession();
   }
 };
 
@@ -565,19 +580,14 @@ const sendRecoverPasswordEmail = async (req, res) => {
     // Fetch the input Email
     const { email } = req.body;
 
-    if (isEmpty(email))
-      throw new HTTPError(400, "Email is required", ERROR_CODES.MISSING_DATA);
+    // if (isEmpty(email))
+    //   throw new HTTPError(400, "Email is required", ERROR_CODES.MISSING_DATA);
 
-    // Fetch the account by email
-    const account = await UserEmailLoginInfo.findByPk(email);
-    let username;
-    if (account) {
-      const userInfo = await UserInfo.findOne({
-        where: { email_address: account.email_address },
-        attributes: ["firstname"],
-      });
-      username = userInfo.firstname;
-    }
+    const connection = await getTenantDB(req.tenantDb);
+    const UserModel = User(connection);
+    const RoleModel = Role(connection);
+
+    const user = await UserModel.findOne({ email });
 
     const { canResend, canResendIn } = await canResendEmailNow(
       email,
@@ -619,53 +629,53 @@ const sendRecoverPasswordEmail = async (req, res) => {
     }
 
     // Send the Email containing password recovery link to the user's email
-    //   emails
-    //       .sendPasswordResetEmail(
-    //           account.email_address,
-    //           passwordRecoveryLink,
-    //           isPortalUser,
-    //           username
-    //       )
-    //       .then(async (data) => {
-    //           logger.info(data.MessageId);
-    //           // Add a new password recovery request [AG-892]
-    //           const userRequest = await UserRequest.findOne({
-    //               where: {
-    //                   request_type: RECOVER_PASSWORD_EMAIL,
-    //               },
-    //               include: [
-    //                   {
-    //                       model: UserAccount,
-    //                       required: true,
-    //                       include: [
-    //                           {
-    //                               model: UserEmailLoginInfo,
-    //                               required: true,
-    //                               where: {
-    //                                   email_address: email,
-    //                               },
-    //                           },
-    //                       ],
-    //                   },
-    //               ],
-    //           });
+    emails
+      .sendPasswordResetEmail(
+        account.email_address,
+        passwordRecoveryLink,
+        isPortalUser,
+        username
+      )
+      .then(async (data) => {
+        logger.info(data.MessageId);
+        // Add a new password recovery request [AG-892]
+        const userRequest = await UserRequest.findOne({
+          where: {
+            request_type: RECOVER_PASSWORD_EMAIL,
+          },
+          include: [
+            {
+              model: UserAccount,
+              required: true,
+              include: [
+                {
+                  model: UserEmailLoginInfo,
+                  required: true,
+                  where: {
+                    email_address: email,
+                  },
+                },
+              ],
+            },
+          ],
+        });
 
-    //           // eslint-disable-next-line promise/always-return
-    //           if (userRequest) await userRequest.destroy();
-    //           await UserRequest.create({
-    //               user_id: account.user_id,
-    //               status: "PENDING",
-    //               request_type: RECOVER_PASSWORD_EMAIL,
-    //           });
-    //           res.status(200).json(new SuccessResponse(`RECOVER_PASSWORD`));
-    //       })
-    //       .catch((err) => {
-    //           logger.error("Error on sending password reset email", {
-    //               error: err,
-    //               apiId: req?.apiId,
-    //           });
-    //           res.status(500).json("Could not send password recovery link.");
-    //       });
+        // eslint-disable-next-line promise/always-return
+        if (userRequest) await userRequest.destroy();
+        await UserRequest.create({
+          user_id: account.user_id,
+          status: "PENDING",
+          request_type: RECOVER_PASSWORD_EMAIL,
+        });
+        res.status(200).json(new SuccessResponse(`RECOVER_PASSWORD`));
+      })
+      .catch((err) => {
+        logger.error("Error on sending password reset email", {
+          error: err,
+          apiId: req?.apiId,
+        });
+        res.status(500).json("Could not send password recovery link.");
+      });
   } catch (err) {
     res
       .status(err.statusCode || 500)

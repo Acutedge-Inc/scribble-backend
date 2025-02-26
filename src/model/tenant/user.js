@@ -26,6 +26,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: true,
     },
+
     isVerified: {
       type: String,
       required: true,
@@ -41,8 +42,12 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
+    lastLoginTime: {
+      type: Date,
+      default: null,
+    },
   },
-  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
+  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );
 
 // Method to compare passwords

@@ -131,25 +131,44 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
         throw new HTTPError(403, "Token invalid", ERROR_CODES.INVALID_TOKEN);
       }
 
-      const { "x-tenant-id": tenantId } = req.headers;
+      let tenantId;
 
-      if (!tenantId) {
-        const user = await AdminUser.findById(identity);
-        req.user = user;
-        throwErrorIfMissingRequiredScopes(requiredScopes, user.scope);
-      } else {
-        const tenant = await Tenant.findById(tenantId);
+      // Superadmin Case
+      if (tokenData.roles === "scribble_admin") {
+        const { "x-tenant-id": tenantIdBody } = req.body;
+        const { "x-tenant-id": tenantIdQuery } = req.query;
+        tenantId = tenantIdBody || tenantIdQuery;
+        req.tenantId = tenantId;
 
-        // If tenant not found, return an error
-        if (!tenant) {
-          return res
-            .status(400)
-            .json(new ErrorResponse({ message: "Tenant not found" }));
+        req.user = await AdminUser.findById(identity);
+        if (!req.user) {
+          throw new HTTPError(403, "Admin not found", ERROR_CODES.INVALID_USER);
         }
 
+        throwErrorIfMissingRequiredScopes(requiredScopes, req.user.scope);
+      }
+
+      // Tenant Admin Case
+      else {
+        const { "x-tenant-id": tenantId } = req.headers;
+
+        if (!tenantId) {
+          return res
+            .status(400)
+            .json(new ErrorResponse("Tenant ID is required in headers"));
+        }
+        req.tenantId = tenantId;
+        // Fetch Tenant
+        const tenant = await Tenant.findById(tenantId);
+        if (!tenant) {
+          return res.status(404).json(new ErrorResponse("Tenant not found"));
+        }
+
+        // Attach Tenant Database Connection
         req.tenantDb = tenant.databaseName;
         const connection = await getTenantDB(tenant.databaseName);
 
+        // Fetch User & Role
         const UserModel = User(connection);
         const RoleModel = Role(connection);
 
@@ -158,18 +177,17 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
           select: "roleName scope",
         });
 
-        if (!user) {
-          throw new HTTPError(
-            403,
-            "User not registered to this tenant",
-            ERROR_CODES.GENERAL_ERROR
-          );
+        if (!user && tokenData.roles !== "scribble_admin") {
+          return res
+            .status(403)
+            .json(new ErrorResponse("User not registered to this tenant"));
         }
-        const { roleName, scope } = user.roleId;
 
-        throwErrorIfMissingRequiredScopes(requiredScopes, scope);
-
-        req.user = user;
+        throwErrorIfMissingRequiredScopes(
+          requiredScopes,
+          user?.roleId?.scope || req.user.scope
+        );
+        req.user = user || req.user;
       }
 
       return next();

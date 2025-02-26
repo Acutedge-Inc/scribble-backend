@@ -1,5 +1,5 @@
 const express = require("express");
-const { listClient } = require("../controllers/user.js");
+const { listClient, listClinician } = require("../controllers/user.js");
 const {
   checkMissingInputs,
   validateInputs,
@@ -11,10 +11,18 @@ const visitRoutes = express.Router();
 
 visitRoutes.get(
   "/client",
-  auth.protect(["form.read"]),
+  auth.protect(["user.read"]),
   checkMissingInputs,
   validateInputs,
   listClient
+);
+
+visitRoutes.get(
+  "/clinician",
+  auth.protect(["user.read"]),
+  checkMissingInputs,
+  validateInputs,
+  listClinician
 );
 
 module.exports = visitRoutes;

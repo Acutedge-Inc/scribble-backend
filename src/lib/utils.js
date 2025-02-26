@@ -37,23 +37,31 @@ module.exports = {
     }
   },
 
-  encryptText: (text) => {
-    const iv = randomBytes(IV_LENGTH);
+  getFilterQuery: (reqQuery) => {
+    const { limit = 10, page = 0, ...filters } = reqQuery;
 
-    const cipher = createCipheriv(ALGORITHM, key, iv);
+    const parsedLimit = Math.max(parseInt(limit, 10) || 10, 1); // Default 10, minimum 1
+    const parsedPage = Math.max(parseInt(page, 10) || 0, 0); // Default 0, minimum 0
+    const parsedOffset = parsedPage * parsedLimit; // Offset calculation
 
-    let encrypted = cipher.update(text);
+    let orConditions = [];
 
-    encrypted = Buffer.concat([encrypted, cipher.final()]);
+    for (const key in filters) {
+      if (filters[key]) {
+        // Use regex for string fields (case-insensitive), otherwise direct match
+        let condition =
+          typeof filters[key] === "string"
+            ? { [key]: { $regex: filters[key], $options: "i" } }
+            : { [key]: filters[key] };
 
-    return `${iv.toString("hex")}:${encrypted.toString("hex")}`;
-  },
+        orConditions.push(condition);
+      }
+    }
 
-  getScopeNamesFromRoles: (Roles) => {
-    const roleScopes = Roles.flatMap((role) =>
-      role.Role.Scopes.map((scope) => scope.name)
-    );
-    return Array.from(new Set(roleScopes));
+    // If no filters provided, return an empty query (matches all)
+    let query = orConditions.length > 0 ? { $or: orConditions } : {};
+
+    return { query, parsedLimit, parsedOffset };
   },
 
   /**
