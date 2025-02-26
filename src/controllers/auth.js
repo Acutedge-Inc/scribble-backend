@@ -6,10 +6,8 @@ const fs = require("fs");
 const path = require("path");
 
 const { getTenantDB } = require("../lib/dbManager.js");
-const {
-  generateRandomPassword,
-  generateHashedPassword,
-} = require("../lib/utils.js");
+const { getFilterQuery, generateHashedPassword } = require("../lib/utils.js");
+
 const { sendAccountVerificationEmail } = require("../lib/emails.js");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
@@ -269,9 +267,15 @@ const createTenant = async (req, res) => {
 
 const getTenant = async (req, res) => {
   try {
-    const existingTenants = await Tenant.find({});
+    let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    const existingTenants = await Tenant.find(query)
+      .limit(parsedLimit)
+      .skip(parsedOffset);
 
-    return res.status(201).json(new SuccessResponse({ data: existingTenants }));
+    const totalCount = await Tenant.countDocuments(query);
+    return res
+      .status(201)
+      .json(new SuccessResponse(existingTenants, totalCount));
   } catch (error) {
     console.error("Error on getting tenants:", error);
     res.status(500).json(new ErrorResponse(error));
@@ -294,14 +298,18 @@ const getRoles = async (req, res) => {
 
     const RoleModel = Role(connection);
 
-    const role = await RoleModel.find();
+    let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    const role = await RoleModel.find(query)
+      .limit(parsedLimit)
+      .skip(parsedOffset);
 
     if (!role) {
       return res
         .status(400)
         .json(new ErrorResponse({ message: "Role not found" }));
     }
-    return res.status(201).json(new SuccessResponse({ data: role }));
+    const totalCount = await RoleModel.countDocuments(query);
+    return res.status(201).json(new SuccessResponse(role, totalCount));
   } catch (error) {
     console.error("Error on getting roles:", error);
     res.status(500).json(new ErrorResponse(error));
@@ -416,18 +424,6 @@ const register = async (req, res) => {
   }
 };
 
-/**
-This function is to reset the login attempts in UserAccount Table
-*/
-const resetLoginAttemptsIfNeeded = async (account) => {
-  if (account.login_attempts !== 0) {
-    await UserAccount.update(
-      { login_attempts: 0 },
-      { where: { user_id: account.user_id } }
-    );
-  }
-};
-
 const health = async (req, res) => {
   try {
     return res.json({ message: "health" });
@@ -445,39 +441,7 @@ const getAccessToken = async (req, res) => {
   try {
     const { refreshToken } = req.body;
     const tokenDetails = await tokens.verifyRefreshToken(refreshToken);
-    // const account = await UserAccount.findOne({
-    //   where: {
-    //     user_id: tokenDetails.user,
-    //   },
-    //   include: [
-    //     {
-    //       model: LoginType,
-    //       attributes: ["name"],
-    //     },
-    //     {
-    //       model: UserRole,
-    //       attributes: ["role_id"],
-    //       include: [
-    //         {
-    //           model: Role,
-    //           attributes: ["name"],
-    //           include: [
-    //             {
-    //               model: Scope,
-    //               attributes: ["name"],
-    //               through: { attributes: [] },
-    //             },
-    //           ],
-    //         },
-    //       ],
-    //       distinct: true,
-    //     },
-    //   ],
-    // });
 
-    // if (!account) {
-    //   throw new HTTPError(400, "Invalid identity", ERROR_CODES.NOT_FOUND);
-    // }
     const accessTokenTtl = "6000";
 
     const response = await session.checkIfRefreshTokenExists(req.user.id);

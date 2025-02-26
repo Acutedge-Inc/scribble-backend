@@ -7,9 +7,9 @@ const {
 const { auth } = require("../lib/index.js");
 const jwt = require("jsonwebtoken");
 const { ErrorResponse } = require("../lib/responses.js");
-const visitRoutes = express.Router();
+const userRoutes = express.Router();
 
-visitRoutes.get(
+userRoutes.get(
   "/client",
   auth.protect(["user.read"]),
   checkMissingInputs,
@@ -17,7 +17,7 @@ visitRoutes.get(
   listClient
 );
 
-visitRoutes.get(
+userRoutes.get(
   "/clinician",
   auth.protect(["user.read"]),
   checkMissingInputs,
@@ -25,4 +25,4 @@ visitRoutes.get(
   listClinician
 );
 
-module.exports = visitRoutes;
+module.exports = userRoutes;

@@ -39,9 +39,10 @@ module.exports = {
 
   getFilterQuery: (reqQuery) => {
     const { limit = 10, page = 0, ...filters } = reqQuery;
+    delete filters["x-tenant-id"];
 
     const parsedLimit = Math.max(parseInt(limit, 10) || 10, 1); // Default 10, minimum 1
-    const parsedPage = Math.max(parseInt(page, 10) || 0, 0); // Default 0, minimum 0
+    const parsedPage = Math.max(parseInt(page, 10) - 1 || 0, 0); // Default 0, minimum 0
     const parsedOffset = parsedPage * parsedLimit; // Offset calculation
 
     let orConditions = [];

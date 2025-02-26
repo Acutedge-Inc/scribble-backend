@@ -5,10 +5,8 @@ const fs = require("fs");
 const path = require("path");
 
 const { getTenantDB } = require("../lib/dbManager.js");
-const {
-  generateRandomPassword,
-  generateHashedPassword,
-} = require("../lib/utils.js");
+const { getFilterQuery } = require("../lib/utils.js");
+
 const { sendAccountVerificationEmail } = require("../lib/emails.js");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");

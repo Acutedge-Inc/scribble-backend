@@ -5,10 +5,8 @@ const fs = require("fs");
 const path = require("path");
 
 const { getTenantDB } = require("../lib/dbManager.js");
-const {
-  generateRandomPassword,
-  generateHashedPassword,
-} = require("../lib/utils.js");
+const { getFilterQuery } = require("../lib/utils.js");
+
 const { sendAccountVerificationEmail } = require("../lib/emails.js");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
@@ -57,18 +55,27 @@ const createForm = async (req, res) => {
 const formTypes = async (req, res) => {
   const connection = await getTenantDB(req.tenantDb);
   const Form_TypeModel = Form_Type(connection);
+  let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
 
-  const assessmentTypes = await Form_TypeModel.find();
+  const assessmentTypes = await Form_TypeModel.find(query)
+    .limit(parsedLimit)
+    .skip(parsedOffset);
 
-  return res.status(404).json(new SuccessResponse(assessmentTypes));
+  const totalCount = await Form_TypeModel.countDocuments(query);
+
+  return res.status(201).json(new SuccessResponse(assessmentTypes, totalCount));
 };
 
 const listEpisode = async (req, res) => {
   try {
     const connection = await getTenantDB(req.tenantDb);
     const EpisodeModel = Episode(connection);
-    let episode = await EpisodeModel.find({});
-    return res.status(201).json(new SuccessResponse(episode));
+    let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    let episode = await EpisodeModel.find(query)
+      .limit(parsedLimit)
+      .skip(parsedOffset);
+    const totalCount = await EpisodeModel.countDocuments(query);
+    return res.status(201).json(new SuccessResponse(episode, totalCount));
   } catch (error) {
     return res.status(500).json(new ErrorResponse(error.message));
   }
@@ -78,8 +85,12 @@ const listVisit = async (req, res) => {
   try {
     const connection = await getTenantDB(req.tenantDb);
     const VisitModel = Visit(connection);
-    let visit = await VisitModel.find({});
-    return res.status(201).json(new SuccessResponse(visit));
+    let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    let visit = await VisitModel.find(query)
+      .limit(parsedLimit)
+      .skip(parsedOffset);
+    const totalCount = await VisitModel.countDocuments(query);
+    return res.status(201).json(new SuccessResponse(visit, totalCount));
   } catch (error) {
     return res.status(500).json(new ErrorResponse(error.message));
   }
