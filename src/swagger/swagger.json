@@ -369,28 +369,11 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "email",
-                  "firstName",
-                  "lastName",
-                  "employeeId",
-                  "primaryPhone",
-                  "x-tenant-id",
-                  "roleId"
-                ],
                 "properties": {
                   "email": {
                     "type": "string",
                     "format": "email",
                     "example": "thillaimaharajan.g@gmail.com"
-                  },
-                  "firstName": {
-                    "type": "string",
-                    "example": "thillai"
-                  },
-                  "lastName": {
-                    "type": "string",
-                    "example": "Maharajan"
                   },
                   "employeeId": {
                     "type": "string",
@@ -398,19 +381,86 @@
                   },
                   "primaryPhone": {
                     "type": "string",
-                    "example": "9487316396"
+                    "example": "567-890-1234"
                   },
                   "x-tenant-id": {
                     "type": "string",
-                    "format": "uuid",
-                    "example": "67ba30c60af9a55d9831d4eb"
+                    "example": "67c03a5a14563c13b59a7846"
                   },
                   "roleId": {
                     "type": "string",
-                    "format": "uuid",
-                    "example": "67ba30c60af9a55d9831d4d3"
+                    "example": "67c03a5914563c13b59a7829"
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "example": "David"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "example": "Miller"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": ["Active", "Inactive"],
+                    "example": "Active"
+                  },
+                  "discipline": {
+                    "type": "string",
+                    "example": "Physical Therapy"
+                  },
+                  "jobTitle": {
+                    "type": "string",
+                    "example": "Therapist"
+                  },
+                  "age": {
+                    "type": "string",
+                    "example": "50"
+                  },
+                  "dob": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "1974-07-08"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": ["Male", "Female", "Other"],
+                    "example": "Male"
+                  },
+                  "address1": {
+                    "type": "string",
+                    "example": "654 Pine St"
+                  },
+                  "address2": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "city": {
+                    "type": "string",
+                    "example": "San Diego"
+                  },
+                  "state": {
+                    "type": "string",
+                    "example": "CA"
+                  },
+                  "zip": {
+                    "type": "string",
+                    "example": "92101"
+                  },
+                  "country": {
+                    "type": "string",
+                    "example": "USA"
                   }
-                }
+                },
+                "required": [
+                  "email",
+                  "employeeId",
+                  "x-tenant-id",
+                  "roleId",
+                  "firstName",
+                  "lastName",
+                  "status",
+                  "primaryPhone"
+                ]
               }
             }
           }

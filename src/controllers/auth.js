@@ -108,8 +108,8 @@ async function adminLogin(req, res) {
     const responseInst = {
       email: adminUser.email,
       userId: adminUser._id,
-      firstname: adminUser.firstname,
-      lastname: adminUser.lastname,
+      firstName: adminUser.firstName,
+      lastName: adminUser.lastName,
       isFirstLogin: adminUser?.isFirstLogin,
       lastLoginTime: new Date(),
       roles,
@@ -159,6 +159,7 @@ async function userLogin(req, res) {
         { _id: user._id }, // Filter: find the user by ID
         { $inc: { loginAttempts: 1 } } // Increment loginAttempts by 1
       );
+
       if (user.loginAttempts > 3) {
         return res
           .status(401)
@@ -324,7 +325,24 @@ const getRoles = async (req, res) => {
  * Creates a record in the appropriate UserInfo table.
  */
 async function createUserInfo({ userId, roleName, req, connection, session }) {
-  const { employeeId, firstName, lastName, primaryPhone } = req.body;
+  const {
+    employeeId,
+    firstName,
+    lastName,
+    status,
+    discipline,
+    jobTitle,
+    age,
+    dob,
+    gender,
+    address1,
+    address2,
+    city,
+    state,
+    zip,
+    country,
+    primaryPhone,
+  } = req.body;
   try {
     if (roleName === "user") {
       const ClinicianModel = Clinician_Info(connection);
@@ -335,6 +353,18 @@ async function createUserInfo({ userId, roleName, req, connection, session }) {
             clinicianNo: employeeId,
             firstName,
             lastName,
+            status,
+            discipline,
+            jobTitle,
+            age,
+            dob,
+            gender,
+            address1,
+            address2,
+            city,
+            state,
+            zip,
+            country,
             primaryPhone,
           },
         ],
@@ -351,6 +381,18 @@ async function createUserInfo({ userId, roleName, req, connection, session }) {
             adminNo: employeeId,
             firstName,
             lastName,
+            status,
+            discipline,
+            jobTitle,
+            age,
+            dob,
+            gender,
+            address1,
+            address2,
+            city,
+            state,
+            zip,
+            country,
             primaryPhone,
           },
         ],
@@ -526,7 +568,7 @@ const changePassword = async (req, res) => {
 
     await UserModel.updateOne(
       { email: req.user?.email }, // Filter: Find user by email
-      { $set: { password: hash } } // Update password field
+      { $set: { password: hash, isFirstLogin: false } } // Update password field
     );
 
     res.json(new SuccessResponse({ message: "Password updated." }));

@@ -19,10 +19,40 @@ const adminInfoSchema = new mongoose.Schema(
     lastName: {
       type: String,
     },
+    status: {
+      type: String,
+    },
+    discipline: {
+      type: String,
+    },
+    jobTitle: {
+      type: String,
+    },
+    age: {
+      type: String,
+    },
     dob: {
       type: String,
     },
-    address: {
+    gender: {
+      type: String,
+    },
+    address1: {
+      type: String,
+    },
+    address2: {
+      type: String,
+    },
+    city: {
+      type: String,
+    },
+    state: {
+      type: String,
+    },
+    zip: {
+      type: String,
+    },
+    country: {
       type: String,
     },
     primaryPhone: {

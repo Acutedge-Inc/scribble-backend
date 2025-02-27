@@ -1,6 +1,8 @@
 module.exports = {
   email: "sandeepb@acutedge.com",
   password: "Admin@123",
+  firstName: "Sandeep",
+  lastName: "Banga",
   scope: [
     "tenant.create",
     "tenant.read",
