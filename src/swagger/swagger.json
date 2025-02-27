@@ -252,7 +252,7 @@
           {
             "name": "x-tenant-id",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
               "type": "object",
               "properties": {
@@ -1245,7 +1245,7 @@
       }
     },
     "/v1/setting/gridView": {
-      "post": {
+      "put": {
         "responses": {
           "200": {
             "description": "",
@@ -1296,17 +1296,72 @@
           "content": {
             "application/json": {
               "schema": {
-                "oneOf": [
-                  {
+                "type": "object",
+                "properties": {
+                  "gridName": {
+                    "type": "string"
+                  },
+                  "viewJson": {
                     "type": "object",
                     "properties": {
-                      "tenantName": {
-                        "type": "string"
+                      "clinicianId": {
+                        "$ref": "#/components/schemas/LogoutResponse"
+                      },
+                      "clinicianNo": {
+                        "$ref": "#/components/schemas/LogoutResponse"
+                      },
+                      "firstName": {
+                        "$ref": "#/components/schemas/LogoutResponse"
+                      },
+                      "lastName": {
+                        "$ref": "#/components/schemas/LogoutResponse"
+                      },
+                      "status": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "discipline": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "jobTitle": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "email": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "age": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "dob": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "gender": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "address1": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "address2": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "city": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "state": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "zip": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "country": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "primaryPhone": {
+                        "$ref": "#/components/schemas/FieldSchema"
                       }
-                    },
-                    "required": ["tenantName"]
+                    }
                   }
-                ]
+                },
+                "required": ["gridName", "viewJson"]
               }
             }
           },
@@ -1734,6 +1789,43 @@
             "type": "object"
           }
         }
+      },
+      "FieldSchema": {
+        "type": "object",
+        "properties": {
+          "isRequired": {
+            "type": "boolean"
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "label": {
+            "type": "string"
+          },
+          "questionType": {
+            "type": "string",
+            "enum": ["TEXT_INPUT"]
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": ["name", "value"]
+          }
+        },
+        "required": [
+          "isRequired",
+          "isVisible",
+          "label",
+          "questionType",
+          "options"
+        ]
       },
       "UserResponseModel": {
         "type": "object",

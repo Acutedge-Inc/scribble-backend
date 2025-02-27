@@ -89,7 +89,33 @@ const getGridViewSettings = async (req, res) => {
 };
 
 const updateGridViewSettings = async (req, res) => {
-  return res.status(404).json(new SuccessResponse("Needs to be developed"));
+  try {
+    const { gridName, viewJson } = req.body;
+    const connection = await getTenantDB(req.tenantDb);
+    const GridModel = Grid(connection);
+    const View_SettingModel = View_Setting(connection);
+
+    const grid = await GridModel.findOne({ gridName });
+    if (!grid) {
+      return res.status(500).json(new ErrorResponse("Grid not found"));
+    }
+
+    const viewSetting = await View_SettingModel.findOne({
+      gridId: grid._id,
+    });
+    if (!viewSetting) {
+      return res.status(500).json(new ErrorResponse("View setting not found"));
+    }
+
+    await View_SettingModel.updateOne(
+      { _id: viewSetting._id },
+      { $set: { viewJson: JSON.stringify(viewJson) } }
+    );
+
+    return res.status(200).json(new SuccessResponse("View setting updated"));
+  } catch (error) {
+    return res.status(500).json(new ErrorResponse(error));
+  }
 };
 
 module.exports = {
