@@ -110,12 +110,13 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
         tenantId = tenantIdBody || tenantIdQuery;
         req.tenantId = tenantId;
 
-        const tenant = await Tenant.findById(tenantId);
-        if (!tenant) {
-          return res.status(404).json(new ErrorResponse("Tenant not found"));
+        if (tenantId) {
+          const tenant = await Tenant.findById(tenantId);
+          if (!tenant) {
+            return res.status(404).json(new ErrorResponse("Tenant not found"));
+          }
+          req.tenantDb = tenant.databaseName;
         }
-
-        req.tenantDb = tenant.databaseName;
 
         req.user = await AdminUser.findById(identity);
         if (!req.user) {

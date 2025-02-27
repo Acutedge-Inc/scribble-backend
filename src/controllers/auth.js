@@ -9,7 +9,10 @@ const { isEmpty } = require("lodash");
 const { getTenantDB } = require("../lib/dbManager.js");
 const { getFilterQuery, generateHashedPassword } = require("../lib/utils.js");
 
-const { sendAccountVerificationEmail } = require("../lib/emails.js");
+const {
+  sendAccountVerificationEmail,
+  sendPasswordResetEmail,
+} = require("../lib/emails.js");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
@@ -576,8 +579,8 @@ const sendRecoverPasswordEmail = async (req, res) => {
       "6000"
     );
 
-    let passwordRecoveryLink = `${process.env.API_URL}/recover-password/${user.email}/${token}/`;
-    await sendAccountVerificationEmail(email, passwordRecoveryLink);
+    let passwordRecoveryLink = `${process.env.WEB_URL}/recover-password/${user.email}/${token}/`;
+    await sendPasswordResetEmail(email, passwordRecoveryLink);
     res.json(new SuccessResponse({ message: "Link sent to your email" }));
   } catch (err) {
     res

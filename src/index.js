@@ -48,7 +48,7 @@ const swaggerDocument = require("./swagger/swagger.json");
 const swaggerUrl =
   process.env.NODE_ENV === "local"
     ? `http://localhost:3000/api/`
-    : `${process.env.API_URL}/api/`;
+    : `${process.env.WEB_URL}/api/`;
 swaggerDocument.servers.push({
   url: swaggerUrl,
 });

@@ -1360,7 +1360,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["clinicianTable", "clientTable", "assessmentTable"],
+              "enum": ["clinicianTable", "clientTable", "visitTable"],
               "example": "clinicianTable"
             }
           }
