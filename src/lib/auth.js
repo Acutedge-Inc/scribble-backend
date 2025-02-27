@@ -116,6 +116,22 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
             return res.status(404).json(new ErrorResponse("Tenant not found"));
           }
           req.tenantDb = tenant.databaseName;
+        } else {
+          const { "x-tenant-id": tenantIdHeader } = req.headers;
+
+          if (tenantIdHeader) {
+            const tenant = await Tenant.findById(tenantId);
+            if (!tenant) {
+              return res
+                .status(404)
+                .json(
+                  new ErrorResponse(
+                    "Tenant Id should not be in header for Super Admin"
+                  )
+                );
+            }
+            req.tenantDb = tenant.databaseName;
+          }
         }
 
         req.user = await AdminUser.findById(identity);
