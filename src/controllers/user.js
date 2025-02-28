@@ -33,9 +33,47 @@ const listClinician = async (req, res) => {
     const Clinician_InfoModel = Clinician_Info(connection);
 
     let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
-    const clinicians = await Clinician_InfoModel.find(query)
-      .limit(parsedLimit)
-      .skip(parsedOffset);
+
+    const clinicians = await Clinician_InfoModel.aggregate([
+      { $match: query }, // Apply filters to Clinician_Info
+      {
+        $lookup: {
+          from: "users", // Users collection name
+          localField: "userId", // Field in Clinician_Info
+          foreignField: "_id", // Field in Users
+          as: "userDetails",
+        },
+      },
+      { $unwind: { path: "$userDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          clinicianId: 1,
+          staffId: "$clinicianNo",
+          firstName: 1,
+          lastName: 1,
+          email: 1,
+          phone: 1,
+          discipline: 1,
+          dob: 1,
+          address1: 1,
+          address2: 1,
+          city: 1,
+          state: 1,
+          zip: 1,
+          primaryPhone: 1,
+          gender: 1,
+          status: 1,
+          jobTitle: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          userId: 1,
+          lastLoginTime: "$userDetails.lastLoginTime",
+          email: "$userDetails.email",
+        },
+      },
+      { $skip: parsedOffset },
+      { $limit: parsedLimit },
+    ]);
 
     const totalCount = await Clinician_InfoModel.countDocuments(query);
 
