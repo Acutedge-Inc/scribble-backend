@@ -149,6 +149,8 @@ const listVisit = async (req, res) => {
           updatedAt: 1,
           episodeId: "$episode._id",
           episodeNo: "$episode.episodeNo",
+          episodeStartDate: "$episode.startDate",
+          episodeEndDate: "$episode.endDate",
           episodeDuration: "$episode.episodeDuration",
           clientId: "$client._id",
           clientFirstName: "$client.firstName",

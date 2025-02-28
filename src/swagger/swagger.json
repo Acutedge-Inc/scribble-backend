@@ -17,6 +17,14 @@
     {
       "name": "Settings",
       "description": "Used by user to create user & login to system"
+    },
+    {
+      "name": "User",
+      "description": "Used by user to create user & login to system"
+    },
+    {
+      "name": "Dashboard",
+      "description": "Used by user to create user & login to system"
     }
   ],
   "paths": {
@@ -1468,6 +1476,52 @@
               "enum": ["clinicianTable", "clientTable", "visitTable"],
               "example": "clinicianTable"
             }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+
+    "/v1/dashboard/admin": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Dashboard"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-settings-gridview",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "schema": {
+              "type": "string",
+              "example": "Bearer token"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
           }
         ],
         "security": [
