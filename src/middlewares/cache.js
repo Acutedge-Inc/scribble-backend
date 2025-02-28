@@ -2,8 +2,8 @@ const url = require("url");
 const NodeCache = require("node-cache");
 
 const myCache = new NodeCache({
-  stdTTL: 300,
-  checkperiod: 600,
+  stdTTL: 30000,
+  checkperiod: 60000,
 });
 
 module.exports = (req, res, next) => {

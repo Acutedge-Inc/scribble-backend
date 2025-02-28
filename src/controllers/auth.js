@@ -81,8 +81,8 @@ async function adminLogin(req, res) {
       { $set: { lastLoginTime: new Date() } }
     );
 
-    const accessTokenTtl = "6000";
-    const refreshTokenttl = "36000";
+    const accessTokenTtl = "600000";
+    const refreshTokenttl = "3600000";
 
     const roles = "scribble_admin";
     const scopes = adminUser.scope;
@@ -178,8 +178,8 @@ async function userLogin(req, res) {
       { $set: { lastLoginTime: new Date() } }
     );
 
-    const accessTokenTtl = "6000";
-    const refreshTokenttl = "36000";
+    const accessTokenTtl = "600000";
+    const refreshTokenttl = "3600000";
 
     const roles = [roleName];
     const scopes = scope;
@@ -488,7 +488,7 @@ const getAccessToken = async (req, res) => {
     const { refreshToken } = req.body;
     const tokenDetails = await tokens.verifyRefreshToken(refreshToken);
 
-    const accessTokenTtl = "6000";
+    const accessTokenTtl = "600000";
 
     const response = await session.checkIfRefreshTokenExists(req.user.id);
 
