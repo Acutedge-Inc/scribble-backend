@@ -34,12 +34,20 @@ const adminKpis = async (req, res) => {
     const Clinician_InfoModel = Clinician_Info(connection);
     const FormModel = Form(connection);
     const VisitModel = Visit(connection);
+    const EpisodeModel = Episode(connection);
 
     const result = {
       client: await Client_InfoModel.countDocuments(),
+      activeClinician: await Clinician_InfoModel.countDocuments({
+        status: "Active",
+      }),
+      inActiveClinician: await Clinician_InfoModel.countDocuments({
+        status: "Inactive",
+      }),
       clinician: await Clinician_InfoModel.countDocuments(),
       form: await FormModel.countDocuments(),
       visit: await VisitModel.countDocuments(),
+      visit: await EpisodeModel.countDocuments(),
     };
 
     return res.status(201).json(new SuccessResponse(result));
