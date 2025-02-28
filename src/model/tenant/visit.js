@@ -37,7 +37,7 @@ const visitSchema = new mongoose.Schema(
     serviceCode: {
       type: String,
     },
-    service: {
+    status: {
       type: String,
     },
   },
