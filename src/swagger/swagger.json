@@ -1502,7 +1502,7 @@
         },
         "tags": ["Dashboard"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "GET_v1-settings-gridview",
+        "operationId": "GET_v1-dashboard-admin",
         "parameters": [
           {
             "in": "header",
