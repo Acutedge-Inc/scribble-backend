@@ -51,6 +51,7 @@ const listClinician = async (req, res) => {
           staffId: "$clinicianNo",
           firstName: 1,
           lastName: 1,
+          name: { $concat: ["$firstName", " ", "$lastName"] },
           email: 1,
           phone: 1,
           discipline: 1,
