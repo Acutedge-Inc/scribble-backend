@@ -627,7 +627,6 @@ const sendRecoverPasswordEmail = async (req, res) => {
       accessTokenTtl,
       "recover-password"
     );
-    await session.storeAccessToken(user._id, accessToken, accessTokenTtl);
 
     let passwordRecoveryLink = `${process.env.WEB_URL}/recover-password/${user.email}/${token}/`;
     await sendPasswordResetEmail(email, passwordRecoveryLink);
