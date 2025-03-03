@@ -96,9 +96,11 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
 
       const identity = tokenData.v === 3 ? tokenData.sub : tokenData.id;
 
-      const response = await session.checkIfAccessTokenExists(identity);
-      if (!response || response !== rawToken) {
-        throw new HTTPError(403, "Token invalid", ERROR_CODES.INVALID_TOKEN);
+      if (tokenData.type !== "recover-password") {
+        const response = await session.checkIfAccessTokenExists(identity);
+        if (!response || response !== rawToken) {
+          throw new HTTPError(403, "Token invalid", ERROR_CODES.INVALID_TOKEN);
+        }
       }
 
       let tenantId;

@@ -605,21 +605,29 @@ const sendRecoverPasswordEmail = async (req, res) => {
 
     const connection = await getTenantDB(tenant.databaseName);
     const UserModel = User(connection);
+    const RoleModel = Role(connection);
 
-    const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ email }).populate({
+      path: "roleId",
+      select: "roleName scope",
+    });
 
     // Verify if user is registered
     if (!user)
       throw new HTTPError(400, "User does not exist", ERROR_CODES.NOT_FOUND);
+    const accessTokenTtl = "600000";
+    const { roleName, scope } = user.roleId;
 
     const token = await tokens.createTokenV2(
       {
         user_id: user._id,
-        roles: ["user"],
-        scopes: ["sso.self.write"],
+        roles: [roleName],
+        scopes: scope,
       },
-      "6000"
+      accessTokenTtl,
+      "recover-password"
     );
+    await session.storeAccessToken(user._id, accessToken, accessTokenTtl);
 
     let passwordRecoveryLink = `${process.env.WEB_URL}/recover-password/${user.email}/${token}/`;
     await sendPasswordResetEmail(email, passwordRecoveryLink);
