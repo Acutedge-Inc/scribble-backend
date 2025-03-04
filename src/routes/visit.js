@@ -5,6 +5,7 @@ const {
   formTypes,
   listVisit,
   listEpisode,
+  listAssessment,
 } = require("../controllers/visit.js");
 const {
   checkMissingInputs,
@@ -53,6 +54,14 @@ visitRoutes.get(
   checkMissingInputs,
   validateInputs,
   formTypes
+);
+
+visitRoutes.get(
+  "/assessment",
+  auth.protect(["form.create"]),
+  checkMissingInputs,
+  validateInputs,
+  listAssessment
 );
 
 module.exports = visitRoutes;

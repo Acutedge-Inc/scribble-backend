@@ -14,7 +14,7 @@ AWS.config.update({
 });
 
 const s3 = new AWS.S3();
-
+const sqs = new AWS.SQS();
 const bucketName = "scribble2-data";
 
 const createFolder = async (folderName) => {
@@ -32,6 +32,40 @@ const createFolder = async (folderName) => {
   }
 };
 
+const uploadFile = async (file, folderName) => {
+  try {
+    const params = {
+      Bucket: bucketName,
+      Key: folderName,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    };
+
+    const data = await s3.upload(params).promise();
+    return data;
+  } catch (error) {
+    if (error.message.includes("Unsupported body payload object")) {
+      console.error(
+        "Error uploading file: Error: Unsupported body payload object"
+      );
+    } else {
+      console.error("Error uploading file:", error);
+    }
+  }
+};
+
+const pushToQueue = async (queueUrl, message) => {
+  const params = {
+    QueueUrl: queueUrl,
+    MessageBody: JSON.stringify(message),
+  };
+
+  const data = await sqs.sendMessage(params).promise();
+  return data;
+};
+
 module.exports = {
   createFolder,
+  uploadFile,
+  pushToQueue,
 };

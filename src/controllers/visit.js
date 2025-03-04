@@ -176,6 +176,24 @@ const listVisit = async (req, res) => {
   }
 };
 
+const listAssessment = async (req, res) => {
+  try {
+    const connection = await getTenantDB(req.tenantDb);
+    const { visitId, ...restQuery } = req.query;
+    const AssessmentModel = Assessment(connection);
+    let { query, parsedLimit, parsedOffset } = getFilterQuery(restQuery);
+    query.visitId = new mongoose.Types.ObjectId(visitId);
+
+    let assessment = await AssessmentModel.find(query)
+      .limit(parsedLimit)
+      .skip(parsedOffset);
+    const totalCount = await AssessmentModel.countDocuments(query);
+    return res.status(201).json(new SuccessResponse(assessment, totalCount));
+  } catch (error) {
+    return res.status(500).json(new ErrorResponse(error.message));
+  }
+};
+
 const createVisit = async (req, res) => {
   const { connection, session } = await startDatabaseSession(req.tenantDb);
 
@@ -434,4 +452,5 @@ module.exports = {
   formTypes,
   listVisit,
   listEpisode,
+  listAssessment,
 };

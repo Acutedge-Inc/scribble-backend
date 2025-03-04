@@ -99,10 +99,7 @@ app.use((err, req, res, next) => {
 
   return res.status(err?.statusCode || err?.errorCode || 500).json({
     status: "error",
-    errorMessage:
-      err?.statusCode === 404 || err?.errorCode === 400
-        ? err?.message
-        : "Some unexpected error found!",
+    errorMessage: err?.message ? err?.message : "Some unexpected error found!",
     data: {},
   });
 });
