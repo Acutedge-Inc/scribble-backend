@@ -18,7 +18,7 @@ const visitRoutes = express.Router();
 
 visitRoutes.post(
   "/form",
-  auth.protect(["form.create"]),
+  auth.protect(["self.read"]),
   checkMissingInputs,
   validateInputs,
   createForm
@@ -26,7 +26,7 @@ visitRoutes.post(
 
 visitRoutes.post(
   "/",
-  auth.protect(["form.create"]),
+  auth.protect(["self.read"]),
   checkMissingInputs,
   validateInputs,
   createVisit
@@ -34,7 +34,7 @@ visitRoutes.post(
 
 visitRoutes.get(
   "/",
-  auth.protect(["form.create"]),
+  auth.protect(["self.read"]),
   checkMissingInputs,
   validateInputs,
   listVisit
@@ -42,7 +42,7 @@ visitRoutes.get(
 
 visitRoutes.get(
   "/episode",
-  auth.protect(["form.create"]),
+  auth.protect(["self.read"]),
   checkMissingInputs,
   validateInputs,
   listEpisode
@@ -50,7 +50,7 @@ visitRoutes.get(
 
 visitRoutes.get(
   "/formtypes",
-  auth.protect(["form.read"]),
+  auth.protect(["self.read"]),
   checkMissingInputs,
   validateInputs,
   formTypes
@@ -58,7 +58,7 @@ visitRoutes.get(
 
 visitRoutes.get(
   "/assessment",
-  auth.protect(["form.create"]),
+  auth.protect(["self.read"]),
   checkMissingInputs,
   validateInputs,
   listAssessment
