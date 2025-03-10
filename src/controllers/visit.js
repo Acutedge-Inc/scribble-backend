@@ -319,7 +319,7 @@ const createVisitFromRPA = async (err, data) => {
       await createNotification(
         clinician.userId,
         `New visit created for client ${client.firstName} ${client.lastName}`,
-        "Visit Created",
+        "New Visits",
         connection,
         session
       );
