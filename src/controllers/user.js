@@ -13,7 +13,7 @@ const bcrypt = require("bcryptjs");
 const tenantModels = require("../model/tenant/index.js");
 const Clinician_Info = require("../model/tenant/clinicianInfo.js");
 const Client_Info = require("../model/tenant/clientInfo.js");
-const Episode = require("../model/tenant/episode.js");
+const Visit = require("../model/tenant/visit.js");
 const Form_Type = require("../model/tenant/formType.js");
 const Form = require("../model/tenant/form.js");
 const Assessment = require("../model/tenant/assessment.js");
@@ -100,7 +100,99 @@ const listClient = async (req, res) => {
   }
 };
 
+const updateClinician = async (req, res) => {
+  try {
+    const connection = await getTenantDB(req.tenantDb);
+    const Clinician_InfoModel = Clinician_Info(connection);
+    const clinician = await Clinician_InfoModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    if (req.body.isDeleted) {
+      const user = await UserModel.findByIdAndUpdate(
+        clinician.userId,
+        { isDeleted: true },
+        { new: true }
+      );
+    }
+
+    return res.status(200).json(new SuccessResponse(clinician));
+  } catch (error) {
+    return res.status(500).json(new ErrorResponse(error.message));
+  }
+};
+
+const listClinicianVisitDetails = async (req, res) => {
+  try {
+    const connection = await getTenantDB(req.tenantDb);
+    let clinicianId = req.user.id;
+    const VisitModel = Visit(connection);
+
+    const visitCounts = await VisitModel.aggregate([
+      {
+        $match: { clinicianId: new mongoose.Types.ObjectId(clinicianId) },
+      },
+      {
+        $group: {
+          _id: null,
+          totalVisits: { $sum: 1 },
+          newVisits: {
+            $sum: { $cond: [{ $eq: ["$status", "New"] }, 1, 0] },
+          },
+          inProgressVisits: {
+            $sum: {
+              $cond: [
+                { $in: ["$status", ["In Progress", "Past Due", "Missed"]] },
+                1,
+                0,
+              ],
+            },
+          },
+          completedVisits: {
+            $sum: {
+              $cond: [{ $in: ["$status", ["Completed", "Submitted"]] }, 1, 0],
+            },
+          },
+        },
+      },
+    ]);
+
+    const counts = visitCounts[0] || {
+      totalVisits: 0,
+      newVisits: 0,
+      inProgressVisits: 0,
+      completedVisits: 0,
+    };
+
+    return res.status(200).json(
+      new SuccessResponse({
+        counts,
+      })
+    );
+  } catch (error) {
+    return res.status(500).json(new ErrorResponse(error.message));
+  }
+};
+
+const listUserNotification = async (req, res) => {
+  try {
+    const connection = await getTenantDB(req.tenantDb);
+    const NotificationModel = Notification(connection);
+    const notifications = await NotificationModel.find({
+      userId: req.user.id,
+    });
+    return res.status(200).json(new SuccessResponse(notifications));
+  } catch (error) {
+    return res.status(500).json(new ErrorResponse(error.message));
+  }
+};
+
 module.exports = {
   listClient,
   listClinician,
+  updateClinician,
+  listClinicianVisitDetails,
+  listUserNotification,
 };

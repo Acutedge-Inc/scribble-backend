@@ -28,7 +28,6 @@ const clinitianInfoSchema = new mongoose.Schema(
     jobTitle: {
       type: String,
     },
-
     age: {
       type: String,
     },
@@ -57,6 +56,15 @@ const clinitianInfoSchema = new mongoose.Schema(
       type: String,
     },
     primaryPhone: {
+      type: String,
+    },
+    county: {
+      type: String,
+    },
+    officialMailId: {
+      type: String,
+    },
+    ssn: {
       type: String,
     },
   },

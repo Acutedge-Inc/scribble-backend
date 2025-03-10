@@ -6,6 +6,7 @@ const View_Setting = require("../model/tenant/viewSetting");
 const RoleData = require("./default/role");
 const FormTypeData = require("./default/formType");
 let GridSettingData = require("./default/grid");
+const NotificationTypeData = require("./default/notificationType");
 const { indexOf } = require("lodash");
 const { ErrorResponse } = require("../lib/responses");
 const { logger } = require("../lib");
@@ -21,6 +22,7 @@ const seedTenantData = async (connection) => {
     const FormTypeModel = Form_Type(connection);
     const GridModel = Grid(connection);
     const ViewSettingModel = View_Setting(connection);
+    const NotificationTypeModel = NotificationType(connection);
 
     await RoleModel.create(RoleData);
     await FormTypeModel.create(FormTypeData);
@@ -36,6 +38,7 @@ const seedTenantData = async (connection) => {
     );
 
     await ViewSettingModel.create(GridSettingData);
+    await NotificationTypeModel.create(NotificationTypeData);
 
     logger.info("Seeding completed successfully!");
     return true;

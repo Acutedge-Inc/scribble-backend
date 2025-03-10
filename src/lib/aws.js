@@ -1,6 +1,6 @@
 const AWS = require("aws-sdk");
 const dotenv = require("dotenv");
-
+const logger = require("../lib/logger.js");
 dotenv.config();
 
 const REGION = process.env.AWS_REGION;
@@ -54,6 +54,16 @@ const uploadFile = async (file, folderName) => {
   }
 };
 
+const downloadFile = async (bucketName, key) => {
+  const params = {
+    Bucket: bucketName,
+    Key: key,
+  };
+
+  const data = await s3.getObject(params).promise();
+  return data;
+};
+
 const pushToQueue = async (queueUrl, message) => {
   const params = {
     QueueUrl: queueUrl,
@@ -64,8 +74,45 @@ const pushToQueue = async (queueUrl, message) => {
   return data;
 };
 
+const deleteMessageFromQueue = async (queueUrl, message) => {
+  const deleteParams = {
+    QueueUrl: queueUrl,
+    ReceiptHandle: message.ReceiptHandle,
+  };
+  await sqs.deleteMessage(deleteParams).promise();
+  logger.debug(`Message deleted from queue: ${queueUrl}`);
+};
+
+const subscribeToQueue = (queueUrl, cb) => {
+  const params = {
+    QueueUrl: queueUrl,
+    WaitTimeSeconds: 20,
+  };
+
+  setInterval(() => {
+    sqs.receiveMessage(params, (err, data) => {
+      if (err) {
+        return cb(err);
+      }
+      if (data.Messages.length > 0) {
+        data.Messages.forEach((m) => {
+          logger.debug("------------------------------------");
+          logger.debug("----------NEW SQS MESSAGE-------------", m);
+          logger.debug("------------------------------------");
+          cb(null, m);
+        });
+      } else {
+        // logger.debug("No messages in RPA Data Queue");
+      }
+    });
+  }, 2000);
+};
+
 module.exports = {
   createFolder,
   uploadFile,
   pushToQueue,
+  subscribeToQueue,
+  deleteMessageFromQueue,
+  downloadFile,
 };

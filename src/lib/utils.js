@@ -93,4 +93,53 @@ module.exports = {
       throw error;
     }
   },
+
+  sendMessageToUIPath: async (message) => {
+    try {
+      // Get orchestrator config from environment
+      const orchestratorUrl = process.env.UIPATH_ORCHESTRATOR_URL;
+      const queueName = process.env.UIPATH_QUEUE_NAME;
+      const tenantName = process.env.UIPATH_TENANT_NAME;
+      const clientId = process.env.UIPATH_CLIENT_ID;
+      const clientSecret = process.env.UIPATH_CLIENT_SECRET;
+
+      // Get access token
+      const tokenResponse = await axios.post(
+        `${orchestratorUrl}/identity/connect/token`,
+        {
+          grant_type: "client_credentials",
+          client_id: clientId,
+          client_secret: clientSecret,
+          scope: "OR.Queues",
+        }
+      );
+
+      const accessToken = tokenResponse.data.access_token;
+
+      // Add message to queue
+      const queueResponse = await axios.post(
+        `${orchestratorUrl}/${tenantName}/odata/Queues/UiPathODataSvc.AddQueueItem`,
+        {
+          itemData: {
+            Name: queueName,
+            SpecificContent: message,
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      return queueResponse.data;
+    } catch (error) {
+      throw new HTTPError(
+        500,
+        "Failed to send message to UiPath queue",
+        ERROR_CODES.UIPATH_ERROR
+      );
+    }
+  },
 };

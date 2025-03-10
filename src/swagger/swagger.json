@@ -945,6 +945,150 @@
         ]
       }
     },
+    "/v1/user/clinician/:id": {
+      "put": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicianResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["User"],
+        "description": "Update a clinician",
+        "operationId": "PUT_v1-user-clinician-id",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/user/clinician/visitDetails": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["User"],
+        "description": "Get the visit details of the clinician",
+        "operationId": "GET_v1-user-clinician-visitDetails",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/user/notification": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["User"],
+        "description": "Get the notifications of the user",
+        "operationId": "GET_v1-user-notification",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+
     "/v1/visit/formtypes": {
       "get": {
         "responses": {
@@ -1232,9 +1376,68 @@
             "Bearer": []
           }
         ]
+      },
+      "put": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visit"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "PUT_v1-visit",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisitUpdateRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
       }
     },
-
     "/v1/visit/assessment": {
       "get": {
         "responses": {
@@ -1292,10 +1495,77 @@
             "name": "filters",
             "in": "query",
             "schema": {
-              "$ref": "#/components/schemas/Filter"
+              "type": "object",
+              "properties": {
+                "visitId": {
+                  "type": "string",
+                  "example": "67c669e52f53af0f16bf90f4"
+                }
+              },
+              "required": ["visitId"]
             }
           }
         ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "put": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssessmentResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "PUT_v1-assessment",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67a962c84aa8bc0e4063589e"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssessmentUpdateRequest"
+              }
+            }
+          }
+        },
         "security": [
           {
             "Bearer": []
@@ -1630,7 +1900,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "$ref": "#/components/schemas/UploadAudioResponse"
                 }
               }
             }
@@ -1999,6 +2269,40 @@
           "__v": {
             "type": "integer",
             "example": 0
+          }
+        }
+      },
+      "VisitUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "New",
+              "Missed",
+              "In Progress",
+              "Past Due",
+              "Submitted",
+              "Completed"
+            ],
+            "example": "In Progress"
+          }
+        }
+      },
+      "AssessmentUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "Not Started",
+              "In Progress",
+              "Submitted to AI",
+              "Validation",
+              "Submitted to EMR",
+              "Completed"
+            ],
+            "example": "In Progress"
           }
         }
       },
@@ -2428,6 +2732,19 @@
           }
         },
         "required": ["status", "data"]
+      },
+      "UploadAudioResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "data": {
+            "type": "string",
+            "example": "Audio file uploaded and message sent to SQS"
+          }
+        }
       }
     },
     "responses": {},

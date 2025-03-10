@@ -39,6 +39,15 @@ const visitSchema = new mongoose.Schema(
     },
     status: {
       type: String,
+      enum: [
+        "New",
+        "Missed",
+        "In Progress",
+        "Past Due",
+        "Submitted",
+        "Completed",
+      ],
+      default: "New",
     },
   },
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }

@@ -6,6 +6,9 @@ const {
   listVisit,
   listEpisode,
   listAssessment,
+  updateVisit,
+  updateAssessment,
+  getAssessmentById,
 } = require("../controllers/visit.js");
 const {
   checkMissingInputs,
@@ -62,6 +65,30 @@ visitRoutes.get(
   checkMissingInputs,
   validateInputs,
   listAssessment
+);
+
+visitRoutes.get(
+  "/assessment/:id",
+  auth.protect(["self.update"]),
+  checkMissingInputs,
+  validateInputs,
+  getAssessmentById
+);
+
+visitRoutes.put(
+  "/assessment/:id",
+  auth.protect(["self.update"]),
+  checkMissingInputs,
+  validateInputs,
+  updateAssessment
+);
+
+visitRoutes.put(
+  "/:id",
+  auth.protect(["self.update"]),
+  checkMissingInputs,
+  validateInputs,
+  updateVisit
 );
 
 module.exports = visitRoutes;

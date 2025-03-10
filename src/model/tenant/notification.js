@@ -12,20 +12,20 @@ const notificationSchema = new mongoose.Schema(
       ref: "Notification_Type",
       required: true,
     },
-    notification_content: {
+    notificationContent: {
       type: String,
       required: true,
     },
     isRead: {
-      type: String,
-      required: true,
+      type: Boolean,
+      default: false,
     },
     isDelivered: {
-      type: String,
-      required: true,
+      type: Boolean,
+      default: false,
     },
   },
-  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
+  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );
 
 notificationSchema.pre("save", async function (next) {

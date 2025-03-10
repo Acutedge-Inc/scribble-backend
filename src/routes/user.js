@@ -1,5 +1,11 @@
 const express = require("express");
-const { listClient, listClinician } = require("../controllers/user.js");
+const {
+  listClient,
+  listClinician,
+  updateClinician,
+  listClinicianVisitDetails,
+  listUserNotification,
+} = require("../controllers/user.js");
 const {
   checkMissingInputs,
   validateInputs,
@@ -25,4 +31,27 @@ userRoutes.get(
   listClinician
 );
 
+userRoutes.put(
+  "/clinician/:id",
+  auth.protect(["user.update"]),
+  checkMissingInputs,
+  validateInputs,
+  updateClinician
+);
+
+userRoutes.get(
+  "/clinician/visitDetails",
+  auth.protect(["visit.read"]),
+  checkMissingInputs,
+  validateInputs,
+  listClinicianVisitDetails
+);
+
+userRoutes.get(
+  "/notification",
+  auth.protect(["user.read"]),
+  checkMissingInputs,
+  validateInputs,
+  listUserNotification
+);
 module.exports = userRoutes;

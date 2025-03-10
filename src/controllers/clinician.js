@@ -76,9 +76,14 @@ const processAudio = async (req, res) => {
         .json(new ErrorResponse("Error converting form to buffer"));
     }
 
+    const visit = assessment.visitId;
+    if (!visit) {
+      return res.status(404).json(new ErrorResponse("Visit not found"));
+    }
+
     const params = {
       Bucket: "scribble2-data",
-      Key: `${req.tenantDb}/${assessmentId}/input/questionForm.json`,
+      Key: `${req.tenantDb}/${visit._id}/${assessmentId}/input/questionForm.json`,
       Body: formBuffer,
       ContentType: "application/json",
     };
@@ -86,31 +91,30 @@ const processAudio = async (req, res) => {
     const s3 = new AWS.S3();
     const formUploadData = await s3.upload(params).promise();
 
-    const data = await uploadFile(
+    await uploadFile(
       audioFile,
-      `${req.tenantDb}/${assessmentId}/input/${audioFile.originalname}`
+      `${req.tenantDb}/${visit._id}/${assessmentId}/input/${audioFile.originalname}`
     );
-
-    const visit = assessment.visitId;
-    if (!visit) {
-      return res.status(404).json(new ErrorResponse("Visit not found"));
-    }
-
     // Update status as submitted in visits table
     await VisitModel.findByIdAndUpdate(visit._id, { status: "Submitted" });
 
     // Update status as submitted in assessments table
     await AssessmentModel.findByIdAndUpdate(assessmentId, {
-      status: "Submitted",
+      status: "Submitted to AI",
     });
 
     const message = {
-      audioFilePath: `${req.tenantDb}/${assessmentId}/input/${audioFile.originalname}`,
-      questionFormPath: `${req.tenantDb}/${assessmentId}/input/questionForm.json`,
-      assessmentId,
+      audioFilePath: `${req.tenantDb}/${visit._id}/${assessmentId}/input/${audioFile.originalname}`,
+      questionFormPath: `${req.tenantDb}/${visit._id}/${assessmentId}/input/questionForm.json`,
+      visit_id: visit._id,
+      assessment_id: assessmentId,
+      company_id: req.tenantDb,
+      transcribe_type: "deepgram",
+      audio_files: [audioFile.originalname],
+      question_files: ["questionForm.json"],
     };
 
-    const queueUrl = process.env.SQS_QUEUE_URL;
+    const queueUrl = process.env.AI_INPUT_QUEUE_URL;
     const queueMessage = await pushToQueue(queueUrl, message);
 
     return res

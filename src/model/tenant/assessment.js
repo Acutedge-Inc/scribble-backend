@@ -18,6 +18,18 @@ const assessmentSchema = new mongoose.Schema(
     s3Path: {
       type: String,
     },
+    status: {
+      type: String,
+      enum: [
+        "Not Started",
+        "In Progress",
+        "Submitted to AI",
+        "Validation",
+        "Submitted to EMR",
+        "Completed",
+      ],
+      default: "Not Started",
+    },
   },
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );
