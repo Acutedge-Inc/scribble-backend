@@ -40,6 +40,7 @@ const assessment = require("../model/tenant/assessment.js");
 
 //UserAdmin create a form
 const createForm = async (req, res) => {
+  logger.debug(`Creating form with formTypeId: ${req.body.formTypeId}`);
   const { formTypeId, form } = req.body;
   const connection = await getTenantDB(req.tenantDb);
   const FormModel = Form(connection);
@@ -47,54 +48,73 @@ const createForm = async (req, res) => {
   let assessmentForm = await FormModel.find({
     assessmentTypeId: formTypeId,
   });
+  logger.debug(`Found existing assessment forms: ${assessmentForm.length}`);
   if (assessmentForm.length) {
     return res
       .status(401)
       .json(new ErrorResponse("Assessment Form already available"));
   }
   assessmentForm = await FormModel.create({
-    assessmentTypeId: formTypeId,
+    formTypeId: formTypeId,
     questionForm: JSON.stringify(form),
   });
+  logger.debug(`Created new assessment form with id: ${assessmentForm._id}`);
   return res.status(404).json(new SuccessResponse(assessmentForm));
 };
 
 const formTypes = async (req, res) => {
+  logger.debug("Fetching form types");
   const connection = await getTenantDB(req.tenantDb);
   const Form_TypeModel = Form_Type(connection);
   const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+  logger.debug(
+    `Query params: ${JSON.stringify(query)}, limit: ${parsedLimit}, offset: ${parsedOffset}`
+  );
 
   const assessmentTypes = await Form_TypeModel.find(query)
     .limit(parsedLimit)
     .skip(parsedOffset);
 
   const totalCount = await Form_TypeModel.countDocuments(query);
+  logger.debug(`Found ${totalCount} form types`);
 
   return res.status(201).json(new SuccessResponse(assessmentTypes, totalCount));
 };
 
 const listEpisode = async (req, res) => {
   try {
+    logger.debug("Listing episodes");
     const connection = await getTenantDB(req.tenantDb);
     const EpisodeModel = Episode(connection);
     const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    logger.debug(
+      `Query params: ${JSON.stringify(query)}, limit: ${parsedLimit}, offset: ${parsedOffset}`
+    );
+
     const episode = await EpisodeModel.find(query)
       .limit(parsedLimit)
       .skip(parsedOffset);
     const totalCount = await EpisodeModel.countDocuments(query);
+    logger.debug(`Found ${totalCount} episodes`);
+
     return res.status(201).json(new SuccessResponse(episode, totalCount));
   } catch (error) {
+    logger.error(`Error listing episodes: ${error.message}`);
     return res.status(500).json(new ErrorResponse(error.message));
   }
 };
 
 const listVisit = async (req, res) => {
   try {
+    logger.debug("Listing visits");
     const connection = await getTenantDB(req.tenantDb);
     const VisitModel = Visit(connection);
     const clinicianId = req.user.id;
     const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
     query.clinicianId = new mongoose.Types.ObjectId(clinicianId);
+    logger.debug(
+      `Query params: ${JSON.stringify(query)}, limit: ${parsedLimit}, offset: ${parsedOffset}`
+    );
 
     const visit = await VisitModel.aggregate([
       { $match: query },
@@ -179,58 +199,77 @@ const listVisit = async (req, res) => {
     ]);
 
     const totalCount = await VisitModel.countDocuments(query);
+    logger.debug(`Found ${totalCount} visits`);
     return res.status(201).json(new SuccessResponse(visit, totalCount));
   } catch (error) {
+    logger.error(`Error listing visits: ${error.message}`);
     return res.status(500).json(new ErrorResponse(error.message));
   }
 };
 
 const listAssessment = async (req, res) => {
   try {
+    logger.debug("Listing assessments");
     const connection = await getTenantDB(req.tenantDb);
     const { visitId, ...restQuery } = req.query;
     const AssessmentModel = Assessment(connection);
     const { query, parsedLimit, parsedOffset } = getFilterQuery(restQuery);
     query.visitId = new mongoose.Types.ObjectId(visitId);
+    logger.debug(
+      `Query params: ${JSON.stringify(query)}, limit: ${parsedLimit}, offset: ${parsedOffset}`
+    );
 
     const assessment = await AssessmentModel.find(query)
       .limit(parsedLimit)
       .skip(parsedOffset);
     const totalCount = await AssessmentModel.countDocuments(query);
+    logger.debug(`Found ${totalCount} assessments`);
     return res.status(201).json(new SuccessResponse(assessment, totalCount));
   } catch (error) {
+    logger.error(`Error listing assessments: ${error.message}`);
     return res.status(500).json(new ErrorResponse(error.message));
   }
 };
 
 const getAssessmentById = async (req, res) => {
   try {
+    logger.debug(`Getting assessment by id: ${req.params.id}`);
     const { id } = req.params;
     const { connection, session } = await startDatabaseSession(req.tenantDb);
     const AssessmentModel = Assessment(connection);
     const assessment = await AssessmentModel.findById(id);
+    logger.debug(`Found assessment: ${assessment ? "yes" : "no"}`);
     return res.status(200).json(new SuccessResponse(assessment));
   } catch (error) {
+    logger.error(`Error getting assessment by id: ${error.message}`);
     return res.status(500).json(new ErrorResponse(error.message));
   }
 };
 
 const createVisit = async (req, res) => {
+  logger.debug("Creating visit");
   const { connection, session } = await startDatabaseSession(req.tenantDb);
 
   try {
     const requestData = extractRequestData(req.body);
+    logger.debug(`Request data: ${JSON.stringify(requestData)}`);
 
     const clinician = await getOrUpdateClinician(
       requestData,
       connection,
       session
     );
+    logger.debug(
+      `Found/Updated clinician: ${clinician ? clinician._id : "not found"}`
+    );
     if (!clinician)
       return res.status(404).json(new ErrorResponse("Clinician not found"));
 
     const episode = await getOrCreateEpisode(requestData, connection, session);
+    logger.debug(`Found/Created episode: ${episode._id}`);
+
     const client = await getOrUpdateClient(requestData, connection, session);
+    logger.debug(`Found/Updated client: ${client._id}`);
 
     const visit = await createVisitRecord(
       requestData,
@@ -240,11 +279,16 @@ const createVisit = async (req, res) => {
       connection,
       session
     );
+    logger.debug(`Created visit: ${visit ? visit._id : "failed"}`);
     if (!visit)
       return res.status(400).json(new ErrorResponse("Visit already exists"));
 
     const form = await getOrCreateForm(connection, session);
+    logger.debug(`Found/Created form: ${form.id}`);
+
     await createAssessment(form.id, visit.id, connection, session);
+    logger.debug("Created assessment");
+
     await createNotification(
       clinician.userId,
       `New visit created for client ${client.firstName} ${client.lastName}`,
@@ -252,9 +296,13 @@ const createVisit = async (req, res) => {
       connection,
       session
     );
+    logger.debug("Created notification");
+
     await session.commitTransaction();
+    logger.debug("Transaction committed successfully");
     return res.status(201).json(new SuccessResponse(visit));
   } catch (error) {
+    logger.error(`Error creating visit: ${error.message}`);
     await session.abortTransaction();
     return res.status(500).json(new ErrorResponse(error.message));
   } finally {
@@ -266,6 +314,7 @@ const createVisitFromRPA = async (err, data) => {
   let msg;
 
   try {
+    logger.debug("Creating visit from RPA");
     if (err) {
       logger.error(`message container error: ${err.toString()}`);
       return {
@@ -289,11 +338,15 @@ const createVisitFromRPA = async (err, data) => {
 
     try {
       const requestData = extractRequestData(msg.body);
+      logger.debug(`Request data: ${JSON.stringify(requestData)}`);
 
       const clinician = await getOrUpdateClinician(
         requestData,
         connection,
         session
+      );
+      logger.debug(
+        `Found/Updated clinician: ${clinician ? clinician._id : "not found"}`
       );
       if (!clinician) throw new Error("Clinician not found");
 
@@ -302,7 +355,10 @@ const createVisitFromRPA = async (err, data) => {
         connection,
         session
       );
+      logger.debug(`Found/Created episode: ${episode._id}`);
+
       const client = await getOrUpdateClient(requestData, connection, session);
+      logger.debug(`Found/Updated client: ${client._id}`);
 
       const visit = await createVisitRecord(
         requestData,
@@ -312,10 +368,15 @@ const createVisitFromRPA = async (err, data) => {
         connection,
         session
       );
+      logger.debug(`Created visit: ${visit ? visit._id : "failed"}`);
       if (!visit) throw new Error("Visit already exists");
 
       const form = await getOrCreateForm(connection, session);
+      logger.debug(`Found/Created form: ${form.id}`);
+
       await createAssessment(form.id, visit.id, connection, session);
+      logger.debug("Created assessment");
+
       await createNotification(
         clinician.userId,
         `New visit created for client ${client.firstName} ${client.lastName}`,
@@ -323,11 +384,14 @@ const createVisitFromRPA = async (err, data) => {
         connection,
         session
       );
+      logger.debug("Created notification");
+
       await session.commitTransaction();
+      logger.debug("Transaction committed successfully");
       return { msgStatus: true, reason: "Visit created successfully" };
     } catch (error) {
+      logger.error(`Error in transaction: ${error.message}`);
       await session.abortTransaction();
-
       throw error;
     } finally {
       session.endSession();
@@ -354,10 +418,13 @@ const createNotification = async (
   connection,
   session
 ) => {
+  logger.debug(
+    `Creating notification for clinician ${clinicianId} of type ${type}`
+  );
   const NotificationTypeModel = NotificationType(connection);
   const notificationType = await NotificationTypeModel.findOne({
     name: type,
-  });
+  }).session(session);
   const NotificationModel = Notification(connection);
   await NotificationModel.create(
     [
@@ -369,54 +436,61 @@ const createNotification = async (
     ],
     { session }
   );
+  logger.debug("Notification created successfully");
 };
 
 /** Extract request data from req.body */
-const extractRequestData = (body) => ({
-  clinicianNo: body["Clinician ID"],
-  clinicianFirstName: body["Clinician First Name"],
-  clinicianLastName: body["Clinician Last Name"],
-  clinicianDOB: body["Clinician Date of Birth"],
-  clinicianDiscipline: body["Clinician Discipline"],
-  clinicianAge: body["Clinician Age"],
-  clinicianGender: body["Clinician Gender"],
-  clinicianStatus: body["Clinician Status"],
-  clinicianState: body["Clinician State"],
-  clinicianCity: body["Clinician City"],
-  clinicianCounty: body["Clinician County"],
-  clinicianAddress1: body["Clinician Address 1"],
-  clinicianAddress2: body["Clinician Address 2"],
-  clinicianZip: body["Clinician Zip"],
-  clinicianPrimaryPhone: body["Clinician Cell"],
-  clinicianOfficialMailId: body["Clinician Official Email ID"],
-  clinicianSSN: body["Clinician SSN"],
-  episodeNo: body["Episode Number"],
-  episodeDuration: body["Episode Duration"],
-  startDate: body["Episode Start Date"],
-  endDate: body["Episode End Date"],
-  clientNo: body["Client ID"],
-  clientGroupId: body["Client Group ID"],
-  firstName: body["Client First Name"],
-  lastName: body["Client Last Name"],
-  dob: body["Client DOB"],
-  age: body["Client Age"],
-  state: body["Client State"],
-  city: body["Client City"],
-  address1: body["Client Address 1"],
-  address2: body["Client Address 2"],
-  primaryPhone: body["Client Phone"],
-  emergencyContact: body["Client Emergency Contact"],
-  emergencyContactNo: body["Client Emergency Contact #"],
-  visitNo: body["Visit ID"],
-  visitDate: body["Visit Date"],
-  week: body.Week,
-  visitType: body["Visit Type"],
-  service: body.Service,
-  serviceCode: body["Service Code"],
-});
+const extractRequestData = (body) => {
+  logger.debug("Extracting request data from body");
+  const data = {
+    clinicianNo: body["Clinician ID"],
+    clinicianFirstName: body["Clinician First Name"],
+    clinicianLastName: body["Clinician Last Name"],
+    clinicianDOB: body["Clinician Date of Birth"],
+    clinicianDiscipline: body["Clinician Discipline"],
+    clinicianAge: body["Clinician Age"],
+    clinicianGender: body["Clinician Gender"],
+    clinicianStatus: body["Clinician Status"],
+    clinicianState: body["Clinician State"],
+    clinicianCity: body["Clinician City"],
+    clinicianCounty: body["Clinician County"],
+    clinicianAddress1: body["Clinician Address 1"],
+    clinicianAddress2: body["Clinician Address 2"],
+    clinicianZip: body["Clinician Zip"],
+    clinicianPrimaryPhone: body["Clinician Cell"],
+    clinicianOfficialMailId: body["Clinician Official Email ID"],
+    clinicianSSN: body["Clinician SSN"],
+    episodeNo: body["Episode Number"],
+    episodeDuration: body["Episode Duration"],
+    startDate: body["Episode Start Date"],
+    endDate: body["Episode End Date"],
+    clientNo: body["Client ID"],
+    clientGroupId: body["Client Group ID"],
+    firstName: body["Client First Name"],
+    lastName: body["Client Last Name"],
+    dob: body["Client DOB"],
+    age: body["Client Age"],
+    state: body["Client State"],
+    city: body["Client City"],
+    address1: body["Client Address 1"],
+    address2: body["Client Address 2"],
+    primaryPhone: body["Client Phone"],
+    emergencyContact: body["Client Emergency Contact"],
+    emergencyContactNo: body["Client Emergency Contact #"],
+    visitNo: body["Visit ID"],
+    visitDate: body["Visit Date"],
+    week: body.Week,
+    visitType: body["Visit Type"],
+    service: body.Service,
+    serviceCode: body["Service Code"],
+  };
+  logger.debug("Request data extracted successfully");
+  return data;
+};
 
 /** Get or update the clinician record */
 const getOrUpdateClinician = async (data, connection, session) => {
+  logger.debug(`Getting/Updating clinician with number: ${data.clinicianNo}`);
   const Clinician_InfoModel = Clinician_Info(connection);
   const query = Clinician_InfoModel.findOne({
     clinicianNo: data.clinicianNo.toString(),
@@ -424,9 +498,10 @@ const getOrUpdateClinician = async (data, connection, session) => {
   console.log("Executing Query:", query.getFilter()); // Print the query
 
   const clinician = await query;
+  logger.debug(`Found existing clinician: ${clinician ? "yes" : "no"}`);
   if (!clinician) return null;
 
-  return await Clinician_InfoModel.findOneAndUpdate(
+  const updatedClinician = await Clinician_InfoModel.findOneAndUpdate(
     { clinicianNo: data.clinicianNo.toString() },
     {
       firstName: data.clinicianFirstName,
@@ -449,15 +524,20 @@ const getOrUpdateClinician = async (data, connection, session) => {
     },
     { new: true, runValidators: true, session }
   );
+  logger.debug(`Updated clinician: ${updatedClinician._id}`);
+  return updatedClinician;
 };
 
 /** Get or create an episode */
 const getOrCreateEpisode = async (data, connection, session) => {
+  logger.debug(`Getting/Creating episode with number: ${data.episodeNo}`);
   const EpisodeModel = Episode(connection);
 
   let episode = await EpisodeModel.findOne({
     episodeNo: data.episodeNo,
   }).session(session);
+  logger.debug(`Found existing episode: ${episode ? "yes" : "no"}`);
+
   if (!episode) {
     episode = await EpisodeModel.create(
       [
@@ -471,6 +551,7 @@ const getOrCreateEpisode = async (data, connection, session) => {
       { session }
     );
     episode = episode[0];
+    logger.debug(`Created new episode: ${episode._id}`);
   }
 
   return episode;
@@ -478,11 +559,14 @@ const getOrCreateEpisode = async (data, connection, session) => {
 
 /** Get or update the client record */
 const getOrUpdateClient = async (data, connection, session) => {
+  logger.debug(`Getting/Updating client with number: ${data.clientNo}`);
   const Client_InfoModel = Client_Info(connection);
 
   let client = await Client_InfoModel.findOne({
     clientNo: data.clientNo,
   }).session(session);
+  logger.debug(`Found existing client: ${client ? "yes" : "no"}`);
+
   if (!client) {
     client = await Client_InfoModel.create(
       [
@@ -504,10 +588,11 @@ const getOrUpdateClient = async (data, connection, session) => {
       ],
       { session }
     );
+    logger.debug(`Created new client: ${client[0]._id}`);
     return client[0];
   }
 
-  return await Client_InfoModel.findOneAndUpdate(
+  const updatedClient = await Client_InfoModel.findOneAndUpdate(
     { clientNo: data.clientNo },
     {
       clientGroupId: data.clientGroupId,
@@ -525,6 +610,8 @@ const getOrUpdateClient = async (data, connection, session) => {
     },
     { new: true, runValidators: true, session }
   );
+  logger.debug(`Updated client: ${updatedClient._id}`);
+  return updatedClient;
 };
 
 /** Create a new visit record */
@@ -536,11 +623,13 @@ const createVisitRecord = async (
   connection,
   session
 ) => {
+  logger.debug(`Creating visit record with number: ${data.visitNo}`);
   const VisitModel = Visit(connection);
 
   const existingVisit = await VisitModel.findOne({
     visitNo: data.visitNo,
   }).session(session);
+  logger.debug(`Found existing visit: ${existingVisit ? "yes" : "no"}`);
   if (existingVisit) return existingVisit;
 
   const visit = await VisitModel.create(
@@ -559,65 +648,77 @@ const createVisitRecord = async (
     ],
     { session }
   );
+  logger.debug(`Created new visit: ${visit[0]._id}`);
   return visit[0];
 };
 
 /** Get or create a form */
 const getOrCreateForm = async (connection, session) => {
+  logger.debug("Getting/Creating form");
   const Form_TypeModel = Form_Type(connection);
   const FormModel = Form(connection);
 
   const formType = await Form_TypeModel.findOne({
     formName: "Start of Care",
   }).session(session);
+  logger.debug(`Found form type: ${formType ? formType._id : "not found"}`);
   if (!formType) throw new Error("Form type not found");
 
-  const FormTemplateModel = FormTemplate(connection);
-  const formTemplate = await FormTemplateModel.findOne({
-    name: "Start of Care",
-  }).session(session);
-  if (!formTemplate) throw new Error("Form template not found");
-
-  let form = await FormModel.findOne({ formId: formType.id }).session(session);
-  if (!form) {
-    form = await FormModel.create(
-      [{ formTypeId: formType.id, questionForm: formTemplate.formTemplate }],
-      { session }
-    );
-    form = form[0];
-  }
+  let form = await FormModel.findOne({ formTypeId: formType.id }).session(
+    session
+  );
+  logger.debug(`Found form: ${form ? form._id : "not found"}`);
+  if (!form) throw new Error("Form not found");
 
   return form;
 };
 
 /** Create an assessment record */
 const createAssessment = async (formId, visitId, connection, session) => {
+  logger.debug(`Creating assessment for form ${formId} and visit ${visitId}`);
   const AssessmentModel = Assessment(connection);
-  await AssessmentModel.create([{ formId, visitId }], { session });
+
+  const existingAssessment = await AssessmentModel.findOne({
+    formId,
+    visitId,
+  }).session(session);
+  if (existingAssessment) return existingAssessment;
+
+  const assessment = await AssessmentModel.create([{ formId, visitId }], {
+    session,
+  });
+  logger.debug(`Created assessment: ${assessment[0]._id}`);
+  return assessment[0];
 };
 
 /** Start a database session and return connection + session */
 const startDatabaseSession = async (tenantDb) => {
+  logger.debug(`Starting database session for tenant: ${tenantDb}`);
   const connection = await getTenantDB(tenantDb);
   const session = await connection.startSession();
   session.startTransaction();
+  logger.debug("Database session started successfully");
   return { connection, session };
 };
 
 const updateVisit = async (req, res) => {
+  logger.debug(`Updating visit with id: ${req.params.id}`);
   const { connection, session } = await startDatabaseSession(req.tenantDb);
   const VisitModel = Visit(connection);
   const visit = await VisitModel.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
+  logger.debug(`Updated visit: ${visit._id}`);
   return res.status(200).json(new SuccessResponse(visit));
 };
 
 const updateAssessment = async (req, res) => {
+  logger.debug(`Updating assessment with id: ${req.params.id}`);
   const { connection, session } = await startDatabaseSession(req.tenantDb);
   const AssessmentModel = Assessment(connection);
 
   if (req.body.answer) {
+    logger.debug("Sending message to UIPath");
     await sendMessageToUIPath(req.body);
     req.body.status = "Submitted to EMR";
   }
@@ -628,6 +729,7 @@ const updateAssessment = async (req, res) => {
       new: true,
     }
   );
+  logger.debug(`Updated assessment: ${assessment._id}`);
   return res.status(200).json(new SuccessResponse(assessment));
 };
 
@@ -635,6 +737,7 @@ const processAIOutput = async (err, data) => {
   let msg;
 
   try {
+    logger.debug("Processing AI output");
     if (err) {
       logger.error(`message container error: ${err.toString()}`);
       return {
@@ -650,6 +753,9 @@ const processAIOutput = async (err, data) => {
     const { connection, session } = await startDatabaseSession(msg.company_id);
     let jsonContent;
     try {
+      logger.debug(
+        `Downloading file from S3: ${msg.bucketName}/${msg.answerPath}`
+      );
       const s3Response = await downloadFile(msg.bucketName, msg.answerPath);
       // Convert S3 response buffer to string and store JSON content
       const responseBuffer = s3Response.Body;
@@ -658,6 +764,7 @@ const processAIOutput = async (err, data) => {
       }
       jsonContent = responseBuffer.toString("utf-8");
       msg.aiOutput = JSON.parse(jsonContent);
+      logger.debug("Successfully parsed AI output");
     } catch (error) {
       logger.error(`Error downloading from S3: ${error.toString()}`);
       throw error;
@@ -674,6 +781,7 @@ const processAIOutput = async (err, data) => {
         },
       }
     );
+    logger.debug(`Updated assessment with AI output: ${assessment._id}`);
   } catch (error) {
     logger.error(`message container error: ${error.toString()}`);
     await pushToQueue(process.env.AI_OUTPUT_DLQ_QUEUE_URL, {
@@ -691,6 +799,7 @@ const updateAssessmentFromRPA = async (err, data) => {
   let msg;
 
   try {
+    logger.debug("Updating assessment from RPA");
     if (err) {
       logger.error(`message container error: ${err.toString()}`);
       return {
@@ -712,6 +821,8 @@ const updateAssessmentFromRPA = async (err, data) => {
         new: true,
       }
     );
+    logger.debug(`Updated assessment status to Completed: ${assessment._id}`);
+
     const assessments = await AssessmentModel.find({ visitId: msg.visitId });
     const allSubmittedToEMR = assessments.every(
       (a) => a.status === "Submitted to EMR"

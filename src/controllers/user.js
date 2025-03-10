@@ -27,11 +27,15 @@ const {
 const { ErrorResponse } = require("../lib/responses.js");
 
 const listClinician = async (req, res) => {
+  logger.debug("Listing clinicians request received");
   try {
     const connection = await getTenantDB(req.tenantDb);
+    logger.debug(`Connected to tenant database: ${req.tenantDb}`);
     const Clinician_InfoModel = Clinician_Info(connection);
 
     const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    logger.debug(`Query filters: ${JSON.stringify(query)}`);
+    logger.debug(`Pagination: limit=${parsedLimit}, offset=${parsedOffset}`);
 
     const clinicians = await Clinician_InfoModel.aggregate([
       { $match: query }, // Apply filters to Clinician_Info
@@ -74,61 +78,87 @@ const listClinician = async (req, res) => {
       { $skip: parsedOffset },
       { $limit: parsedLimit },
     ]);
+    logger.debug(`Found ${clinicians.length} clinicians`);
 
     const totalCount = await Clinician_InfoModel.countDocuments(query);
+    logger.debug(`Total clinician count: ${totalCount}`);
 
     return res.status(200).json(new SuccessResponse(clinicians, totalCount));
   } catch (error) {
+    logger.error(`Error listing clinicians: ${error.message}`);
     return res.status(500).json(new ErrorResponse(error.message));
   }
 };
 
 const listClient = async (req, res) => {
+  logger.debug("Listing clients request received");
   try {
     const connection = await getTenantDB(req.tenantDb);
+    logger.debug(`Connected to tenant database: ${req.tenantDb}`);
     const Client_InfoModel = Client_Info(connection);
+
     const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    logger.debug(`Query filters: ${JSON.stringify(query)}`);
+    logger.debug(`Pagination: limit=${parsedLimit}, offset=${parsedOffset}`);
+
     const client = await Client_InfoModel.find(query)
       .limit(parsedLimit)
       .skip(parsedOffset);
+    logger.debug(`Found ${client.length} clients`);
+
     const totalCount = await Client_InfoModel.countDocuments(query);
+    logger.debug(`Total client count: ${totalCount}`);
 
     return res.status(201).json(new SuccessResponse(client, totalCount));
   } catch (error) {
+    logger.error(`Error listing clients: ${error.message}`);
     return res.status(500).json(new ErrorResponse(error.message));
   }
 };
 
 const updateClinician = async (req, res) => {
+  logger.debug(`Updating clinician with ID: ${req.params.id}`);
   try {
     const connection = await getTenantDB(req.tenantDb);
+    logger.debug(`Connected to tenant database: ${req.tenantDb}`);
     const Clinician_InfoModel = Clinician_Info(connection);
+
+    logger.debug(`Update data: ${JSON.stringify(req.body)}`);
     const clinician = await Clinician_InfoModel.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
     );
+    logger.debug(`Successfully updated clinician: ${clinician._id}`);
 
     if (req.body.isDeleted) {
+      logger.debug(
+        `Marking associated user as deleted for clinician: ${clinician._id}`
+      );
       const user = await UserModel.findByIdAndUpdate(
         clinician.userId,
         { isDeleted: true },
         { new: true }
       );
+      logger.debug(`Successfully marked user as deleted: ${user._id}`);
     }
 
     return res.status(200).json(new SuccessResponse(clinician));
   } catch (error) {
+    logger.error(`Error updating clinician: ${error.message}`);
     return res.status(500).json(new ErrorResponse(error.message));
   }
 };
 
 const listClinicianVisitDetails = async (req, res) => {
+  logger.debug(`Listing visit details for clinician: ${req.user.id}`);
   try {
     const connection = await getTenantDB(req.tenantDb);
+    logger.debug(`Connected to tenant database: ${req.tenantDb}`);
     const clinicianId = req.user.id;
     const VisitModel = Visit(connection);
 
+    logger.debug("Aggregating visit statistics");
     const visitCounts = await VisitModel.aggregate([
       {
         $match: { clinicianId: new mongoose.Types.ObjectId(clinicianId) },
@@ -164,6 +194,7 @@ const listClinicianVisitDetails = async (req, res) => {
       inProgressVisits: 0,
       completedVisits: 0,
     };
+    logger.debug(`Visit statistics: ${JSON.stringify(counts)}`);
 
     return res.status(200).json(
       new SuccessResponse({
@@ -171,19 +202,26 @@ const listClinicianVisitDetails = async (req, res) => {
       })
     );
   } catch (error) {
+    logger.error(`Error listing clinician visit details: ${error.message}`);
     return res.status(500).json(new ErrorResponse(error.message));
   }
 };
 
 const listUserNotification = async (req, res) => {
+  logger.debug(`Listing notifications for user: ${req.user.id}`);
   try {
     const connection = await getTenantDB(req.tenantDb);
+    logger.debug(`Connected to tenant database: ${req.tenantDb}`);
     const NotificationModel = Notification(connection);
+
     const notifications = await NotificationModel.find({
       userId: req.user.id,
     });
+    logger.debug(`Found ${notifications.length} notifications`);
+
     return res.status(200).json(new SuccessResponse(notifications));
   } catch (error) {
+    logger.error(`Error listing user notifications: ${error.message}`);
     return res.status(500).json(new ErrorResponse(error.message));
   }
 };

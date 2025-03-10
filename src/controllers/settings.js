@@ -29,91 +29,131 @@ const clinicianInfo = require("../model/tenant/clinicianInfo.js");
 
 //UserAdmin create a form
 const createForm = async (req, res) => {
+  logger.debug("Creating new form");
   const { formTypeId, form } = req.body;
+  logger.debug(`Form type ID: ${formTypeId}`);
+
   const connection = await getTenantDB(req.tenantDb);
+  logger.debug(`Connected to tenant database: ${req.tenantDb}`);
   const FormModel = Form(connection);
 
   let assessmentForm = await FormModel.find({
     assessmentTypeId: formTypeId,
   });
+  logger.debug(`Found ${assessmentForm.length} existing forms for this type`);
+
   if (assessmentForm.length) {
+    logger.debug("Assessment form already exists - returning error");
     return res
       .status(401)
       .json(new ErrorResponse("Assessment Form already available"));
   }
+
+  logger.debug("Creating new assessment form");
   assessmentForm = await FormModel.create({
     assessmentTypeId: formTypeId,
     questionForm: JSON.stringify(form),
   });
+  logger.debug(`Created new form with ID: ${assessmentForm._id}`);
+
   return res.status(404).json(new SuccessResponse(assessmentForm));
 };
 
 const getUserSettings = async (req, res) => {
+  logger.debug("Getting user settings");
   const connection = await getTenantDB(req.tenantDb);
+  logger.debug(`Connected to tenant database: ${req.tenantDb}`);
   const Form_TypeModel = Form_Type(connection);
 
+  logger.debug("Fetching assessment types");
   const assessmentTypes = await Form_TypeModel.find();
+  logger.debug(`Found ${assessmentTypes.length} assessment types`);
 
   return res.status(404).json(new SuccessResponse(assessmentTypes));
 };
 
 const updateUserSettings = async (req, res) => {
+  logger.debug("Update user settings called - not yet implemented");
   return res.status(404).json(new SuccessResponse("Needs to be developed"));
 };
 
 const getGridViewSettings = async (req, res) => {
+  logger.debug("Getting grid view settings");
   const { gridName } = req.query;
+  logger.debug(`Grid name: ${gridName}`);
+
   try {
     const connection = await getTenantDB(req.tenantDb);
+    logger.debug(`Connected to tenant database: ${req.tenantDb}`);
     const GridModel = Grid(connection);
     const View_SettingModel = View_Setting(connection);
 
+    logger.debug(`Looking up grid with name: ${gridName}`);
     const grid = await GridModel.findOne({ gridName });
     if (!grid) {
+      logger.debug("Grid not found");
       return res.status(500).json(new ErrorResponse("Grid not found"));
     }
+    logger.debug(`Found grid with ID: ${grid._id}`);
 
+    logger.debug(`Looking up view settings for grid: ${grid._id}`);
     const viewSetting = await View_SettingModel.findOne({
       gridId: grid._id,
     }).select("viewJson");
     if (!viewSetting) {
+      logger.debug("View setting not found");
       throw new Error("View setting not found");
     }
+    logger.debug("Found view settings");
 
     return res
       .status(202)
       .json(new SuccessResponse(JSON.parse(viewSetting.viewJson)));
   } catch (error) {
+    logger.error(`Error getting grid view settings: ${error.message}`);
     return res.status(500).json(new ErrorResponse(error));
   }
 };
 
 const updateGridViewSettings = async (req, res) => {
+  logger.debug("Updating grid view settings");
   try {
     const { gridName, viewJson } = req.body;
+    logger.debug(`Grid name: ${gridName}`);
+
     const connection = await getTenantDB(req.tenantDb);
+    logger.debug(`Connected to tenant database: ${req.tenantDb}`);
     const GridModel = Grid(connection);
     const View_SettingModel = View_Setting(connection);
 
+    logger.debug(`Looking up grid with name: ${gridName}`);
     const grid = await GridModel.findOne({ gridName });
     if (!grid) {
+      logger.debug("Grid not found");
       return res.status(500).json(new ErrorResponse("Grid not found"));
     }
+    logger.debug(`Found grid with ID: ${grid._id}`);
 
+    logger.debug(`Looking up view settings for grid: ${grid._id}`);
     const viewSetting = await View_SettingModel.findOne({
       gridId: grid._id,
     });
     if (!viewSetting) {
+      logger.debug("View setting not found");
       return res.status(500).json(new ErrorResponse("View setting not found"));
     }
+    logger.debug(`Found view setting with ID: ${viewSetting._id}`);
 
+    logger.debug("Updating view settings");
     await View_SettingModel.updateOne(
       { _id: viewSetting._id },
       { $set: { viewJson: JSON.stringify(viewJson) } }
     );
+    logger.debug("View settings updated successfully");
 
     return res.status(200).json(new SuccessResponse("View setting updated"));
   } catch (error) {
+    logger.error(`Error updating grid view settings: ${error.message}`);
     return res.status(500).json(new ErrorResponse(error));
   }
 };

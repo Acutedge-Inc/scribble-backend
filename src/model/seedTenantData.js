@@ -5,6 +5,7 @@ const Grid = require("../model/tenant/grid");
 const View_Setting = require("../model/tenant/viewSetting");
 const NotificationType = require("../model/tenant/notificationType");
 const FormTemplate = require("../model/tenant/assessmentFormTemplate");
+const Form = require("./tenant/form");
 const RoleData = require("./default/role");
 const FormTypeData = require("./default/formType");
 let GridSettingData = require("./default/grid");
@@ -26,7 +27,7 @@ const seedTenantData = async (connection) => {
     const NotificationTypeModel = NotificationType(connection);
     const FormTemplateModel = FormTemplate(connection);
     await RoleModel.create(RoleData);
-    await FormTypeModel.create(FormTypeData);
+    const formType = await FormTypeModel.create(FormTypeData);
     const grid = await GridModel.create(GridSettingData);
 
     GridSettingData = await Promise.all(
@@ -40,9 +41,17 @@ const seedTenantData = async (connection) => {
 
     await ViewSettingModel.create(GridSettingData);
     await NotificationTypeModel.create(NotificationTypeData);
+    const FormModel = Form(connection);
     for (const formTemplate of FormTemplateData) {
       formTemplate.assessmentForm = JSON.stringify(formTemplate.assessmentForm);
       await FormTemplateModel.create(formTemplate);
+      let formTypeId = formType.find(
+        (item) => item.formName === formTemplate.name
+      );
+      await FormModel.create({
+        formTypeId: formTypeId.id,
+        questionForm: JSON.stringify(formTemplate.assessmentForm),
+      });
     }
 
     logger.info("Seeding completed successfully!");
