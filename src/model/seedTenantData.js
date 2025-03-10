@@ -3,12 +3,13 @@ const Role = require("../model/tenant/role");
 const Form_Type = require("./tenant/formType");
 const Grid = require("../model/tenant/grid");
 const View_Setting = require("../model/tenant/viewSetting");
+const NotificationType = require("../model/tenant/notificationType");
+const FormTemplate = require("../model/tenant/assessmentFormTemplate");
 const RoleData = require("./default/role");
 const FormTypeData = require("./default/formType");
 let GridSettingData = require("./default/grid");
 const NotificationTypeData = require("./default/notificationType");
-const { indexOf } = require("lodash");
-const { ErrorResponse } = require("../lib/responses");
+const FormTemplateData = require("./default/formTemplate");
 const { logger } = require("../lib");
 
 const connections = {}; // Store tenant connections
@@ -23,7 +24,7 @@ const seedTenantData = async (connection) => {
     const GridModel = Grid(connection);
     const ViewSettingModel = View_Setting(connection);
     const NotificationTypeModel = NotificationType(connection);
-
+    const FormTemplateModel = FormTemplate(connection);
     await RoleModel.create(RoleData);
     await FormTypeModel.create(FormTypeData);
     const grid = await GridModel.create(GridSettingData);
@@ -39,7 +40,7 @@ const seedTenantData = async (connection) => {
 
     await ViewSettingModel.create(GridSettingData);
     await NotificationTypeModel.create(NotificationTypeData);
-
+    await FormTemplateModel.create(FormTemplateData);
     logger.info("Seeding completed successfully!");
     return true;
   } catch (error) {

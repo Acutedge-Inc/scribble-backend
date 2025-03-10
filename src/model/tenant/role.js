@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
 
 const roleSchema = new mongoose.Schema(
   {
@@ -16,7 +15,7 @@ const roleSchema = new mongoose.Schema(
   },
   {
     timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" },
-  },
+  }
 );
 
 roleSchema.pre("save", function (next) {

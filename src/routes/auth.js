@@ -14,8 +14,6 @@ const {
 } = require("../controllers/auth.js");
 const { checkMissingInputs, validateInputs } = require("../middlewares");
 const { auth } = require("../lib/index.js");
-const jwt = require("jsonwebtoken");
-const { ErrorResponse } = require("../lib/responses.js");
 const authRoutes = express.Router();
 
 //Login of all the users in scribble

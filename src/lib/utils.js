@@ -45,12 +45,12 @@ module.exports = {
     const parsedPage = Math.max(parseInt(page, 10) - 1 || 0, 0); // Default 0, minimum 0
     const parsedOffset = parsedPage * parsedLimit; // Offset calculation
 
-    let orConditions = [];
+    const orConditions = [];
 
     for (const key in filters) {
       if (filters[key]) {
         // Use regex for string fields (case-insensitive), otherwise direct match
-        let condition =
+        const condition =
           typeof filters[key] === "string"
             ? { [key]: { $regex: filters[key], $options: "i" } }
             : { [key]: filters[key] };
@@ -60,7 +60,7 @@ module.exports = {
     }
 
     // If no filters provided, return an empty query (matches all)
-    let query = orConditions.length > 0 ? { $or: orConditions } : {};
+    const query = orConditions.length > 0 ? { $or: orConditions } : {};
 
     return { query, parsedLimit, parsedOffset };
   },

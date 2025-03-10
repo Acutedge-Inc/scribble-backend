@@ -272,7 +272,7 @@ const createTenant = async (req, res) => {
 
 const getTenant = async (req, res) => {
   try {
-    let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
     const existingTenants = await Tenant.find(query)
       .limit(parsedLimit)
       .skip(parsedOffset);
@@ -303,7 +303,7 @@ const getRoles = async (req, res) => {
 
     const RoleModel = Role(connection);
 
-    let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
     const role = await RoleModel.find(query)
       .limit(parsedLimit)
       .skip(parsedOffset);
@@ -628,7 +628,7 @@ const sendRecoverPasswordEmail = async (req, res) => {
       "recover-password"
     );
 
-    let passwordRecoveryLink = `${process.env.WEB_URL}/recover-password/${user.email}/${token}/`;
+    const passwordRecoveryLink = `${process.env.WEB_URL}/recover-password/${user.email}/${token}/`;
     await sendPasswordResetEmail(email, passwordRecoveryLink);
     res.json(new SuccessResponse({ message: "Link sent to your email" }));
   } catch (err) {

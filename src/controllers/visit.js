@@ -21,6 +21,7 @@ const Form = require("../model/tenant/form.js");
 const Assessment = require("../model/tenant/assessment.js");
 const Notification = require("../model/tenant/notification.js");
 const NotificationType = require("../model/tenant/notificationType.js");
+const FormTemplate = require("../model/tenant/assessmentFormTemplate.js");
 
 const {
   pushToQueue,
@@ -61,7 +62,7 @@ const createForm = async (req, res) => {
 const formTypes = async (req, res) => {
   const connection = await getTenantDB(req.tenantDb);
   const Form_TypeModel = Form_Type(connection);
-  let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+  const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
 
   const assessmentTypes = await Form_TypeModel.find(query)
     .limit(parsedLimit)
@@ -76,8 +77,8 @@ const listEpisode = async (req, res) => {
   try {
     const connection = await getTenantDB(req.tenantDb);
     const EpisodeModel = Episode(connection);
-    let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
-    let episode = await EpisodeModel.find(query)
+    const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    const episode = await EpisodeModel.find(query)
       .limit(parsedLimit)
       .skip(parsedOffset);
     const totalCount = await EpisodeModel.countDocuments(query);
@@ -91,11 +92,11 @@ const listVisit = async (req, res) => {
   try {
     const connection = await getTenantDB(req.tenantDb);
     const VisitModel = Visit(connection);
-    let clinicianId = req.user.id;
-    let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    const clinicianId = req.user.id;
+    const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
     query.clinicianId = new mongoose.Types.ObjectId(clinicianId);
 
-    let visit = await VisitModel.aggregate([
+    const visit = await VisitModel.aggregate([
       { $match: query },
 
       // 🔹 Join with episodes table
@@ -189,10 +190,10 @@ const listAssessment = async (req, res) => {
     const connection = await getTenantDB(req.tenantDb);
     const { visitId, ...restQuery } = req.query;
     const AssessmentModel = Assessment(connection);
-    let { query, parsedLimit, parsedOffset } = getFilterQuery(restQuery);
+    const { query, parsedLimit, parsedOffset } = getFilterQuery(restQuery);
     query.visitId = new mongoose.Types.ObjectId(visitId);
 
-    let assessment = await AssessmentModel.find(query)
+    const assessment = await AssessmentModel.find(query)
       .limit(parsedLimit)
       .skip(parsedOffset);
     const totalCount = await AssessmentModel.countDocuments(query);
@@ -408,21 +409,21 @@ const extractRequestData = (body) => ({
   emergencyContactNo: body["Client Emergency Contact #"],
   visitNo: body["Visit ID"],
   visitDate: body["Visit Date"],
-  week: body["Week"],
+  week: body.Week,
   visitType: body["Visit Type"],
-  service: body["Service"],
+  service: body.Service,
   serviceCode: body["Service Code"],
 });
 
 /** Get or update the clinician record */
 const getOrUpdateClinician = async (data, connection, session) => {
   const Clinician_InfoModel = Clinician_Info(connection);
-  let query = Clinician_InfoModel.findOne({
+  const query = Clinician_InfoModel.findOne({
     clinicianNo: data.clinicianNo.toString(),
   }).session(session);
   console.log("Executing Query:", query.getFilter()); // Print the query
 
-  let clinician = await query;
+  const clinician = await query;
   if (!clinician) return null;
 
   return await Clinician_InfoModel.findOneAndUpdate(
@@ -542,7 +543,7 @@ const createVisitRecord = async (
   }).session(session);
   if (existingVisit) return existingVisit;
 
-  let visit = await VisitModel.create(
+  const visit = await VisitModel.create(
     [
       {
         episodeId,
@@ -566,15 +567,21 @@ const getOrCreateForm = async (connection, session) => {
   const Form_TypeModel = Form_Type(connection);
   const FormModel = Form(connection);
 
-  let formType = await Form_TypeModel.findOne({
+  const formType = await Form_TypeModel.findOne({
     formName: "Start of Care",
   }).session(session);
   if (!formType) throw new Error("Form type not found");
 
+  const FormTemplateModel = FormTemplate(connection);
+  const formTemplate = await FormTemplateModel.findOne({
+    name: "Start of Care",
+  }).session(session);
+  if (!formTemplate) throw new Error("Form template not found");
+
   let form = await FormModel.findOne({ formId: formType.id }).session(session);
   if (!form) {
     form = await FormModel.create(
-      [{ formTypeId: formType.id, questionForm: "hello" }],
+      [{ formTypeId: formType.id, questionForm: formTemplate.formTemplate }],
       { session }
     );
     form = form[0];

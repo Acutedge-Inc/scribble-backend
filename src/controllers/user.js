@@ -31,7 +31,7 @@ const listClinician = async (req, res) => {
     const connection = await getTenantDB(req.tenantDb);
     const Clinician_InfoModel = Clinician_Info(connection);
 
-    let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
 
     const clinicians = await Clinician_InfoModel.aggregate([
       { $match: query }, // Apply filters to Clinician_Info
@@ -87,8 +87,8 @@ const listClient = async (req, res) => {
   try {
     const connection = await getTenantDB(req.tenantDb);
     const Client_InfoModel = Client_Info(connection);
-    let { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
-    let client = await Client_InfoModel.find(query)
+    const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    const client = await Client_InfoModel.find(query)
       .limit(parsedLimit)
       .skip(parsedOffset);
     const totalCount = await Client_InfoModel.countDocuments(query);
@@ -126,7 +126,7 @@ const updateClinician = async (req, res) => {
 const listClinicianVisitDetails = async (req, res) => {
   try {
     const connection = await getTenantDB(req.tenantDb);
-    let clinicianId = req.user.id;
+    const clinicianId = req.user.id;
     const VisitModel = Visit(connection);
 
     const visitCounts = await VisitModel.aggregate([

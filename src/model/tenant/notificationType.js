@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
 
 const notificationTypeSchema = new mongoose.Schema(
   {
@@ -11,7 +10,7 @@ const notificationTypeSchema = new mongoose.Schema(
   },
   {
     timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" },
-  },
+  }
 );
 
 notificationTypeSchema.pre("save", function (next) {

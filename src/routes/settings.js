@@ -10,8 +10,6 @@ const {
   validateInputs,
 } = require("../middlewares/index.js");
 const { auth } = require("../lib/index.js");
-const jwt = require("jsonwebtoken");
-const { ErrorResponse } = require("../lib/responses.js");
 const assessmentRoutes = express.Router();
 
 //Scribble admin to create new tenant

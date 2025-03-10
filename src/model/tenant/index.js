@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 const path = require("path");
-const fs = require("fs");
-const { getConnection } = require("../../lib/dbManager");
 const { logger } = require("../../lib");
 const seedTenantData = require("../seedTenantData");
 
