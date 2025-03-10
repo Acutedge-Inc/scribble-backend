@@ -19,6 +19,8 @@ const Visit = require("../model/tenant/visit.js");
 const Form_Type = require("../model/tenant/formType.js");
 const Form = require("../model/tenant/form.js");
 const Assessment = require("../model/tenant/assessment.js");
+const Notification = require("../model/tenant/notification.js");
+const NotificationType = require("../model/tenant/notificationType.js");
 
 const {
   pushToQueue,
