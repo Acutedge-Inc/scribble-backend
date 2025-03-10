@@ -9,6 +9,8 @@ const {
   updateVisit,
   updateAssessment,
   getAssessmentById,
+  getForm,
+  updateForm,
 } = require("../controllers/visit.js");
 const {
   checkMissingInputs,
@@ -19,15 +21,31 @@ const visitRoutes = express.Router();
 
 visitRoutes.post(
   "/form",
-  auth.protect(["self.read"]),
+  auth.protect(["form.create"]),
   checkMissingInputs,
   validateInputs,
   createForm
 );
 
+visitRoutes.get(
+  "/form",
+  auth.protect(["form.read"]),
+  checkMissingInputs,
+  validateInputs,
+  getForm
+);
+
+visitRoutes.put(
+  "/form/:id",
+  auth.protect(["form.update"]),
+  checkMissingInputs,
+  validateInputs,
+  updateForm
+);
+
 visitRoutes.post(
   "/",
-  auth.protect(["self.read"]),
+  auth.protect(["visit.create"]),
   checkMissingInputs,
   validateInputs,
   createVisit
@@ -35,7 +53,7 @@ visitRoutes.post(
 
 visitRoutes.get(
   "/",
-  auth.protect(["self.read"]),
+  auth.protect(["visit.read"]),
   checkMissingInputs,
   validateInputs,
   listVisit
@@ -43,7 +61,7 @@ visitRoutes.get(
 
 visitRoutes.get(
   "/episode",
-  auth.protect(["self.read"]),
+  auth.protect(["visit.read"]),
   checkMissingInputs,
   validateInputs,
   listEpisode
@@ -51,7 +69,7 @@ visitRoutes.get(
 
 visitRoutes.get(
   "/formtypes",
-  auth.protect(["self.read"]),
+  auth.protect(["visit.read"]),
   checkMissingInputs,
   validateInputs,
   formTypes
@@ -59,7 +77,7 @@ visitRoutes.get(
 
 visitRoutes.get(
   "/assessment",
-  auth.protect(["self.read"]),
+  auth.protect(["visit.read"]),
   checkMissingInputs,
   validateInputs,
   listAssessment
@@ -67,7 +85,7 @@ visitRoutes.get(
 
 visitRoutes.get(
   "/assessment/:id",
-  auth.protect(["self.update"]),
+  auth.protect(["visit.read"]),
   checkMissingInputs,
   validateInputs,
   getAssessmentById
@@ -75,7 +93,7 @@ visitRoutes.get(
 
 visitRoutes.put(
   "/assessment/:id",
-  auth.protect(["self.update"]),
+  auth.protect(["visit.update"]),
   checkMissingInputs,
   validateInputs,
   updateAssessment
@@ -83,7 +101,7 @@ visitRoutes.put(
 
 visitRoutes.put(
   "/:id",
-  auth.protect(["self.update"]),
+  auth.protect(["visit.update"]),
   checkMissingInputs,
   validateInputs,
   updateVisit

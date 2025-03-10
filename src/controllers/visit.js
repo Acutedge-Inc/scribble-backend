@@ -745,6 +745,27 @@ const updateAssessmentFromRPA = async (err, data) => {
   }
 };
 
+const getForm = async (req, res) => {
+  const { connection, session } = await startDatabaseSession(req.tenantDb);
+  const FormModel = Form(connection);
+  const form = await FormModel.findById(req.params.id).populate({
+    path: "formTypeId",
+    model: Form_Type,
+  });
+  if (!form) return res.status(404).json(new ErrorResponse("Form not found"));
+  form.formName = form.formTypeId.formName;
+  form.questionForm = JSON.parse(form.questionForm);
+  return res.status(200).json(new SuccessResponse(form));
+};
+
+const updateForm = async (req, res) => {
+  const { connection, session } = await startDatabaseSession(req.tenantDb);
+  const FormModel = Form(connection);
+  const form = await FormModel.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+  return res.status(200).json(new SuccessResponse(form));
+};
 module.exports = {
   createForm,
   createVisit,
@@ -758,4 +779,6 @@ module.exports = {
   getAssessmentById,
   processAIOutput,
   updateAssessmentFromRPA,
+  getForm,
+  updateForm,
 };
