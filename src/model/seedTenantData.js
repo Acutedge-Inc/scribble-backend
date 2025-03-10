@@ -41,7 +41,7 @@ const seedTenantData = async (connection) => {
     await ViewSettingModel.create(GridSettingData);
     await NotificationTypeModel.create(NotificationTypeData);
     for (const formTemplate of FormTemplateData) {
-      formTemplate.formTemplate = JSON.stringify(formTemplate.formTemplate);
+      formTemplate.assessmentForm = JSON.stringify(formTemplate.assessmentForm);
       await FormTemplateModel.create(formTemplate);
     }
 
