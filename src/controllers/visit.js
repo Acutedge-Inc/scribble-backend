@@ -153,7 +153,7 @@ const listVisit = async (req, res) => {
           visitType: 1,
           service: 1,
           serviceCode: 1,
-          status: "InProgress",
+          status: 1,
           createdAt: 1,
           updatedAt: 1,
           episodeId: "$episode._id",
