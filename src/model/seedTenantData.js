@@ -40,7 +40,11 @@ const seedTenantData = async (connection) => {
 
     await ViewSettingModel.create(GridSettingData);
     await NotificationTypeModel.create(NotificationTypeData);
-    await FormTemplateModel.create(FormTemplateData);
+    for (const formTemplate of FormTemplateData) {
+      formTemplate.formTemplate = JSON.stringify(formTemplate.formTemplate);
+      await FormTemplateModel.create(formTemplate);
+    }
+
     logger.info("Seeding completed successfully!");
     return true;
   } catch (error) {
