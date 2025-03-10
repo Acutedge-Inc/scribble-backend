@@ -768,6 +768,7 @@ const updateForm = async (req, res) => {
   const form = await FormModel.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
+  form.questionForm = JSON.parse(form.questionForm);
   return res.status(200).json(new SuccessResponse(form));
 };
 module.exports = {
