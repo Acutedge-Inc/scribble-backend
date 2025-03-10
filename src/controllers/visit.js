@@ -748,14 +748,17 @@ const updateAssessmentFromRPA = async (err, data) => {
 const getForm = async (req, res) => {
   const { connection, session } = await startDatabaseSession(req.tenantDb);
   const FormModel = Form(connection);
-  const form = await FormModel.findById(req.params.id).populate({
+  const form = await FormModel.find().populate({
     path: "formTypeId",
     model: Form_Type,
   });
   if (!form) return res.status(404).json(new ErrorResponse("Form not found"));
-  form.formName = form.formTypeId.formName;
-  form.questionForm = JSON.parse(form.questionForm);
-  return res.status(200).json(new SuccessResponse(form));
+  const formData = form.map((f) => {
+    f.formName = f.formTypeId.formName;
+    f.questionForm = JSON.parse(f.questionForm);
+    return f;
+  });
+  return res.status(200).json(new SuccessResponse(formData));
 };
 
 const updateForm = async (req, res) => {
