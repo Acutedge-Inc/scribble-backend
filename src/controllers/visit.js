@@ -764,6 +764,7 @@ const getForm = async (req, res) => {
 const updateForm = async (req, res) => {
   const { connection, session } = await startDatabaseSession(req.tenantDb);
   const FormModel = Form(connection);
+  req.body.questionForm = JSON.stringify(req.body.questionForm);
   const form = await FormModel.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
