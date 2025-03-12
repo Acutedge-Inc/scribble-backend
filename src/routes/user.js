@@ -47,7 +47,7 @@ userRoutes.get(
 
 userRoutes.get(
   "/notification",
-  auth.protect(["user.read"]),
+  auth.protect(["visit.read"]),
   checkMissingInputs,
   validateInputs,
   listUserNotification

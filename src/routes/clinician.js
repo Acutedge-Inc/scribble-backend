@@ -10,11 +10,12 @@ const upload = multer({
   limits: { fileSize: 30 * 1024 * 1024 }, // 30 MB limit
   fileFilter(req, file, cb) {
     console.log("File details:", file);
-    const validExtensions = /\.(mp3|wav|webm|mp4|mkv)$/;
+    const validExtensions = /\.(mp3|wav|webm|mp4|m4a|mkv)$/;
     const validMimeTypes = [
       "audio/webm",
       "audio/mp3",
       "audio/wav",
+      "audio/x-m4a",
       "video/mp4",
       "video/webm",
       "video/x-matroska",

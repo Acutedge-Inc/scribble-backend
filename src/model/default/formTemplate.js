@@ -3,6 +3,21 @@ module.exports = [
     name: "Start of Care",
     assessmentForm: [
       {
+        question_code: "B1300",
+        question:
+          "How often do you need to have someone help you when you read instructions, pamphlets, or other written material from your doctor or pharmacy?",
+        options: [
+          "0. Never",
+          "1. Rarely",
+          "2. Sometimes",
+          "3. Often",
+          "4. Always",
+          "7. Patient declines to respond",
+          "8. Patient unable to respond",
+        ],
+        value: 0,
+      },
+      {
         question_code: "B0200",
         question:
           "Do you have difficulty hearing in a normal conversation, when socializing, or watching TV?",
@@ -12,6 +27,7 @@ module.exports = [
           "2. Moderate difficulty - speaker has to increase volume and speak distinctly",
           "3. Highly impaired - absence of useful hearing",
         ],
+        value: 2,
       },
       {
         question_code: "B1000",
@@ -24,67 +40,7 @@ module.exports = [
           "3. Highly impaired - object identification in question, but eyes appear to follow objects",
           "4. Severely impaired - no vision or sees only light, colors or shapes; eyes do not appear to follow objects",
         ],
-      },
-      {
-        question_code: "GG0100.A",
-        question:
-          "Indicate the patient's usual ability with everyday activities prior to the current illness, exacerbation, or injury. - Code the patient's need for assistance with bathing, dressing, using the toilet, and eating prior to the current illness, exacerbation, or injury.",
-        options: [
-          "3. Independent - Patient completed all the activities by themself, with or without an assistive device, with no assistance from a helper.",
-          "2. Needed Some Help - Patient needed partial assistance from another person to complete any activities.",
-          "1. Dependent - A helper completed all the activities for the patient.",
-          "8. Unknown",
-          "9. Not Applicable",
-        ],
-      },
-      {
-        question_code: "GG0100.B",
-        question:
-          "Indicate the patient's usual ability with everyday activities prior to the current illness, exacerbation, or injury. - Code the patient's need for assistance with walking from room to room (with or without a device such as cane, crutch or walker) prior to the current illness, exacerbation, or injury.",
-        options: [
-          "3. Independent - Patient completed all the activities by themself, with or without an assistive device, with no assistance from a helper.",
-          "2. Needed Some Help - Patient needed partial assistance from another person to complete any activities.",
-          "1. Dependent - A helper completed all the activities for the patient.",
-          "8. Unknown",
-          "9. Not Applicable",
-        ],
-      },
-      {
-        question_code: "GG0100.C",
-        question:
-          "Indicate the patient's usual ability with everyday activities prior to the current illness, exacerbation, or injury. - Code the patient's need for assistance with internal or external stairs (with or without a device such as cane, crutch, or walker) prior to the current illness, exacerbation or injury.",
-        options: [
-          "3. Independent - Patient completed all the activities by themself, with or without an assistive device, with no assistance from a helper.",
-          "2. Needed Some Help - Patient needed partial assistance from another person to complete any activities.",
-          "1. Dependent - A helper completed all the activities for the patient.",
-          "8. Unknown",
-          "9. Not Applicable",
-        ],
-      },
-      {
-        question_code: "GG0100.D",
-        question:
-          "Indicate the patient's usual ability with everyday activities prior to the current illness, exacerbation, or injury. - Code the patient's need for assistance with planning regular tasks, such as shopping or remembering to take medication prior to the current illness, exacerbation, or injury.",
-        options: [
-          "3. Independent - Patient completed all the activities by themself, with or without an assistive device, with no assistance from a helper.",
-          "2. Needed Some Help - Patient needed partial assistance from another person to complete any activities.",
-          "1. Dependent - A helper completed all the activities for the patient.",
-          "8. Unknown",
-          "9. Not Applicable",
-        ],
-      },
-      {
-        question_code: "GG0110",
-        question:
-          "Indicate devices and aids used by the patient prior to the current illness, exacerbation, or injury.",
-        options: [
-          "A. Manual wheelchair",
-          "B. Motorized wheelchair and/or scooter",
-          "C. Mechanical lift",
-          "D. Walker",
-          "E. Orthotics/Prosthetics",
-          "Z. None of the above",
-        ],
+        value: 3,
       },
     ],
   },

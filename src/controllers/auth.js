@@ -76,8 +76,7 @@ async function adminLogin(req, res) {
 
     const adminUser = await AdminUser.findOne({ email });
     logger.debug(
-      "Admin user lookup result:",
-      adminUser ? "found" : "not found"
+      `Admin user lookup result: ${adminUser ? "found" : "not found"}`
     );
 
     if (!adminUser) {
@@ -341,37 +340,37 @@ const getTenant = async (req, res) => {
     const existingTenants = await Tenant.find(query)
       .limit(parsedLimit)
       .skip(parsedOffset);
-    logger.debug("Found tenants count:", existingTenants.length);
+    logger.debug(`Found tenants count: ${existingTenants.length}`);
 
     const totalCount = await Tenant.countDocuments(query);
-    logger.debug("Total tenants count:", totalCount);
+    logger.debug(`Total tenants count: ${totalCount}`);
 
     return res
       .status(201)
       .json(new SuccessResponse(existingTenants, totalCount));
   } catch (error) {
-    logger.error("Error on getting tenants:", error);
+    logger.error(`Error on getting tenants: ${error}`);
     res.status(500).json(new ErrorResponse(error));
   }
 };
 
 const getRoles = async (req, res) => {
-  logger.debug("Getting roles for tenant:", req.tenantId);
+  logger.debug(`Getting roles for tenant: ${req.tenantId}`);
   try {
     const { tenantId } = req;
     const tenant = await Tenant.findById(tenantId);
-    logger.debug("Tenant lookup result:", tenant ? "found" : "not found");
+    logger.debug(`Tenant lookup result: ${tenant ? "found" : "not found"}`);
 
     // If tenant not found, return an error
     if (!tenant) {
-      logger.warn("Get roles failed - tenant not found:", tenantId);
+      logger.warn(`Get roles failed - tenant not found: ${tenantId}`);
       return res
         .status(400)
         .json(new ErrorResponse({ message: "Tenant not found" }));
     }
 
     const connection = await getTenantDB(tenant.databaseName);
-    logger.debug("Connected to tenant database");
+    logger.debug(`Connected to tenant database: ${tenant.databaseName}`);
 
     const RoleModel = Role(connection);
 
@@ -381,7 +380,7 @@ const getRoles = async (req, res) => {
     const role = await RoleModel.find(query)
       .limit(parsedLimit)
       .skip(parsedOffset);
-    logger.debug("Found roles count:", role.length);
+    logger.debug(`Found roles count: ${role.length}`);
 
     if (!role) {
       logger.warn("No roles found for query");
@@ -390,11 +389,11 @@ const getRoles = async (req, res) => {
         .json(new ErrorResponse({ message: "Role not found" }));
     }
     const totalCount = await RoleModel.countDocuments(query);
-    logger.debug("Total roles count:", totalCount);
+    logger.debug(`Total roles count: ${totalCount}`);
 
     return res.status(201).json(new SuccessResponse(role, totalCount));
   } catch (error) {
-    logger.error("Error on getting roles:", error);
+    logger.error(`Error on getting roles: ${error}`);
     res.status(500).json(new ErrorResponse(error));
   }
 };
@@ -403,7 +402,7 @@ const getRoles = async (req, res) => {
  * Creates a record in the appropriate UserInfo table.
  */
 async function createUserInfo({ userId, roleName, req, connection, session }) {
-  logger.debug("Creating user info", { userId, roleName });
+  logger.debug(`Creating user info: ${userId}, ${roleName}`);
   const {
     employeeId,
     firstName,
@@ -645,13 +644,15 @@ const getAccessToken = async (req, res) => {
  * @returns Response stating the password update status
  */
 const changePassword = async (req, res) => {
-  logger.debug("Change password request received for user:", req.user.id);
+  logger.debug(`Change password request received for user: ${req.user.id}`);
   try {
     const { newPassword, oldPassword } = req.body;
 
     // Current password entered by user should be correct to be allowed to change it
     if (!bcrypt.compareSync(oldPassword, req.user.password)) {
-      logger.warn("Change password failed - incorrect current password");
+      logger.warn(
+        `Change password failed - incorrect current password: ${oldPassword}`
+      );
       throw new HTTPError(
         400,
         "Current password entered is incorrect",
@@ -661,7 +662,9 @@ const changePassword = async (req, res) => {
 
     // New password can not be the same as the current password
     if (bcrypt.compareSync(newPassword, req.user.password)) {
-      logger.warn("Change password failed - new password same as current");
+      logger.warn(
+        `Change password failed - new password same as current: ${newPassword}`
+      );
       throw new HTTPError(
         403,
         "Your new password cannot be the same as your current password.",
@@ -676,7 +679,7 @@ const changePassword = async (req, res) => {
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(newPassword, salt);
     req.user.password = hash;
-    logger.debug("Generated new hashed password");
+    logger.debug(`Generated new hashed password: ${hash}`);
 
     const connection = await getTenantDB(req.tenantDb);
 
@@ -686,12 +689,12 @@ const changePassword = async (req, res) => {
       { email: req.user?.email }, // Filter: Find user by email
       { $set: { password: hash, isFirstLogin: false } } // Update password field
     );
-    logger.debug("Updated password in database");
+    logger.debug(`Updated password in database: ${req.user.email}`);
 
-    logger.info("Successfully changed password for user:", req.user.email);
+    logger.info(`Successfully changed password for user: ${req.user.email}`);
     res.json(new SuccessResponse({ message: "Password updated." }));
   } catch (err) {
-    logger.error("Change password error:", err);
+    logger.error(`Change password error: ${err}`);
     res
       .status(err.statusCode || 500)
       .json(new ErrorResponse(err, err.errorCode, req?.apiId, err.data));
@@ -717,11 +720,11 @@ const sendRecoverPasswordEmail = async (req, res) => {
 
     const { "x-tenant-id": tenantId } = req.headers;
     const tenant = await Tenant.findById(tenantId);
-    logger.debug("Tenant lookup result:", tenant ? "found" : "not found");
+    logger.debug(`Tenant lookup result: ${tenant ? "found" : "not found"}`);
 
     // If tenant not found, return an error
     if (!tenant) {
-      logger.warn("Recovery email failed - tenant not found:", tenantId);
+      logger.warn(`Recovery email failed - tenant not found: ${tenantId}`);
       return res
         .status(400)
         .json(new ErrorResponse({ message: "Tenant not found" }));
@@ -735,7 +738,7 @@ const sendRecoverPasswordEmail = async (req, res) => {
       path: "roleId",
       select: "roleName scope",
     });
-    logger.debug("User lookup result:", user ? "found" : "not found");
+    logger.debug(`User lookup result: ${user ? "found" : "not found"}`);
 
     // Verify if user is registered
     if (!user) {
@@ -758,11 +761,11 @@ const sendRecoverPasswordEmail = async (req, res) => {
 
     const passwordRecoveryLink = `${process.env.WEB_URL}/recover-password/${user.email}/${token}/`;
     await sendPasswordResetEmail(email, passwordRecoveryLink);
-    logger.info("Sent password recovery email to:", email);
+    logger.info(`Sent password recovery email to: ${email}`);
 
     res.json(new SuccessResponse({ message: "Link sent to your email" }));
   } catch (err) {
-    logger.error("Password recovery email error:", err);
+    logger.error(`Password recovery email error: ${err}`);
     res
       .status(err.statusCode || 500)
       .json(new ErrorResponse(err, err.errorCode, req?.apiId, err.data));
@@ -842,7 +845,7 @@ const recoverPassword = async (req, res) => {
 
     const { "x-tenant-id": tenantId } = req.headers;
     const tenant = await Tenant.findById(tenantId);
-    logger.debug("Tenant lookup result:", tenant ? "found" : "not found");
+    logger.debug(`Tenant lookup result: ${tenant ? "found" : "not found"}`);
 
     // If tenant not found, return an error
     if (!tenant) {
@@ -856,7 +859,7 @@ const recoverPassword = async (req, res) => {
     const UserModel = User(connection);
 
     const user = await UserModel.findOne({ email });
-    logger.debug("User lookup result:", user ? "found" : "not found");
+    logger.debug(`User lookup result: ${user ? "found" : "not found"}`);
 
     if (isEmpty(newPassword)) {
       logger.warn("Password recovery failed - missing new password");
