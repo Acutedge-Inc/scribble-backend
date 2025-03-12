@@ -110,6 +110,7 @@ const listVisit = async (req, res) => {
     const connection = await getTenantDB(req.tenantDb);
     const VisitModel = Visit(connection);
     const clinicianId = req.user.id;
+    req.query.and = [];
     if (req.query.status === "To be reviewed") {
       req.query.status = {
         $nin: ["Missed", "In Progress"],
@@ -120,8 +121,30 @@ const listVisit = async (req, res) => {
         $in: ["Completed", "Submitted"],
       };
     }
+
+    let clientId = "";
+    if (req.query.clientId) {
+      clientId = req.query.clientId;
+      delete req.query.clientId;
+    }
+    let episodeId = "";
+    if (req.query.episodeId) {
+      episodeId = req.query.episodeId;
+      delete req.query.episodeId;
+    }
+
     const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
-    query.clinicianId = new mongoose.Types.ObjectId(clinicianId);
+
+    if (clientId) {
+      query.clientId = new mongoose.Types.ObjectId(clientId);
+    } else {
+      query.clinicianId = new mongoose.Types.ObjectId(clinicianId);
+    }
+
+    if (episodeId) {
+      query.episodeId = new mongoose.Types.ObjectId(episodeId);
+    }
+
     logger.debug(
       `Query params: ${JSON.stringify(query)}, limit: ${parsedLimit}, offset: ${parsedOffset}`
     );
