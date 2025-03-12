@@ -896,6 +896,42 @@ const updateForm = async (req, res) => {
   form.questionForm = JSON.parse(form.questionForm);
   return res.status(200).json(new SuccessResponse(form));
 };
+
+const markVisitPastDue = async () => {
+  const tenants = await Tenant.find();
+  logger.debug(`Found ${tenants.length} tenants`);
+
+  tenants.forEach(async (tenant) => {
+    logger.debug(`Marking visits past due for tenant: ${tenant.databaseName}`);
+    const connection = await getTenantDB(tenant.databaseName);
+    const VisitModel = Visit(connection);
+    const visits = await VisitModel.find({
+      status: { $nin: ["Completed", "Submitted", "Past Due"] },
+      visitDate: { $lt: new Date() },
+    });
+    logger.debug(
+      `Found ${visits.length} visits to mark as past due in tenant ${tenant.databaseName}`
+    );
+    visits.forEach(async (visit) => {
+      const visitDate = new Date(visit.visitDate);
+      if (visitDate < new Date()) {
+        logger.debug(`Marking visit ${visit._id} as past due`);
+        await VisitModel.findByIdAndUpdate(visit._id, { status: "Past Due" });
+        await createNotification(
+          visit.clinicianId,
+          `Visit ${visit.visitNo} is past due`,
+          "Visit Past Due",
+          connection
+        );
+      } else {
+        logger.debug(
+          `Visit ${visit._id} is of date ${visitDate} and is not past due`
+        );
+      }
+    });
+  });
+};
+
 module.exports = {
   createForm,
   createVisit,
@@ -911,4 +947,5 @@ module.exports = {
   updateAssessmentFromRPA,
   getForm,
   updateForm,
+  markVisitPastDue,
 };

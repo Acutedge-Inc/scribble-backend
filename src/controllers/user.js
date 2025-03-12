@@ -188,17 +188,61 @@ const listClinicianVisitDetails = async (req, res) => {
       },
     ]);
 
-    const counts = visitCounts[0] || {
+    const overallCounts = visitCounts[0] || {
       totalVisits: 0,
       newVisits: 0,
       inProgressVisits: 0,
       completedVisits: 0,
     };
-    logger.debug(`Visit statistics: ${JSON.stringify(counts)}`);
+    logger.debug(`Visit statistics: ${JSON.stringify(overallCounts)}`);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const month = String(today.getMonth() + 1).padStart(2, "0"); // Ensure month is in MM format
+    const day = String(today.getDate()).padStart(2, "0"); // Ensure day is in DD format
+    const year = today.getFullYear();
+    const todayStart = `${month}/${day}/${year}`; // Format as MM/DD/YYYY
+    const todayEnd = new Date(today);
+    todayEnd.setHours(23, 59, 59, 999);
+    const todayEndString = `${month}/${day}/${year}`; // Format as MM/DD/YYYY
+
+    const todayVisits = await VisitModel.aggregate([
+      {
+        $match: {
+          clinicianId: new mongoose.Types.ObjectId(clinicianId),
+          visitDate: todayStart, // Compare with string format
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalVisits: { $sum: 1 },
+          newVisits: {
+            $sum: {
+              $cond: [{ $eq: ["$status", "New"] }, 1, 0],
+            },
+          },
+          inProgressVisits: {
+            $sum: {
+              $cond: [
+                { $in: ["$status", ["In Progress", "Past Due", "Missed"]] },
+                1,
+                0,
+              ],
+            },
+          },
+          completedVisits: {
+            $sum: {
+              $cond: [{ $in: ["$status", ["Completed", "Submitted"]] }, 1, 0],
+            },
+          },
+        },
+      },
+    ]);
 
     return res.status(200).json(
       new SuccessResponse({
-        counts,
+        overallCounts,
+        todayVisits,
       })
     );
   } catch (error) {
@@ -213,10 +257,25 @@ const listUserNotification = async (req, res) => {
     const connection = await getTenantDB(req.tenantDb);
     logger.debug(`Connected to tenant database: ${req.tenantDb}`);
     const NotificationModel = Notification(connection);
+    const NotificationTypeModel = NotificationType(connection);
 
     const notifications = await NotificationModel.find({
       userId: req.user.id,
-    });
+    })
+      .populate({
+        path: "notificationTypeId",
+        select: "name",
+        model: NotificationTypeModel,
+      })
+      .lean()
+      .exec()
+      .then((notifications) =>
+        notifications.map((notification) => ({
+          ...notification,
+          notificationTypeName: notification.notificationTypeId.name,
+        }))
+      );
+
     logger.debug(`Found ${notifications.length} notifications`);
 
     return res.status(200).json(new SuccessResponse(notifications));

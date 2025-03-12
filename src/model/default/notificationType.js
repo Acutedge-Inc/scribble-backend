@@ -30,6 +30,9 @@ module.exports = [
     name: "Visit Completed",
   },
   {
+    name: "Visit Past Due",
+  },
+  {
     name: "New Visits",
   },
   {

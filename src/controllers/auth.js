@@ -254,7 +254,7 @@ async function userLogin(req, res) {
       created: user.createdAt,
       updated: user.updatedAt,
     };
-    logger.info("User login successful:", email);
+    logger.info(`User login successful: ${email}`);
     return res.json(new SuccessResponse(responseInst));
   } catch (err) {
     logger.error(`User login error: ${err}`);

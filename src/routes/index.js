@@ -10,6 +10,7 @@ const {
   createVisitFromRPA,
   processAIOutput,
   updateAssessmentFromRPA,
+  markVisitPastDue,
 } = require("../controllers/visit.js");
 module.exports = (app) => {
   const baseVersion = nconf.get("BASE_VERSION");
@@ -23,6 +24,18 @@ module.exports = (app) => {
     process.env.RPA_UPDATE_QUEUE_URL,
     updateAssessmentFromRPA
   );
+
+  const schedule = require("node-schedule");
+
+  // Schedule a job to run every day at midnight
+  schedule.scheduleJob("*/10 * * * *", async () => {
+    try {
+      console.log("Daily task executed");
+      markVisitPastDue();
+    } catch (error) {
+      console.error(`Error executing daily task: ${error}`);
+    }
+  });
 
   app.use(`/api/${baseVersion}/auth`, authRoutes);
   app.use(`/api/${baseVersion}/visit`, visitRoutes);
