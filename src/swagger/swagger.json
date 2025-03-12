@@ -1034,6 +1034,14 @@
             },
             "required": false,
             "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "visitDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "02/15/2025"
+            }
           }
         ],
         "security": [
@@ -1998,6 +2006,7 @@
                   },
                   "assessmentId": {
                     "type": "string",
+                    "example": "67a95e6208705766eb2a4619",
                     "description": "ID of the assessment"
                   }
                 },

@@ -116,6 +116,11 @@ const listClient = async (req, res) => {
   }
 };
 
+const isValidDate = (dateString) => {
+  const regex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/(19|20)\d\d$/;
+  return regex.test(dateString);
+};
+
 const updateClinician = async (req, res) => {
   logger.debug(`Updating clinician with ID: ${req.params.id}`);
   try {
@@ -159,6 +164,7 @@ const listClinicianVisitDetails = async (req, res) => {
     const VisitModel = Visit(connection);
 
     logger.debug("Aggregating visit statistics");
+
     const visitCounts = await VisitModel.aggregate([
       {
         $match: { clinicianId: new mongoose.Types.ObjectId(clinicianId) },
@@ -195,7 +201,21 @@ const listClinicianVisitDetails = async (req, res) => {
       completedVisits: 0,
     };
     logger.debug(`Visit statistics: ${JSON.stringify(overallCounts)}`);
-    const today = new Date();
+
+    const { visitDate } = req.query;
+
+    if (visitDate) {
+      if (!isValidDate(visitDate)) {
+        return res.status(400).json(new ErrorResponse("Invalid date format"));
+      }
+    }
+
+    let today = new Date();
+    if (visitDate) {
+      today = new Date(visitDate);
+    } else {
+      today = new Date();
+    }
     today.setHours(0, 0, 0, 0);
     const month = String(today.getMonth() + 1).padStart(2, "0"); // Ensure month is in MM format
     const day = String(today.getDate()).padStart(2, "0"); // Ensure day is in DD format
