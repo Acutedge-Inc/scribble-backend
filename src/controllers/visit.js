@@ -110,7 +110,6 @@ const listVisit = async (req, res) => {
     const connection = await getTenantDB(req.tenantDb);
     const VisitModel = Visit(connection);
     const clinicianId = req.user.id;
-    req.query.and = [];
     if (req.query.status === "To be reviewed") {
       req.query.status = {
         $nin: ["Missed", "In Progress"],

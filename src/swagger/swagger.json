@@ -1006,7 +1006,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TenantResponse"
+                  "$ref": "#/components/schemas/VisitDetailResponse"
                 }
               }
             }
@@ -2311,6 +2311,75 @@
           "total_records_available": { "type": "integer" }
         },
         "required": ["status", "data", "total_records_available"]
+      },
+      "VisitDetailResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "overallCounts": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string",
+                    "nullable": true,
+                    "example": null
+                  },
+                  "totalVisits": {
+                    "type": "integer",
+                    "example": 5
+                  },
+                  "newVisits": {
+                    "type": "integer",
+                    "example": 2
+                  },
+                  "inProgressVisits": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "completedVisits": {
+                    "type": "integer",
+                    "example": 2
+                  }
+                }
+              },
+              "todayVisits": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": null
+                    },
+                    "totalVisits": {
+                      "type": "integer",
+                      "example": 4
+                    },
+                    "newVisits": {
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "inProgressVisits": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "completedVisits": {
+                      "type": "integer",
+                      "example": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "TenantResponse": {
         "type": "object",
