@@ -52,7 +52,7 @@ const createForm = async (req, res) => {
   logger.debug("Creating new assessment form");
   assessmentForm = await FormModel.create({
     assessmentTypeId: formTypeId,
-    questionForm: JSON.stringify(form),
+    questionForm: form,
   });
   logger.debug(`Created new form with ID: ${assessmentForm._id}`);
 

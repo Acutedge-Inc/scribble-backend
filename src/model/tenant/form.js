@@ -8,7 +8,7 @@ const formSchema = new mongoose.Schema(
       required: true,
     },
     questionForm: {
-      type: String,
+      type: Array,
     },
   },
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }

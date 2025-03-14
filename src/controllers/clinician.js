@@ -27,7 +27,7 @@ const {
 } = require("../lib/index.js");
 const { ErrorResponse } = require("../lib/responses.js");
 const { uploadFile, pushToQueue } = require("../lib/aws.js");
-
+const nconf = require("nconf");
 const processAudio = async (req, res) => {
   try {
     logger.debug("Starting audio processing");
@@ -101,7 +101,7 @@ const processAudio = async (req, res) => {
 
     logger.debug(`Preparing to upload form to S3 for visit: ${visit._id}`);
     const params = {
-      Bucket: "scribble2-data",
+      Bucket: nconf.get("S3_BUCKET"),
       Key: `${req.tenantDb}/${visit._id}/${assessmentId}/input/questionForm.json`,
       Body: formBuffer,
       ContentType: "application/json",
@@ -126,10 +126,14 @@ const processAudio = async (req, res) => {
       status: "Submitted to AI",
     });
 
+    const visitDetails = await VisitModel.findById(visit._id);
+
     logger.debug("Preparing message for AI processing queue");
     const message = {
       audioFilePath: `${req.tenantDb}/${visit._id}/${assessmentId}/input/${audioFile.originalname}`,
       questionFormPath: `${req.tenantDb}/${visit._id}/${assessmentId}/input/questionForm.json`,
+      user_id: req.user.email,
+      client_id: visitDetails.clientId,
       visit_id: visit._id,
       assessment_id: assessmentId,
       company_id: req.tenantDb,
@@ -140,6 +144,7 @@ const processAudio = async (req, res) => {
 
     const queueUrl = process.env.AI_INPUT_QUEUE_URL;
     logger.debug(`Sending message to AI queue: ${queueUrl}`);
+    logger.debug(`Message: ${JSON.stringify(message)}`);
     const queueMessage = await pushToQueue(queueUrl, message);
     logger.debug("Message successfully sent to AI queue");
 

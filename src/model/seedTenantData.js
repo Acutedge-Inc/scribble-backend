@@ -43,14 +43,13 @@ const seedTenantData = async (connection) => {
     await NotificationTypeModel.create(NotificationTypeData);
     const FormModel = Form(connection);
     for (const formTemplate of FormTemplateData) {
-      formTemplate.assessmentForm = JSON.stringify(formTemplate.assessmentForm);
       await FormTemplateModel.create(formTemplate);
       let formTypeId = formType.find(
         (item) => item.formName === formTemplate.name
       );
       await FormModel.create({
         formTypeId: formTypeId.id,
-        questionForm: JSON.stringify(formTemplate.assessmentForm),
+        questionForm: formTemplate.assessmentForm,
       });
     }
 

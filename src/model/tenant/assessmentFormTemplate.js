@@ -9,7 +9,7 @@ const assessmentFormTemplateSchema = new mongoose.Schema(
       unique: true,
     },
     assessmentForm: {
-      type: String,
+      type: Array,
       required: true,
     },
   },

@@ -22,7 +22,7 @@ const Assessment = require("../model/tenant/assessment.js");
 const Notification = require("../model/tenant/notification.js");
 const NotificationType = require("../model/tenant/notificationType.js");
 const FormTemplate = require("../model/tenant/assessmentFormTemplate.js");
-
+const nconf = require("nconf");
 const {
   pushToQueue,
   deleteMessageFromQueue,
@@ -56,7 +56,7 @@ const createForm = async (req, res) => {
   }
   assessmentForm = await FormModel.create({
     formTypeId: formTypeId,
-    questionForm: JSON.stringify(form),
+    questionForm: form,
   });
   logger.debug(`Created new assessment form with id: ${assessmentForm._id}`);
   return res.status(404).json(new SuccessResponse(assessmentForm));
@@ -268,6 +268,7 @@ const listAssessment = async (req, res) => {
     const assessment = await AssessmentModel.find(query)
       .limit(parsedLimit)
       .skip(parsedOffset);
+
     const totalCount = await AssessmentModel.countDocuments(query);
     logger.debug(`Found ${totalCount} assessments`);
     return res.status(201).json(new SuccessResponse(assessment, totalCount));
@@ -332,7 +333,7 @@ const createVisit = async (req, res) => {
     const form = await getOrCreateForm(connection, session);
     logger.debug(`Found/Created form: ${form.id}`);
 
-    await createAssessment(form.id, visit.id, connection, session);
+    await createAssessment(form, visit.id, connection, session);
     logger.debug("Created assessment");
 
     await createNotification(
@@ -420,7 +421,7 @@ const createVisitFromRPA = async (err, data) => {
       const form = await getOrCreateForm(connection, session);
       logger.debug(`Found/Created form: ${form.id}`);
 
-      await createAssessment(form.id, visit.id, connection, session);
+      await createAssessment(form, visit.id, connection, session);
       logger.debug("Created assessment");
 
       await createNotification(
@@ -585,17 +586,35 @@ const getOrCreateEpisode = async (data, connection, session) => {
   logger.debug(`Found existing episode: ${episode ? "yes" : "no"}`);
 
   if (!episode) {
-    episode = await EpisodeModel.create(
-      [
-        {
-          episodeNo: data.episodeNo,
-          episodeDuration: data.episodeDuration,
-          startDate: data.startDate,
-          endDate: data.endDate,
-        },
-      ],
-      { session }
-    );
+    let attempts = 0;
+    const maxAttempts = 3;
+    while (attempts < maxAttempts) {
+      try {
+        episode = await EpisodeModel.create(
+          [
+            {
+              episodeNo: data.episodeNo,
+              episodeDuration: data.episodeDuration,
+              startDate: data.startDate,
+              endDate: data.endDate,
+            },
+          ],
+          { session }
+        );
+        break;
+      } catch (error) {
+        attempts++;
+        logger.error(
+          `Error creating episode (attempt ${attempts}): ${error.message}`
+        );
+        if (attempts >= maxAttempts) {
+          throw new Error(
+            "Error creating episode: Please retry your operation or multi-document transaction."
+          );
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second before retrying
+      }
+    }
     episode = episode[0];
     logger.debug(`Created new episode: ${episode._id}`);
   }
@@ -720,19 +739,22 @@ const getOrCreateForm = async (connection, session) => {
 };
 
 /** Create an assessment record */
-const createAssessment = async (formId, visitId, connection, session) => {
-  logger.debug(`Creating assessment for form ${formId} and visit ${visitId}`);
+const createAssessment = async (form, visitId, connection, session) => {
+  logger.debug(`Creating assessment for form ${form.id} and visit ${visitId}`);
   const AssessmentModel = Assessment(connection);
 
   const existingAssessment = await AssessmentModel.findOne({
-    formId,
+    formId: form.id,
     visitId,
   }).session(session);
   if (existingAssessment) return existingAssessment;
 
-  const assessment = await AssessmentModel.create([{ formId, visitId }], {
-    session,
-  });
+  const assessment = await AssessmentModel.create(
+    [{ formId: form.id, visitId, assessmentQuestion: form.questionForm }],
+    {
+      session,
+    }
+  );
   logger.debug(`Created assessment: ${assessment[0]._id}`);
   return assessment[0];
 };
@@ -748,35 +770,43 @@ const startDatabaseSession = async (tenantDb) => {
 };
 
 const updateVisit = async (req, res) => {
-  logger.debug(`Updating visit with id: ${req.params.id}`);
-  const { connection, session } = await startDatabaseSession(req.tenantDb);
-  const VisitModel = Visit(connection);
-  const visit = await VisitModel.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  });
-  logger.debug(`Updated visit: ${visit._id}`);
-  return res.status(200).json(new SuccessResponse(visit));
+  try {
+    logger.debug(`Updating visit with id: ${req.params.id}`);
+    const { connection, session } = await startDatabaseSession(req.tenantDb);
+    const VisitModel = Visit(connection);
+    const visit = await VisitModel.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    logger.debug(`Updated visit: ${visit._id}`);
+    return res.status(200).json(new SuccessResponse(visit));
+  } catch (err) {
+    res.status(404).json(new ErrorResponse(err));
+  }
 };
 
 const updateAssessment = async (req, res) => {
-  logger.debug(`Updating assessment with id: ${req.params.id}`);
-  const { connection, session } = await startDatabaseSession(req.tenantDb);
-  const AssessmentModel = Assessment(connection);
+  try {
+    logger.debug(`Updating assessment with id: ${req.params.id}`);
+    const { connection, session } = await startDatabaseSession(req.tenantDb);
+    const AssessmentModel = Assessment(connection);
 
-  if (req.body.answer) {
-    logger.debug("Sending message to UIPath");
-    await sendMessageToUIPath(req.body);
-    req.body.status = "Submitted to EMR";
+    // if (req.body.answer) {
+    //   logger.debug("Sending message to UIPath");
+    //   await sendMessageToUIPath(req.body);
+    //   req.body.status = "Submitted to EMR";
+    // }
+    const assessment = await AssessmentModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+      }
+    );
+    logger.debug(`Updated assessment: ${assessment._id}`);
+    return res.status(200).json(new SuccessResponse(assessment));
+  } catch (err) {
+    res.status(404).json(new ErrorResponse(err));
   }
-  const assessment = await AssessmentModel.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    {
-      new: true,
-    }
-  );
-  logger.debug(`Updated assessment: ${assessment._id}`);
-  return res.status(200).json(new SuccessResponse(assessment));
 };
 
 const processAIOutput = async (err, data) => {
@@ -800,9 +830,12 @@ const processAIOutput = async (err, data) => {
     let jsonContent;
     try {
       logger.debug(
-        `Downloading file from S3: ${msg.bucketName}/${msg.answerPath}`
+        `Downloading file from S3: ${nconf.get("S3_BUCKET")}/${msg.answer_files[0]}`
       );
-      const s3Response = await downloadFile(msg.bucketName, msg.answerPath);
+      const s3Response = await downloadFile(
+        nconf.get("S3_BUCKET"),
+        msg.answer_files[0]
+      );
       // Convert S3 response buffer to string and store JSON content
       const responseBuffer = s3Response.Body;
       if (!(responseBuffer instanceof Buffer)) {
@@ -818,16 +851,40 @@ const processAIOutput = async (err, data) => {
 
     const AssessmentModel = Assessment(connection);
     const VisitModel = Visit(connection);
-    const assessment = await AssessmentModel.findByIdAndUpdate(
-      msg.assessmentId,
+    const assessment = await AssessmentModel.findById(msg.assessment_id);
+
+    if (!assessment) {
+      logger.error(`Assessment not found: ${msg.assessment_id}`);
+      throw new Error("Assessment not found");
+    }
+
+    let assessmentAnswer = msg.aiOutput.Responses;
+
+    let processedAnswer = assessment.assessmentQuestion.map((question) => {
+      question.answer_context =
+        assessmentAnswer.find((a) => a.question_code === question.question_code)
+          .answer_context || "";
+      question.answer_text =
+        assessmentAnswer.find((a) => a.question_code === question.question_code)
+          .answer_text || "";
+      question.answer_code =
+        assessmentAnswer.find((a) => a.question_code === question.question_code)
+          .answer_code || "NA";
+      return question;
+    });
+
+    logger.debug(`Processed answer: ${JSON.stringify(processedAnswer)}`);
+
+    await AssessmentModel.updateOne(
+      { _id: msg.assessment_id },
       {
         $set: {
-          assessmentAnswer: jsonContent,
+          assessmentQuestion: processedAnswer,
+          assessmentAnswer: assessmentAnswer,
           status: "Validation",
         },
       }
     );
-    logger.debug(`Updated assessment with AI output: ${assessment._id}`);
   } catch (error) {
     logger.error(`message container error: ${error.toString()}`);
     await pushToQueue(process.env.AI_OUTPUT_DLQ_QUEUE_URL, {
@@ -921,7 +978,6 @@ const getForm = async (req, res) => {
 const updateForm = async (req, res) => {
   const { connection, session } = await startDatabaseSession(req.tenantDb);
   const FormModel = Form(connection);
-  req.body.questionForm = JSON.stringify(req.body.questionForm);
   const form = await FormModel.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });

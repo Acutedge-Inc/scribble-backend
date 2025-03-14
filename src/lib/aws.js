@@ -1,6 +1,8 @@
 const AWS = require("aws-sdk");
 const dotenv = require("dotenv");
 const logger = require("../lib/logger.js");
+const nconf = require("nconf");
+const fs = require("fs");
 dotenv.config();
 
 const REGION = process.env.AWS_REGION;
@@ -15,12 +17,12 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 const sqs = new AWS.SQS();
-const bucketName = "scribble2-data";
+const bucketName = nconf.get("S3_BUCKET");
 
 const createFolder = async (folderName) => {
   try {
     const params = {
-      Bucket: bucketName,
+      Bucket: nconf.get("S3_BUCKET"),
       Key: folderName,
       ACL: "private", // Ensure it's a valid S3 object
     };
@@ -35,13 +37,14 @@ const createFolder = async (folderName) => {
 const uploadFile = async (file, folderName) => {
   try {
     const params = {
-      Bucket: bucketName,
+      Bucket: nconf.get("S3_BUCKET"),
       Key: folderName,
       Body: file.buffer,
       ContentType: file.mimetype,
     };
 
     const data = await s3.upload(params).promise();
+    logger.debug(`Audio file uploaded successfully: ${data.Location}`);
     return data;
   } catch (error) {
     if (error.message.includes("Unsupported body payload object")) {

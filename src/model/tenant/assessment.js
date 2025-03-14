@@ -12,8 +12,11 @@ const assessmentSchema = new mongoose.Schema(
       ref: "Form",
       required: true,
     },
+    assessmentQuestion: {
+      type: Array,
+    },
     assessmentAnswer: {
-      type: String,
+      type: Array,
     },
     s3Path: {
       type: String,
