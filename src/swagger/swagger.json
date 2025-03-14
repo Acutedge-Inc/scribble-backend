@@ -1685,6 +1685,13 @@
               "type": "string",
               "example": "1"
             }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "security": [
