@@ -810,8 +810,11 @@ const updateAssessment = async (req, res) => {
       // });
       const rpaInput = transformData(assessment.assessmentQuestion);
       const message = {
+        clientNo: "45678",
+        clientName: "Scribble Test 2",
+        clientDob: "10/10/1952",
         tenantDb: req.tenantDb,
-        assessmentId: assessment._id,
+        assessmentId: assessment.id,
         assessmentAnswer: rpaInput,
       };
       logger.info(`Publishing message to $}: ${JSON.stringify(message)}`);
