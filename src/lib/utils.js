@@ -98,6 +98,7 @@ module.exports = {
   },
   transformData: (inputArray) => {
     return inputArray.reduce((acc, item) => {
+      item.value = item.answer_code;
       const keys = item.question_code.split("."); // Split into multiple levels
       let currentLevel = acc;
 
@@ -135,8 +136,6 @@ module.exports = {
           timeout: 1000 * 30, // Wait for 30 seconds
         }
       );
-      console.log(folderResponse.data);
-
       // Ensure message is flattened (convert objects/arrays to strings)
       const flattenedMessage = {};
       for (const key in message) {
@@ -164,6 +163,7 @@ module.exports = {
           },
         }
       );
+      console.log("Message sent to UiPath queue", queueResponse.data);
       return queueResponse.data;
     } catch (error) {
       console.error(
