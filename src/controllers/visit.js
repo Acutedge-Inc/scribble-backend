@@ -5,7 +5,11 @@ const fs = require("fs");
 const path = require("path");
 
 const { getTenantDB } = require("../lib/dbManager.js");
-const { getFilterQuery, sendMessageToUIPath } = require("../lib/utils.js");
+const {
+  getFilterQuery,
+  sendMessageToUIPath,
+  transformData,
+} = require("../lib/utils.js");
 
 const { sendAccountVerificationEmail } = require("../lib/emails.js");
 const mongoose = require("mongoose");
@@ -790,11 +794,6 @@ const updateAssessment = async (req, res) => {
     const { connection, session } = await startDatabaseSession(req.tenantDb);
     const AssessmentModel = Assessment(connection);
 
-    // if (req.body.answer) {
-    //   logger.debug("Sending message to UIPath");
-    //   await sendMessageToUIPath(req.body);
-    //   req.body.status = "Submitted to EMR";
-    // }
     const assessment = await AssessmentModel.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -803,6 +802,21 @@ const updateAssessment = async (req, res) => {
       }
     );
     logger.debug(`Updated assessment: ${assessment._id}`);
+
+    if (req.body.status === "Submitted to EMR") {
+      // const rpaInput = assessment.assessmentQuestion.map((question) => {
+      //   question.value = question.answer_code;
+      //   return question;
+      // });
+      const rpaInput = transformData(assessment.assessmentQuestion);
+      const message = {
+        tenantDb: req.tenantDb,
+        assessmentId: assessment._id,
+        assessmentAnswer: rpaInput,
+      };
+      logger.info(`Publishing message to $}: ${JSON.stringify(message)}`);
+      await sendMessageToUIPath(message);
+    }
     return res.status(200).json(new SuccessResponse(assessment));
   } catch (err) {
     res.status(404).json(new ErrorResponse(err));
@@ -863,13 +877,13 @@ const processAIOutput = async (err, data) => {
     let processedAnswer = assessment.assessmentQuestion.map((question) => {
       question.answer_context =
         assessmentAnswer.find((a) => a.question_code === question.question_code)
-          .answer_context || "";
+          .answer_context || "Not Generated";
       question.answer_text =
         assessmentAnswer.find((a) => a.question_code === question.question_code)
-          .answer_text || "";
+          .answer_text || "Not Generated";
       question.answer_code =
         assessmentAnswer.find((a) => a.question_code === question.question_code)
-          .answer_code || "NA";
+          .answer_code || "Not Generated";
       return question;
     });
 

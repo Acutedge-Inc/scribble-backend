@@ -5,6 +5,9 @@ const ENCRYPTION_KEY = "B374A26A71490437AA024E4FADD5B497";
 const IV_LENGTH = 16;
 const ALGORITHM = "aes-256-cbc";
 const accountVerificationTemplate = require("../views/emailer-account-verification.js");
+const axios = require("axios");
+const { HTTPError } = require("../lib/responses.js");
+const qs = require("qs");
 
 const key = Buffer.from(ENCRYPTION_KEY);
 module.exports = {
@@ -93,6 +96,24 @@ module.exports = {
       throw error;
     }
   },
+  transformData: (inputArray) => {
+    return inputArray.reduce((acc, item) => {
+      const keys = item.question_code.split("."); // Split into multiple levels
+      let currentLevel = acc;
+
+      // Iterate through all but the last key to create nested structure
+      for (let i = 0; i < keys.length - 1; i++) {
+        if (!currentLevel[keys[i]]) {
+          currentLevel[keys[i]] = {};
+        }
+        currentLevel = currentLevel[keys[i]];
+      }
+
+      // Assign the final level to the last key
+      currentLevel[keys[keys.length - 1]] = { ...item };
+      return acc;
+    }, {});
+  },
 
   sendMessageToUIPath: async (message) => {
     try {
@@ -100,46 +121,56 @@ module.exports = {
       const orchestratorUrl = process.env.UIPATH_ORCHESTRATOR_URL;
       const queueName = process.env.UIPATH_QUEUE_NAME;
       const tenantName = process.env.UIPATH_TENANT_NAME;
-      const clientId = process.env.UIPATH_CLIENT_ID;
-      const clientSecret = process.env.UIPATH_CLIENT_SECRET;
+      const personalAccessToken = process.env.UIPATH_PAT;
+      const folderId = process.env.UIPATH_FOLDER_ID;
 
-      // Get access token
-      const tokenResponse = await axios.post(
-        `${orchestratorUrl}/identity/connect/token`,
+      const folderResponse = await axios.get(
+        `${orchestratorUrl}/odata/Folders?$select=Id,DisplayName`,
         {
-          grant_type: "client_credentials",
-          client_id: clientId,
-          client_secret: clientSecret,
-          scope: "OR.Queues",
+          headers: {
+            "Content-Type": "application/json",
+            "X-UIPATH-TenantName": tenantName,
+            Authorization: `Bearer ${personalAccessToken}`,
+          },
+          timeout: 1000 * 30, // Wait for 30 seconds
         }
       );
+      console.log(folderResponse.data);
 
-      const accessToken = tokenResponse.data.access_token;
+      // Ensure message is flattened (convert objects/arrays to strings)
+      const flattenedMessage = {};
+      for (const key in message) {
+        if (typeof message[key] === "object") {
+          flattenedMessage[key] = JSON.stringify(message[key]); // Convert objects/arrays to string
+        } else {
+          flattenedMessage[key] = message[key]; // Keep primitive values
+        }
+      }
 
-      // Add message to queue
       const queueResponse = await axios.post(
-        `${orchestratorUrl}/${tenantName}/odata/Queues/UiPathODataSvc.AddQueueItem`,
+        `${orchestratorUrl}/odata/Queues/UiPathODataSvc.AddQueueItem`,
         {
           itemData: {
             Name: queueName,
-            SpecificContent: message,
+            SpecificContent: flattenedMessage, // Use flattened object
           },
         },
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${personalAccessToken}`,
             "Content-Type": "application/json",
+            "X-UIPATH-TenantName": tenantName,
+            "X-UIPATH-OrganizationUnitId": folderId, // Folder ID
           },
         }
       );
-
       return queueResponse.data;
     } catch (error) {
-      throw new HTTPError(
-        500,
+      console.error(
         "Failed to send message to UiPath queue",
-        ERROR_CODES.UIPATH_ERROR
+        error.response?.data || error.message
       );
+      throw new Error("Failed to send message to UiPath queue");
     }
   },
 };

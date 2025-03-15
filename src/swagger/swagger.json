@@ -1707,7 +1707,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AssessmentResponse"
+                  "$ref": "#/components/schemas/AssessmentUpdateRequest"
                 }
               }
             }
@@ -3003,6 +3003,50 @@
             "example": "Audio file uploaded and message sent to SQS"
           }
         }
+      },
+      "Form": {
+        "type": "object",
+        "properties": {
+          "formTypeId": {
+            "type": "string",
+            "description": "The ID of the form type"
+          },
+          "form": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "questionCode": {
+                  "type": "string",
+                  "description": "The unique code of the question"
+                },
+                "questionType": {
+                  "type": "string",
+                  "description": "The type of the question (e.g., DROPDOWN, DATE, TEXT INPUT)"
+                },
+                "questionText": {
+                  "type": "string",
+                  "description": "The text of the question"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "A brief description of the question"
+                },
+                "required": {
+                  "type": "boolean",
+                  "description": "Whether the question is required"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "The value/answer provided for the question",
+                  "example": ""
+                }
+              }
+            },
+            "description": "A dynamic set of questions, identified by their questionCode"
+          }
+        },
+        "required": ["formTypeId", "form"]
       }
     },
     "responses": {},

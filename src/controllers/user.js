@@ -178,11 +178,12 @@ const listClinicianVisitDetails = async (req, res) => {
           },
           inProgressVisits: {
             $sum: {
-              $cond: [
-                { $in: ["$status", ["In Progress", "Past Due", "Missed"]] },
-                1,
-                0,
-              ],
+              $cond: [{ $in: ["$status", ["In Progress", "Missed"]] }, 1, 0],
+            },
+          },
+          pastDueVisits: {
+            $sum: {
+              $cond: [{ $in: ["$status", ["Past Due"]] }, 1, 0],
             },
           },
           completedVisits: {
@@ -198,6 +199,7 @@ const listClinicianVisitDetails = async (req, res) => {
       totalVisits: 0,
       newVisits: 0,
       inProgressVisits: 0,
+      pastDueVisits: 0,
       completedVisits: 0,
     };
     logger.debug(`Visit statistics: ${JSON.stringify(overallCounts)}`);
@@ -243,11 +245,12 @@ const listClinicianVisitDetails = async (req, res) => {
           },
           inProgressVisits: {
             $sum: {
-              $cond: [
-                { $in: ["$status", ["In Progress", "Past Due", "Missed"]] },
-                1,
-                0,
-              ],
+              $cond: [{ $in: ["$status", ["In Progress", "Missed"]] }, 1, 0],
+            },
+          },
+          pastDueVisits: {
+            $sum: {
+              $cond: [{ $in: ["$status", ["Past Due"]] }, 1, 0],
             },
           },
           completedVisits: {
