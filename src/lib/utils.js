@@ -119,15 +119,11 @@ module.exports = {
       item.questionCode = item.question_code;
       item.questionType = item.question_type;
 
-      const [mainCode, subCode] = item.question_code.split(".");
-      if (!acc[mainCode]) {
-        acc[mainCode] = {};
-      }
-      acc[mainCode][subCode] = { ...item };
+      const [mainCode] = item.question_code;
+      acc[mainCode] = { ...item };
       return acc;
     }, {});
   },
-
   sendMessageToUIPath: async (message) => {
     try {
       // Get orchestrator config from environment
@@ -174,7 +170,10 @@ module.exports = {
           },
         }
       );
-      console.log("Message sent to UiPath queue", queueResponse.data);
+      console.log(
+        "Message sent to UiPath queue",
+        queueResponse.data.specificContent
+      );
       return queueResponse.data;
     } catch (error) {
       console.error(

@@ -2,11 +2,6 @@
   {
     "question_code": "A1110.A",
     "question": "What is your preferred language?",
-    "options": [
-      "1. Peripheral Vascular Disease (PVD) or Peripheral Arterial Disease (PAD)",
-      "2. Diabetes Mellitus (DM)",
-      "3. None of the above"
-    ],
     "question_type": "TEXT_INPUT",
     "section": "Administrative"
   },

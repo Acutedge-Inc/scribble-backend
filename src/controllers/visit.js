@@ -817,9 +817,7 @@ const updateAssessment = async (req, res) => {
         assessmentId: assessment.id,
         assessmentAnswer: rpaInput,
       };
-      logger.info(
-        `Publishing message to ${JSON.stringify(message.SpecificContent)}`
-      );
+      logger.info(`Publishing message to ${process.env.UIPATH_QUEUE_NAME}`);
       await sendMessageToUIPath(message);
     }
     return res.status(200).json(new SuccessResponse(assessment));
