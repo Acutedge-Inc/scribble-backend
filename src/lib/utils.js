@@ -96,13 +96,12 @@ module.exports = {
       throw error;
     }
   },
-  transformData: (inputArray) => {
+  transformDataToNestedObject: (inputArray) => {
     return inputArray.reduce((acc, item) => {
       item.value = item.answer_code;
       const keys = item.question_code.split("."); // Split into multiple levels
       let currentLevel = acc;
 
-      // Iterate through all but the last key to create nested structure
       for (let i = 0; i < keys.length - 1; i++) {
         if (!currentLevel[keys[i]]) {
           currentLevel[keys[i]] = {};
@@ -110,8 +109,21 @@ module.exports = {
         currentLevel = currentLevel[keys[i]];
       }
 
-      // Assign the final level to the last key
       currentLevel[keys[keys.length - 1]] = { ...item };
+      return acc;
+    }, {});
+  },
+  transformData: (inputArray) => {
+    return inputArray.reduce((acc, item) => {
+      item.value = item.answer_code;
+      item.questionCode = item.question_code;
+      item.questionType = item.question_type;
+
+      const [mainCode, subCode] = item.question_code.split(".");
+      if (!acc[mainCode]) {
+        acc[mainCode] = {};
+      }
+      acc[mainCode][subCode] = { ...item };
       return acc;
     }, {});
   },
@@ -136,13 +148,12 @@ module.exports = {
           timeout: 1000 * 30, // Wait for 30 seconds
         }
       );
-      // Ensure message is flattened (convert objects/arrays to strings)
       const flattenedMessage = {};
       for (const key in message) {
         if (typeof message[key] === "object") {
-          flattenedMessage[key] = JSON.stringify(message[key]); // Convert objects/arrays to string
+          flattenedMessage[key] = JSON.stringify(message[key]);
         } else {
-          flattenedMessage[key] = message[key]; // Keep primitive values
+          flattenedMessage[key] = message[key];
         }
       }
 
