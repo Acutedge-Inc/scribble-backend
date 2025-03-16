@@ -845,6 +845,7 @@ const updateAssessment = async (req, res) => {
         );
       }
       logger.debug(`Found client info: ${JSON.stringify(clientInfo)}`);
+
       const message = {
         clientNo: clientInfo.clientNo,
         clientName: `${clientInfo.firstName} ${clientInfo.lastName}`,
@@ -855,6 +856,29 @@ const updateAssessment = async (req, res) => {
       };
       logger.info(`Publishing message to ${process.env.UIPATH_QUEUE_NAME}`);
       await sendMessageToUIPath(message);
+
+      const allAssessments = await AssessmentModel.find({
+        visitId: assessment.visitId,
+      });
+      const allSubmittedToEMR = allAssessments.every(
+        (a) => a.status === "Submitted to EMR"
+      );
+      const allCompleted = allAssessments.every(
+        (a) => a.status === "Completed"
+      );
+
+      logger.debug(`allSubmittedToEMR: ${allSubmittedToEMR}`);
+      logger.debug(`allCompleted: ${allCompleted}`);
+
+      if (allCompleted) {
+        await VisitModel.findByIdAndUpdate(assessment.visitId, {
+          status: "Completed",
+        });
+      } else if (allSubmittedToEMR) {
+        await VisitModel.findByIdAndUpdate(assessment.visitId, {
+          status: "Submitted",
+        });
+      }
     }
     return res.status(200).json(new SuccessResponse(assessment));
   } catch (err) {
