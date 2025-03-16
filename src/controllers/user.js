@@ -102,6 +102,7 @@ const listClient = async (req, res) => {
     logger.debug(`Pagination: limit=${parsedLimit}, offset=${parsedOffset}`);
 
     const client = await Client_InfoModel.find(query)
+      .sort({ createdAt: -1 })
       .limit(parsedLimit)
       .skip(parsedOffset);
     logger.debug(`Found ${client.length} clients`);
@@ -285,6 +286,7 @@ const listUserNotification = async (req, res) => {
     const notifications = await NotificationModel.find({
       userId: req.user.id,
     })
+      .sort({ createdAt: -1 })
       .populate({
         path: "notificationTypeId",
         select: "name",

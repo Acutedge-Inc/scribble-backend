@@ -138,6 +138,9 @@ const listVisit = async (req, res) => {
 
     if (clientId) {
       query.clientId = new mongoose.Types.ObjectId(clientId);
+      query.status = {
+        $nin: ["New"],
+      };
     } else {
       query.clinicianId = new mongoose.Types.ObjectId(clinicianId);
     }
@@ -241,7 +244,7 @@ const listVisit = async (req, res) => {
           clinicianCounty: "$clinicianInfo.county",
         },
       },
-
+      { $sort: { createdAt: -1 } },
       { $skip: parsedOffset },
       { $limit: parsedLimit },
     ]);
@@ -807,10 +810,45 @@ const updateAssessment = async (req, res) => {
       //   return question;
       // });
       const rpaInput = transformData(assessment.assessmentQuestion);
+      const visitId = assessment.visitId;
+      const VisitModel = Visit(connection);
+      const visitRecord = await VisitModel.aggregate([
+        {
+          $match: { _id: visitId },
+        },
+        {
+          $lookup: {
+            from: "client_infos",
+            localField: "clientId",
+            foreignField: "_id",
+            as: "clientInfo",
+          },
+        },
+        {
+          $unwind: "$clientInfo",
+        },
+      ]).exec();
+
+      if (!visitRecord || visitRecord.length === 0) {
+        logger.error(`Visit record not found for visitId: ${visitId}`);
+        throw new Error(`Visit record not found for visitId: ${visitId}`);
+      }
+
+      const clientInfo = visitRecord[0].clientInfo; // Access the joined clientInfo
+
+      if (!clientInfo) {
+        logger.error(
+          `Client info not found for clientId: ${visitRecord[0].clientId}`
+        );
+        throw new Error(
+          `Client info not found for clientId: ${visitRecord[0].clientId}`
+        );
+      }
+      logger.debug(`Found client info: ${JSON.stringify(clientInfo)}`);
       const message = {
-        clientNo: "45678",
-        clientName: "Scribble Test 2",
-        clientDob: "10/10/1952",
+        clientNo: clientInfo.clientNo,
+        clientName: `${clientInfo.firstName} ${clientInfo.lastName}`,
+        clientDob: clientInfo.dob,
         tenantDb: req.tenantDb,
         assessmentId: assessment.id,
         assessmentAnswer: rpaInput,
@@ -825,6 +863,29 @@ const updateAssessment = async (req, res) => {
 };
 
 const processAIOutput = async (err, data) => {
+  // Sample message
+  //  {
+  //     "id":null,
+  //     "user_id":"clinician@test.com",
+  //     "client_id":"67d1c251cc8d031a8a070b2a",
+  //     "assessment_id":"67d551267e49f4aed9a2d8eb",
+  //     "company_id":"haggiehealth",
+  //     "visit_id":"67d551267e49f4aed9a2d8e6",
+  //     "transcribe_type":"deepgram",
+  //     "status":"completed",
+  //     "started":1742114503,
+  //     "completed":1742114520,
+  //     "answer_files":[
+  //        "haggiehealth/67d551267e49f4aed9a2d8e6/67d551267e49f4aed9a2d8eb/output/answers.json"
+  //     ],
+  //     "transcription_files":[
+  //        "haggiehealth/67d551267e49f4aed9a2d8e6/67d551267e49f4aed9a2d8eb/output/transcription.json"
+  //     ],
+  //     "conversation_files":[
+  //        "haggiehealth/67d551267e49f4aed9a2d8e6/67d551267e49f4aed9a2d8eb/output/conversation.json"
+  //     ]
+  //  }
+
   let msg;
 
   try {
@@ -866,7 +927,13 @@ const processAIOutput = async (err, data) => {
 
     const AssessmentModel = Assessment(connection);
     const VisitModel = Visit(connection);
-    const assessment = await AssessmentModel.findById(msg.assessment_id);
+    const assessment = await AssessmentModel.findById(
+      msg.assessment_id
+    ).populate({
+      path: "visitId",
+      model: VisitModel,
+      select: "clinicianId visitNo",
+    });
 
     if (!assessment) {
       logger.error(`Assessment not found: ${msg.assessment_id}`);
@@ -900,6 +967,15 @@ const processAIOutput = async (err, data) => {
         },
       }
     );
+
+    await createNotification(
+      assessment.visitId.clinicianId,
+      `AI Process Success for visit ${assessment.visitId.visitNo}`,
+      "AI Process Success",
+      connection,
+      session
+    );
+    logger.debug("Created notification");
   } catch (error) {
     logger.error(`message container error: ${error.toString()}`);
     await pushToQueue(process.env.AI_OUTPUT_DLQ_QUEUE_URL, {

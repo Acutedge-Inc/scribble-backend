@@ -119,8 +119,7 @@ module.exports = {
       item.questionCode = item.question_code;
       item.questionType = item.question_type;
 
-      const [mainCode] = item.question_code;
-      acc[mainCode] = { ...item };
+      acc[item.question_code] = { ...item };
       return acc;
     }, {});
   },
@@ -172,7 +171,7 @@ module.exports = {
       );
       console.log(
         "Message sent to UiPath queue",
-        queueResponse.data.specificContent
+        queueResponse.data.SpecificContent
       );
       return queueResponse.data;
     } catch (error) {
