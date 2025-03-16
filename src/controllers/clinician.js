@@ -119,7 +119,7 @@ const processAudio = async (req, res) => {
     );
 
     logger.debug(`Updating visit status for visit: ${visit._id}`);
-    await VisitModel.findByIdAndUpdate(visit._id, { status: "Submitted" });
+    await VisitModel.findByIdAndUpdate(visit._id, { status: "In Progress" });
 
     logger.debug(`Updating assessment status for assessment: ${assessmentId}`);
     await AssessmentModel.findByIdAndUpdate(assessmentId, {
