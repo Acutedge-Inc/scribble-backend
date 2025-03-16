@@ -115,9 +115,7 @@ const listVisit = async (req, res) => {
     const VisitModel = Visit(connection);
     const clinicianId = req.user.id;
     if (req.query.status === "To be reviewed") {
-      req.query.status = {
-        $nin: ["Missed", "In Progress"],
-      };
+      req.query.status = "In Progress";
     }
     if (req.query.status === "Completed") {
       req.query.status = {
