@@ -210,9 +210,19 @@ async function userLogin(req, res) {
 
     await UserModel.updateOne(
       { _id: user._id },
-      { $set: { lastLoginTime: new Date() } }
+      { $set: { lastLoginTime: new Date(), loginAttempts: 0 } }
     );
     logger.debug(`Updated last login time for user: ${user._id}`);
+
+    let userDetails = {};
+
+    if (roleName === "user") {
+      const Clinician_InfoModel = Clinician_Info(connection);
+      userDetails = await Clinician_InfoModel.findOne({ userId: user.id });
+    } else {
+      const Admin_InfoModel = Admin_Info(connection);
+      userDetails = await Admin_InfoModel.findOne({ userId: user.id });
+    }
 
     const accessTokenTtl = "600000";
     const refreshTokenttl = "3600000";
@@ -242,11 +252,23 @@ async function userLogin(req, res) {
     const responseInst = {
       email: user.email,
       userId: user._id,
-      firstname: user.firstname,
-      lastname: user.lastname,
+      firstname: userDetails.firstname,
+      lastname: userDetails.lastname,
+      staffNo: userDetails?.clinicianNo,
       tenantId: user.tenantId,
       isFirstLogin: user?.isFirstLogin,
       lastLoginTime: user?.lastLoginTime || new Date(),
+      address1: userDetails?.address1,
+      address2: userDetails?.address2,
+      city: userDetails?.city,
+      county: userDetails?.county,
+      country: userDetails?.country,
+      state: userDetails?.state,
+      zip: userDetails?.zip,
+      gender: userDetails?.gender,
+      age: userDetails?.age,
+      jobTitle: userDetails?.jobTitle,
+      primaryPhone: userDetails?.primaryPhone,
       roles,
       scopes,
       accessToken,

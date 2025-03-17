@@ -23,7 +23,7 @@ module.exports = [
           "Do you have difficulty hearing in a normal conversation, when socializing, or watching TV?",
         options: [
           "0. Adequate - no difficulty in normal conversation, social interaction, listening to TV",
-          "1. Minimal difficult - difficulty in some environments (e.g., when person speaks softly, or setting is noisy)",
+          "1. Minimal difficulty - difficulty in some environments (e.g., when person speaks softly, or setting is noisy)",
           "2. Moderate difficulty - speaker has to increase volume and speak distinctly",
           "3. Highly impaired - absence of useful hearing",
         ],
@@ -99,7 +99,7 @@ module.exports = [
           "1. Memory deficit: failure to recognize familiar persons/places, inability to recall events of past 24 hours, significant memory loss so that supervision is required",
           "2. Impaired decision-making: failure to perform usual ADLs or IADLs, inability to appropriately stop activities, jeopardizes safety through actions",
           "3. Verbal disruption: yelling, threatening, excessive profanity, sexual references, etc.",
-          "4. Physical aggression: aggressive or combative to self and others (for example, hits self, throws objects, punches, dangerous maneuvers with wheelchair or other objects)",
+          "4. Physical aggression: aggressive or combative to self and others (e.g., hits self, throws objects, punches, dangerous maneuvers with wheelchair or other objects)",
           "5. Disruptive, infantile, or socially inappropriate behavior (excludes verbal actions)",
           "6. Delusional, hallucinatory, or paranoid behavior",
           "7. None of the above behaviors demonstrated",
@@ -126,8 +126,8 @@ module.exports = [
           "How would you describe your ability to walk or get around, on an even or uneven surface? Do you use a wheelchair?",
         options: [
           "0. Able to independently walk on even and uneven surfaces and negotiate stairs with or without railings (specifically: needs no human assistance or assistive device).",
-          "1. With the use of a one-handed device (for example, cane, single crutch, hemi-walker), able to independently walk on even and uneven surfaces and negotiate stairs with or without railings.",
-          "2. Requires use of a two-handed device (for example, walker or crutches) to walk alone on a level surface and/or requires human supervision or assistance to negotiate stairs or steps or uneven surfaces.",
+          "1. With the use of a one-handed device (e.g., cane, single crutch, hemi-walker), able to independently walk on even and uneven surfaces and negotiate stairs with or without railings.",
+          "2. Requires use of a two-handed device (e.g., walker or crutches) to walk alone on a level surface and/or requires human supervision or assistance to negotiate stairs or steps or uneven surfaces.",
           "3. Able to walk only with the supervision or assistance of another person at all times.",
           "4. Chairfast, unable to ambulate but is able to wheel self independently.",
           "5. Chairfast, unable to ambulate and is unable to wheel self.",
