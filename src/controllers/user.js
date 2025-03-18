@@ -241,7 +241,7 @@ const listClinicianVisitDetails = async (req, res) => {
           totalVisits: { $sum: 1 },
           newVisits: {
             $sum: {
-              $cond: [{ $eq: ["$status", "New"] }, 1, 0],
+              $cond: [{ $eq: ["$status", ["Past Due", "New"]] }, 1, 0],
             },
           },
           inProgressVisits: {

@@ -252,8 +252,8 @@ async function userLogin(req, res) {
     const responseInst = {
       email: user.email,
       userId: user._id,
-      firstName: userDetails.firstName,
-      lastName: userDetails.lastName,
+      firstName: userDetails?.firstName,
+      lastName: userDetails?.lastName,
       staffNo: userDetails?.clinicianNo,
       tenantId: user.tenantId,
       isFirstLogin: user?.isFirstLogin,

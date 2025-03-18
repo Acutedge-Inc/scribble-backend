@@ -28,9 +28,9 @@ module.exports = (app) => {
   const schedule = require("node-schedule");
 
   // Schedule a job to run every day at midnight
-  schedule.scheduleJob("*/10 * * * *", async () => {
+  schedule.scheduleJob("0 0 * * *", async () => {
     try {
-      console.log("Daily task executed");
+      console.log("Daily task executed"), new Date();
       markVisitPastDue();
     } catch (error) {
       console.error(`Error executing daily task: ${error}`);
