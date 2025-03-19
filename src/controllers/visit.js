@@ -20,12 +20,11 @@ const Clinician_Info = require("../model/tenant/clinicianInfo.js");
 const Client_Info = require("../model/tenant/clientInfo.js");
 const Episode = require("../model/tenant/episode.js");
 const Visit = require("../model/tenant/visit.js");
-// const Form_Type = require("../model/tenant/formType.js");
 const Form = require("../model/tenant/form.js");
 const Assessment = require("../model/tenant/assessment.js");
 const Notification = require("../model/tenant/notification.js");
 const NotificationType = require("../model/tenant/notificationType.js");
-const FormTemplate = require("../model/tenant/assessmentFormTemplate.js");
+const Form_Template = require("../model/tenant/assessmentFormTemplate.js");
 const nconf = require("nconf");
 const {
   pushToQueue,
@@ -1067,12 +1066,34 @@ const updateAssessmentFromRPA = async (err, data) => {
 };
 
 const getForm = async (req, res) => {
-  const { connection, session } = await startDatabaseSession(req.tenantDb);
-  const FormModel = Form(connection);
-  const form = await FormModel.find();
-  if (!form) return res.status(404).json(new ErrorResponse("Form not found"));
+  try {
+    const { connection, session } = await startDatabaseSession(req.tenantDb);
+    const FormModel = Form(connection);
+    const form = await FormModel.find();
+    if (!form) return res.status(404).json(new ErrorResponse("Form not found"));
 
-  return res.status(200).json(new SuccessResponse(form));
+    return res.status(200).json(new SuccessResponse(form));
+  } catch (error) {
+    logger.error(`message container error: ${error.toString()}`);
+    return res.status(500).json(new ErrorResponse(error.message));
+  }
+};
+
+const getFormTemplate = async (req, res) => {
+  try {
+    const { connection, session } = await startDatabaseSession(req.tenantDb);
+    const Form_TemplateModel = Form_Template(connection);
+    const formTemplate = await Form_TemplateModel.find();
+    if (!formTemplate)
+      return res
+        .status(404)
+        .json(new ErrorResponse("Form Templates not found"));
+
+    return res.status(200).json(new SuccessResponse(formTemplate));
+  } catch (error) {
+    logger.error(`message container error: ${error.toString()}`);
+    return res.status(500).json(new ErrorResponse(error.message));
+  }
 };
 
 const getFormbyId = async (req, res) => {
@@ -1152,6 +1173,7 @@ module.exports = {
   processAIOutput,
   updateAssessmentFromRPA,
   getForm,
+  getFormTemplate,
   updateForm,
   markVisitPastDue,
   getFormbyId,

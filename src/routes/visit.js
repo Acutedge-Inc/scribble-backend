@@ -10,6 +10,7 @@ const {
   updateAssessment,
   getAssessmentById,
   getForm,
+  getFormTemplate,
   updateForm,
 } = require("../controllers/visit.js");
 const {
@@ -33,6 +34,14 @@ visitRoutes.get(
   checkMissingInputs,
   validateInputs,
   getForm
+);
+
+visitRoutes.get(
+  "/template",
+  auth.protect(["form.read"]),
+  checkMissingInputs,
+  validateInputs,
+  getFormTemplate
 );
 
 visitRoutes.put(

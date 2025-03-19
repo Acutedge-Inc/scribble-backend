@@ -1477,6 +1477,78 @@
         ]
       }
     },
+    "/v1/visit/template": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssessmentResponse"
+                },
+                "example": {
+                  "status": "ok",
+                  "data": [
+                    {
+                      "_id": "67cf182ecd6dbb2d123519e8",
+                      "formTypeId": 1,
+                      "createdAt": "2025-03-10T16:49:50.961Z",
+                      "updatedAt": "2025-03-14T12:16:04.920Z",
+                      "__v": 0,
+                      "assessmentForm": [
+                        {
+                          "question_code": "A1110.A",
+                          "question": "What is your preferred language?",
+                          "question_type": "TEXT_INPUT",
+                          "options": [
+                            "0. English",
+                            "1. Spanish",
+                            "9. Unable to determine"
+                          ],
+                          "section": "Administrative"
+                        }
+                      ],
+                      "formName": "Start of Care"
+                    }
+                  ],
+                  "total_records_available": 1
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Get the form of the visit",
+        "operationId": "GET_v1-assessment-form",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
     "/v1/visit": {
       "get": {
         "responses": {
