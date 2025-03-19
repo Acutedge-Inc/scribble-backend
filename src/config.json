@@ -1,3 +1,4 @@
 {
-    "BASE_VERSION": "V1"
+  "BASE_VERSION": "V1",
+  "S3_BUCKET": "scribble2-data"
 }

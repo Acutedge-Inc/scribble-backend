@@ -7,31 +7,43 @@ const http = require("http");
 const nconf = require("nconf");
 require("dotenv").config();
 const mongoose = require("mongoose");
-const db = require("./src/models");
+const db = require("./src/model/scribble-admin/index.js");
 const serverless = require("serverless-http");
-
+let adminDbUrl = process.env.MONGO_URI.replace(
+  "ADMIN_DB",
+  process.env.ADMIN_DB
+);
+adminDbUrl = adminDbUrl.replace(/<PUBLIC_IP>/g, process.env.IP);
+const { createAdminUser } = require("./src/controllers/auth.js");
 nconf
   .use("memory")
   .env({ parseValues: true })
   .file({ file: "./src/config.json" });
+const { logger } = require("./src/lib/index.js");
 
+// Connect to MongoDB and initialize admin user
 async function connectToDatabase() {
   try {
-    await db.init(process.env.MONGO_URI,{
+    logger.info(`Connecting to ${adminDbUrl}`);
+    await db.init(adminDbUrl, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      poolSize: 10, 
-    }); // Initialize the database connection
-    console.log("Database connected successfully.");
+      maxPoolSize: 10, // Limits open connections
+      poolSize: 10,
+    });
+    logger.info("Database connected successfully.");
+
+    // Create admin user if it doesn't exist
+    await createAdminUser(adminDbUrl);
   } catch (err) {
-    console.error("Error on MongoDB Connection ::", err);
-    process.exit(1); 
+    logger.error("Error on MongoDB Connection ::", err);
+    process.exit(1);
   }
 }
 
 // Start server locally
 async function startServer() {
-  await connectToDatabase(); 
+  await connectToDatabase();
 
   const port = process.env.PORT || 3000;
   const app = require("./src/index");
@@ -60,27 +72,29 @@ async function startServer() {
     const addr = server.address();
     const bind =
       typeof addr === "string" ? `pipe ${addr}` : `port ${addr.port}`;
-    console.info(`Server listening on ${bind}`);
+    logger.warn(`Server listening on ${bind}`);
   });
 
   server.listen(port); // Start listening on the specified port
 
   const shutdown = () => {
-    console.error("Received kill signal, shutting down gracefully");
+    logger.error("Received kill signal, shutting down gracefully");
     server.close(() => {
-      console.error("Closed out remaining connections");
+      logger.error("Closed out remaining connections");
       process.exit(0);
     });
   };
+
+  process.on("uncaughtException", (err) => {
+    console.error("There was an uncaught error", err);
+  });
+
+  process.on("unhandledRejection", (reason, promise) => {
+    console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  });
 
   process.on("SIGTERM", shutdown);
   process.on("SIGINT", shutdown);
 }
 
-if (process.env.NODE_ENV === "local") {
-  startServer(); // Start the server locally
-} else {
-  const app = require("./src/index"); // Import your Express app
-  connectToDatabase();
-  module.exports.handler = serverless(app); // Wrap the express app with serverless-http
-}
+startServer(); // Start the server locally

@@ -1,18 +1,34 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Appstore API spec",
+    "title": "Scribble API spec",
     "version": "1.0"
   },
   "servers": [],
   "tags": [
     {
       "name": "Auth",
-      "description": "Used by all to register & login to system"
-    }   
+      "description": "Used by user to create user & login to system"
+    },
+    {
+      "name": "Visit",
+      "description": "Used by user to create user & login to system"
+    },
+    {
+      "name": "Settings",
+      "description": "Used by user to create user & login to system"
+    },
+    {
+      "name": "User",
+      "description": "Used by user to create user & login to system"
+    },
+    {
+      "name": "Dashboard",
+      "description": "Used by user to create user & login to system"
+    }
   ],
   "paths": {
-    "/v1/auth/basic": {
+    "/v1/auth/login": {
       "post": {
         "responses": {
           "200": {
@@ -56,80 +72,36 @@
             }
           }
         },
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "POST_v1-auth-basic",
+        "operationId": "POST_v1-auth-login",
         "parameters": [
-        {
-          "in": "header",
-          "name": "content-type",
-          "schema": {
-            "type": "string",
-            "example": "application/json"
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
           },
-          "required": true
-        },
-        {
-          "in": "header",
-          "name": "authorization",
-          "schema": {
-            "type": "string",
-            "example": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjdmYzkwYmU4LTcyNDUtNGZhNy1hM2ZjLTBlNGI3NGZjODc2MCJ9.eyJpZCI6IjY5MmZjZDQ1LTk1YjEtNGIyNS04YmQyLTU5NDIwOTkwMDRiYyIsInNlcmlhbE5vIjoiMkQwNzUxNTAwMDAxMDE5ODQ1NjEiLCJ2aW4iOiI5YTgyOWU0YzIwYTEzMzhiMjlkZDM1Zjk1ODcwYWNhMGYwNzMxMjhiZWY4OWRiYzUxZjA0MmNjZjJmNTI2MjMwIiwicnNDb250cmFjdCI6IlZBTElEIiwidGVsZW1hdGljc0NvbnRyYWN0IjoiVkFMSUQiLCJkYXRhIjoiRU5BQkxFRCIsImlhdCI6MTcyMzUzNDU2NiwiZXhwIjoxNzM5MDg2NTY2LCJpc3MiOiJodHRwczovL2FwaS5tc2lsZGV2LnZpc3Rlb25jbG91ZC5jb20vcm91dGluZy1zZXJ2aWNlIn0.qcX9JLkkXtUMXbExZeTxAbh4syYVbA3s0-iGj50wFkU1SMh8exNA7-5GhPs3M1VENZ-Vigu2IvpI7OBN1b4kkKNhJMlk-xLEBPRPznlZsvamSNZt1eIfsJcH2yhIlnYtzaSrKOIRLvfu_QY7-Y7clG9SHEUSKr-LvVlQx6QlG6rA1sTm1KAplZUx58U8O-ZRonBAPGM8Pbe399MBdHISyJ7qyDJlX7k9BMF7N4Jy6DK16MZIh8d0nZ79-dvN0UznwSnk7Hd793mEI77Z--cCJleSwBIwnmstSEcpfC5puP9Tahjf1EL5VWrDk1rClKHS-pnQ4Pa1YjBojD5IJGBO7w"
-          },
-          "required": true
-        }
-      ],
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
 
-      "requestBody": {
+        "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "oneOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "username": {
-                        "type": "string"
-                      },
-                      "password": {
-                        "type": "string"
-                      },
-                      "keepAlive": {
-                        "type": "boolean"
-                      }
-                    },
-                    "required": [
-                      "username",
-                      "password"
-                    ]
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "android_version": {
-                        "type": "number"
-                      },
-                      "country": {
-                        "type": "string"
-                      },
-                      "oem": {
-                        "type": "string"
-                      },
-                      "model": {
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "android_version",
-                      "country",
-                      "oem",
-                      "model"
-                    ],
-                    "description": "Requires JWT token with payload containing vin in the Authorization header."
-                  }
-                ]
+                "$ref": "#/components/schemas/LoginRequest"
               }
             }
           },
@@ -137,7 +109,7 @@
         }
       }
     },
-    "/v1/auth/logout": {
+    "/v1/auth/tenant": {
       "post": {
         "responses": {
           "200": {
@@ -145,72 +117,203 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LogoutResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
+                  "$ref": "#/components/schemas/TenantResponse"
                 }
               }
             }
           }
         },
-        "tags": [
-          "Auth"
+        "tags": ["Auth"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "POST_v1-auth-tenant",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "schema": {
+              "type": "string",
+              "example": "Bearer token"
+            },
+            "required": true
+          }
         ],
-        "description": "Clear the data from client and server side.",
-        "operationId": "POST_v1-auth-logout",
+
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "properties": {
-                  "userId": {
-                    "type": "number"
-                  },
-                  "refreshToken": {
-                    "type": "string"
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "tenantName": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["tenantName"]
                   }
-                },
-                "required": [
-                  "userId",
-                  "refreshToken"
-                ],
-                "type": "object"
+                ]
               }
             }
           },
           "required": true
-        }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantListResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-auth-tenant",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "schema": {
+              "type": "string",
+              "example": "Bearer token"
+            },
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Filter"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
       }
     },
-    "/v1/auth/register": {
+    "/v1/auth/roles": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RolesResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-auth-role",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "name": "x-tenant-id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "x-tenant-id": {
+                  "type": "string",
+                  "example": "67a89fad069cd3c52f8cff22"
+                }
+              },
+              "required": ["x-tenant-id"]
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Filter"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/auth/user": {
       "post": {
         "responses": {
           "200": {
@@ -244,108 +347,2240 @@
             }
           }
         },
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "description": "Perform user registration. If the client passes a redirect URL and the SSO requires verification, the response of the verification call will be redirected to that URL.(Currently used in developer registeration)",
-        "operationId": "POST_v1-auth-register",
+        "operationId": "POST_v1-auth-user",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "username": {
+                  "email": {
                     "type": "string",
-                    "example": "developer@gmail.com"
+                    "format": "email",
+                    "example": "thillaimaharajan.g@gmail.com"
                   },
-                  "password": {
+                  "employeeId": {
                     "type": "string",
-                    "example": "123456v@7"
+                    "example": "VS2891"
                   },
-                  "firstname": {
+                  "primaryPhone": {
                     "type": "string",
-                    "example": "Android"
+                    "example": "567-890-1234"
                   },
-                  "lastname": {
+                  "x-tenant-id": {
                     "type": "string",
-                    "example": "Developer"
+                    "example": "67c03a5a14563c13b59a7846"
                   },
-                  "mobile_number": {
+                  "roleId": {
                     "type": "string",
-                    "example": "97xxxxxx00"
+                    "example": "67c03a5914563c13b59a7829"
                   },
-                  "country_code": {
+                  "firstName": {
                     "type": "string",
-                    "example": "91"
+                    "example": "David"
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "example": "Miller"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": ["Active", "Inactive"],
+                    "example": "Active"
+                  },
+                  "discipline": {
+                    "type": "string",
+                    "example": "Physical Therapy"
+                  },
+                  "jobTitle": {
+                    "type": "string",
+                    "example": "Therapist"
+                  },
+                  "age": {
+                    "type": "string",
+                    "example": "50"
+                  },
+                  "dob": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "1974-07-08"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": ["Male", "Female", "Other"],
+                    "example": "Male"
+                  },
+                  "address1": {
+                    "type": "string",
+                    "example": "654 Pine St"
+                  },
+                  "address2": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "city": {
+                    "type": "string",
+                    "example": "San Diego"
+                  },
+                  "state": {
+                    "type": "string",
+                    "example": "CA"
+                  },
+                  "zip": {
+                    "type": "string",
+                    "example": "92101"
                   },
                   "country": {
                     "type": "string",
-                    "example": "0442a27c-e00d-4ff4-8b5a-284f82562766"
-                  },
-                  "company": {
-                    "type": "string",
-                    "example": "Xyz"
+                    "example": "USA"
                   }
+                },
+                "required": [
+                  "email",
+                  "employeeId",
+                  "x-tenant-id",
+                  "roleId",
+                  "firstName",
+                  "lastName",
+                  "status",
+                  "primaryPhone"
+                ]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/auth/change-password": {
+      "put": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangePasswordResponse"
                 }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
+        "description": "Change new password",
+        "operationId": "PUT_v1_change_password",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "newPassword": {
+                    "type": "string"
+                  },
+                  "oldPassword": {
+                    "type": "string"
+                  }
+                },
+                "required": ["newPassword", "oldPassword"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "parameters": []
+    },
+    "/v1/auth/recover-password-email": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponseRecoverPassword"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth"],
+        "description": "Request to resend recover password email",
+        "operationId": "POST_v1_resend_recover_password_email",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                },
+                "required": ["email"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        }
+      },
+      "parameters": []
+    },
+    "/v1/auth/recover-password": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
+        "tags": ["Auth"],
+        "description": "Request to recover password email. This request should contain the authorization token in the header. User will get the auth token as a result of /recover-password-email api",
+        "operationId": "POST_v1_recover_password",
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "newPassword": {
+                    "type": "string"
+                  }
+                },
+                "required": ["email", "newPassword"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        }
+      },
+      "parameters": []
+    },
+    "/v1/auth/logout": {
+      "post": {
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogoutResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth"],
+        "description": "Clear the data from client and server side.",
+        "operationId": "POST_v1-auth-logout",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "refreshToken": {
+                    "type": "string"
+                  }
+                },
+                "required": ["refreshToken"],
+                "type": "object"
               }
             }
           },
           "required": true
         }
       }
+    },
+    "/v1/auth/refresh": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogoutResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth"],
+        "description": "Get new accesstoken by using refreshtoken",
+        "operationId": "POST_v1-auth-refresh",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "refreshToken": {
+                    "type": "string"
+                  }
+                },
+                "required": ["refreshToken"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/user/client": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["User"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-user-client",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Filter"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/user/clinician": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicianResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["User"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-user-clinician",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Filter"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/user/clinician/:id": {
+      "put": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClinicianResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["User"],
+        "description": "Update a clinician",
+        "operationId": "PUT_v1-user-clinician-id",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/user/clinician/visitDetails": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VisitDetailResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["User"],
+        "description": "Get the visit details of the clinician",
+        "operationId": "GET_v1-user-clinician-visitDetails",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "visitDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "02/15/2025"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/user/notification": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["User"],
+        "description": "Get the notifications of the user",
+        "operationId": "GET_v1-user-notification",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+
+    "/v1/visit/formtypes": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-assessment-types",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Filter"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/visit/form": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseModel"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Get the form of the visit",
+        "operationId": "GET_v1-assessment-form",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseModel"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform user registration. If the client passes a redirect URL and the SSO requires verification, the response of the verification call will be redirected to that URL.(Currently used in developer registeration)",
+        "operationId": "POST_v1-assessment-form",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "formTypeId": {
+                    "type": "string",
+                    "description": "The ID of the form type"
+                  },
+                  "form": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "The unique identifier for the question"
+                        },
+                        "questionCode": {
+                          "type": "string",
+                          "description": "The unique code of the question"
+                        },
+                        "questionType": {
+                          "type": "string",
+                          "description": "The type of the question (e.g., DROPDOWN, DATE, TEXT INPUT)"
+                        },
+                        "questionText": {
+                          "type": "string",
+                          "description": "The text of the question"
+                        },
+                        "description": {
+                          "type": "string",
+                          "description": "A brief description of the question"
+                        },
+                        "required": {
+                          "type": "boolean",
+                          "description": "Whether the question is required"
+                        },
+                        "value": {
+                          "type": "string",
+                          "description": "The value/answer provided for the question",
+                          "example": ""
+                        }
+                      }
+                    },
+                    "description": "A dynamic set of questions, identified by their questionCode"
+                  }
+                },
+                "required": ["formTypeId", "form"]
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/visit/form/:id": {
+      "put": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseModel"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Update the form of the visit",
+        "operationId": "PUT_v1-assessment-form",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Form"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/visit": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-visit",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Filter"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "post": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VisitResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform user registration. If the client passes a redirect URL and the SSO requires verification, the response of the verification call will be redirected to that URL.(Currently used in developer registeration)",
+        "operationId": "POST_v1-visit",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Visit"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "put": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Visit"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "PUT_v1-visit",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VisitUpdateRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/visit/assessment": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-assessment",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "visitId": {
+                  "type": "string",
+                  "example": "67c669e52f53af0f16bf90f4"
+                }
+              },
+              "required": ["visitId"]
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/visit/assessment/{id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for all other requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-assessment-id",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "put": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssessmentUpdateRequest"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for all other requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "PUT_v1-assessment-id",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssessmentUpdateRequest"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/visit/episode": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VisitListResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-visit-episode",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Filter"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/setting/gridView": {
+      "put": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Settings"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "POST_v1-settings-gridview",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "schema": {
+              "type": "string",
+              "example": "Bearer token"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          }
+        ],
+
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "gridName": {
+                    "type": "string"
+                  },
+                  "viewJson": {
+                    "type": "object",
+                    "properties": {
+                      "clinicianId": {
+                        "$ref": "#/components/schemas/LogoutResponse"
+                      },
+                      "clinicianNo": {
+                        "$ref": "#/components/schemas/LogoutResponse"
+                      },
+                      "firstName": {
+                        "$ref": "#/components/schemas/LogoutResponse"
+                      },
+                      "lastName": {
+                        "$ref": "#/components/schemas/LogoutResponse"
+                      },
+                      "status": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "discipline": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "jobTitle": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "email": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "age": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "dob": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "gender": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "address1": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "address2": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "city": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "state": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "zip": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "country": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      },
+                      "primaryPhone": {
+                        "$ref": "#/components/schemas/FieldSchema"
+                      }
+                    }
+                  }
+                },
+                "required": ["gridName", "viewJson"]
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Settings"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-settings-gridview",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "schema": {
+              "type": "string",
+              "example": "Bearer token"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "gridName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["clinicianTable", "clientTable", "visitTable"],
+              "example": "clinicianTable"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+
+    "/v1/dashboard/admin": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Dashboard"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "GET_v1-dashboard-admin",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "schema": {
+              "type": "string",
+              "example": "Bearer token"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/clinician/upload-audio": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "audio": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Audio file to upload"
+                  },
+                  "assessmentId": {
+                    "type": "string",
+                    "example": "67a95e6208705766eb2a4619",
+                    "description": "ID of the assessment"
+                  }
+                },
+                "required": ["audio", "assessmentId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Audio file uploaded successfully and message sent to SQS",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadAudioResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Clinician"],
+        "description": "Upload an audio file to S3 and push a message to SQS",
+        "operationId": "POST_v1-clinician-upload-audio",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "schema": {
+              "type": "string",
+              "example": "Bearer token"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          }
+        ],
+
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
     }
   },
   "components": {
     "schemas": {
-      "LoginResponse": {
+      "Filter": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "thillai"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "sathish"
+          }
+        }
+      },
+      "ApiResponse": {
         "type": "object",
         "properties": {
           "status": {
-            "type": "string"
+            "type": "string",
+            "example": "ok"
+          },
+          "data": {
+            "type": "string",
+            "example": "Needs to be developed"
+          }
+        }
+      },
+      "ChangePasswordResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
           },
           "data": {
             "type": "object",
             "properties": {
-              "id": {
-                "type": "number"
+              "message": {
+                "type": "string",
+                "example": "Password updated."
+              }
+            }
+          }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "sandeepb@acutedge.com"
               },
-              "username": {
-                "type": "string"
-              },
-              "firstname": {
-                "type": "string"
-              },
-              "lastname": {
-                "type": "string"
-              },
-              "vin": {
-                "type": "string"
-              },
-              "company": {
-                "type": "string"
+              "userId": {
+                "type": "string",
+                "example": "67a95e6208705766eb2a4619"
               },
               "roles": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
+                "type": "string",
+                "example": "scribble_admin"
               },
               "scopes": {
                 "type": "array",
                 "items": {
                   "type": "string"
-                }
+                },
+                "example": ["sso.write"]
               },
               "accessToken": {
-                "type": "string"
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2IjoyLCJ..."
               },
               "refreshToken": {
-                "type": "string"
+                "type": "string",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoic..."
+              },
+              "created": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-10T02:03:14.080Z"
+              },
+              "updated": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-10T02:03:14.080Z"
               }
             }
           }
         }
+      },
+      "VisitListResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": { "type": "string" },
+                "visitNo": { "type": "string" },
+                "visitDate": { "type": "string", "format": "date" },
+                "week": { "type": "string" },
+                "visitType": { "type": "string" },
+                "service": { "type": "string" },
+                "serviceCode": { "type": "string" },
+                "createdAt": { "type": "string", "format": "date-time" },
+                "updatedAt": { "type": "string", "format": "date-time" },
+                "episodeId": { "type": "string" },
+                "episodeNo": { "type": "string" },
+                "clientId": { "type": "string" },
+                "clientFirstName": { "type": "string" },
+                "clientLastName": { "type": "string" },
+                "clinicianId": { "type": "string" },
+                "clinicianEmail": { "type": "string", "format": "email" },
+                "clinicianFirstName": { "type": "string" },
+                "clinicianLastName": { "type": "string" }
+              },
+              "required": [
+                "_id",
+                "visitNo",
+                "visitDate",
+                "week",
+                "visitType",
+                "service",
+                "serviceCode",
+                "createdAt",
+                "updatedAt",
+                "episodeId",
+                "episodeNo",
+                "clientId",
+                "clientFirstName",
+                "clientLastName",
+                "clinicianId",
+                "clinicianEmail",
+                "clinicianFirstName",
+                "clinicianLastName"
+              ]
+            }
+          },
+          "total_records_available": { "type": "integer" }
+        },
+        "required": ["status", "data", "total_records_available"]
+      },
+      "ClinicianResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": { "type": "string" },
+                "userId": { "type": "string" },
+                "clinicianNo": { "type": "string" },
+                "firstName": { "type": "string" },
+                "lastName": { "type": "string" },
+                "primaryPhone": { "type": "string" },
+                "createdAt": { "type": "string", "format": "date-time" },
+                "updatedAt": { "type": "string", "format": "date-time" },
+                "__v": { "type": "integer" },
+                "address1": { "type": "string" },
+                "city": { "type": "string" },
+                "discipline": { "type": "string" },
+                "dob": { "type": "string", "format": "date" },
+                "state": { "type": "string", "minLength": 2, "maxLength": 2 },
+                "status": { "type": "string" },
+                "zip": { "type": "string", "pattern": "^[0-9]{5}$" }
+              },
+              "required": [
+                "_id",
+                "userId",
+                "clinicianNo",
+                "firstName",
+                "lastName",
+                "primaryPhone",
+                "createdAt",
+                "updatedAt",
+                "__v",
+                "address1",
+                "city",
+                "discipline",
+                "dob",
+                "state",
+                "status",
+                "zip"
+              ]
+            }
+          },
+          "total_records_available": { "type": "integer" }
+        },
+        "required": ["status", "data", "total_records_available"]
+      },
+      "ClientResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_id": { "type": "string" },
+                "clientNo": { "type": "string" },
+                "clientGroupId": { "type": "string" },
+                "firstName": { "type": "string" },
+                "lastName": { "type": "string" },
+                "age": { "type": "string", "pattern": "^[0-9]+ years$" },
+                "dob": { "type": "string", "format": "date" },
+                "address1": { "type": "string" },
+                "address2": { "type": "string" },
+                "city": { "type": "string" },
+                "state": { "type": "string", "minLength": 2, "maxLength": 2 },
+                "primaryPhone": {
+                  "type": "string",
+                  "pattern": "^\\(\\d{3}\\) \\d{3}-\\d{4}$"
+                },
+                "createdAt": { "type": "string", "format": "date-time" },
+                "updatedAt": { "type": "string", "format": "date-time" },
+                "__v": { "type": "integer" }
+              },
+              "required": [
+                "_id",
+                "clientNo",
+                "clientGroupId",
+                "firstName",
+                "lastName",
+                "age",
+                "dob",
+                "address1",
+                "city",
+                "state",
+                "primaryPhone",
+                "createdAt",
+                "updatedAt",
+                "__v"
+              ]
+            }
+          },
+          "total_records_available": { "type": "integer" }
+        },
+        "required": ["status", "data", "total_records_available"]
+      },
+      "VisitDetailResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "overallCounts": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string",
+                    "nullable": true,
+                    "example": null
+                  },
+                  "totalVisits": {
+                    "type": "integer",
+                    "example": 5
+                  },
+                  "newVisits": {
+                    "type": "integer",
+                    "example": 2
+                  },
+                  "inProgressVisits": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "completedVisits": {
+                    "type": "integer",
+                    "example": 2
+                  }
+                }
+              },
+              "todayVisits": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": null
+                    },
+                    "totalVisits": {
+                      "type": "integer",
+                      "example": 4
+                    },
+                    "newVisits": {
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "inProgressVisits": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "completedVisits": {
+                      "type": "integer",
+                      "example": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "TenantResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "tenantName": {
+                "type": "string",
+                "example": "amedysis1"
+              },
+              "databaseName": {
+                "type": "string",
+                "example": "amedysis1"
+              },
+              "createdBy": {
+                "type": "string",
+                "format": "ObjectId",
+                "example": "67a89f512d0f29cb9a87c940"
+              },
+              "_id": {
+                "type": "string",
+                "format": "ObjectId",
+                "example": "67a89fad069cd3c52f8cff1f"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-09T12:29:33.215Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-09T12:29:33.215Z"
+              },
+              "__v": {
+                "type": "integer",
+                "example": 0
+              }
+            }
+          }
+        }
+      },
+      "TenantListResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "67b4a43ef61eb03853b863fb"
+          },
+          "tenantName": {
+            "type": "string",
+            "example": "kantime"
+          },
+          "databaseName": {
+            "type": "string",
+            "example": "kantime"
+          },
+          "createdBy": {
+            "type": "string",
+            "example": "67b4a3fdf61eb03853b863f5"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-02-18T15:16:14.100Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-02-18T15:16:14.100Z"
+          },
+          "__v": {
+            "type": "integer",
+            "example": 0
+          }
+        }
+      },
+      "VisitUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "New",
+              "Missed",
+              "In Progress",
+              "Past Due",
+              "Submitted",
+              "Completed"
+            ],
+            "example": "In Progress"
+          }
+        }
+      },
+      "AssessmentUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "Not Started",
+              "In Progress",
+              "Submitted to AI",
+              "Validation",
+              "Submitted to EMR",
+              "Completed"
+            ],
+            "example": "In Progress"
+          }
+        }
+      },
+      "LoginRequest": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "example": "sandeepb@acutedge.com"
+              },
+              "password": {
+                "type": "string",
+                "example": "Admin@123"
+              }
+            },
+            "required": ["username", "password"]
+          }
+        ]
       },
       "LogoutResponse": {
         "type": "object",
@@ -358,6 +2593,43 @@
           }
         }
       },
+      "FieldSchema": {
+        "type": "object",
+        "properties": {
+          "isRequired": {
+            "type": "boolean"
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "label": {
+            "type": "string"
+          },
+          "questionType": {
+            "type": "string",
+            "enum": ["TEXT_INPUT"]
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": ["name", "value"]
+          }
+        },
+        "required": [
+          "isRequired",
+          "isVisible",
+          "label",
+          "questionType",
+          "options"
+        ]
+      },
       "UserResponseModel": {
         "type": "object",
         "properties": {
@@ -368,63 +2640,183 @@
           "data": {
             "type": "object",
             "properties": {
-              "userId": {
+              "roleId": {
                 "type": "string",
-                "example": "ccc45f31-c009-439d-8ba6-8d93b705e98c"
+                "example": "67a89fad069cd3c52f8cff22"
               },
-              "roles": {
+              "tenantId": {
+                "type": "string",
+                "example": "67a89fad069cd3c52f8cff1f"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "thillaimaharajan.g@gmail.com"
+              },
+              "password": {
+                "type": "string",
+                "example": "$2b$10$8/mIZz4SPDAcPkRvrbopUOtZu87JS2dFhnByr4iW5f6fO9EszyV6e"
+              },
+              "isVerified": {
+                "type": "string",
+                "example": "false"
+              },
+              "isDeleted": {
+                "type": "string",
+                "example": "false"
+              },
+              "loginAttempts": {
+                "type": "integer",
+                "example": 0
+              },
+              "_id": {
+                "type": "string",
+                "example": "67a8a17fda90d3413efda928"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-09T12:37:19.762Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-09T12:37:19.763Z"
+              },
+              "__v": {
+                "type": "integer",
+                "example": 0
+              }
+            }
+          }
+        }
+      },
+      "RolesResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "data": {
                 "type": "array",
                 "items": {
-                  "type": "string",
-                  "example": [
-                    "dev"
-                  ]
+                  "$ref": "#/components/schemas/Role"
                 }
-              },
-              "scopes": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "example": [
-                    "sso.self.read",
-                    "sso.self.write",
-                    "self.read",
-                    "self.write",
-                    "roles.read",
-                    "scopes.read",
-                    "devices.read",
-                    "application.read",
-                    "application.write",
-                    "application.remove",
-                    "appValidation.read",
-                    "category.read",
-                    "stats.read",
-                    "country.read",
-                    "vehicles.read",
-                    "currency.read",
-                    "analytics.read"
-                  ]
-                }
-              },
-              "firstname": {
+              }
+            }
+          }
+        }
+      },
+      "Role": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "67b4b17c9805bd2c1aedbc9e"
+          },
+          "roleName": {
+            "type": "string",
+            "example": "user"
+          },
+          "scope": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "assessment.read",
+              "assessment.write",
+              "assessment.remove"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-02-18T16:12:44.330Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-02-18T16:12:44.331Z"
+          },
+          "__v": {
+            "type": "integer",
+            "example": 0
+          }
+        }
+      },
+      "VisitResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "episodeId": {
                 "type": "string",
-                "example": "Android"
+                "format": "uuid",
+                "example": "67bd8382c5ae4cbd95965ee1"
               },
-              "lastname": {
+              "clinicianId": {
                 "type": "string",
-                "example": "Developer"
+                "format": "uuid",
+                "example": "67bd80867756b55693740021"
               },
-              "country": {
+              "clientId": {
                 "type": "string",
-                "example": "0442a27c-e00d-4ff4-8b5a-284f82562766"
+                "format": "uuid",
+                "example": "67bd8383c5ae4cbd95965ee5"
               },
-              "company": {
+              "visitNo": {
                 "type": "string",
-                "example": "Xyz"
+                "example": "4192052"
               },
-              "isNewRegistration": {
-                "type": "boolean",
-                "example": true
+              "visitDate": {
+                "type": "string",
+                "format": "date",
+                "example": "02/13/2025"
+              },
+              "week": {
+                "type": "string",
+                "example": "02/09/2025 - 02/15/2025"
+              },
+              "visitType": {
+                "type": "string",
+                "example": "Normal"
+              },
+              "service": {
+                "type": "string",
+                "example": "PT SOC OASIS"
+              },
+              "serviceCode": {
+                "type": "string",
+                "example": "PT SOC"
+              },
+              "_id": {
+                "type": "string",
+                "format": "uuid",
+                "example": "67bd8386c5ae4cbd95965ee7"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-25T08:47:02.177Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-02-25T08:47:02.177Z"
+              },
+              "__v": {
+                "type": "integer",
+                "example": 0
               }
             }
           }
@@ -457,11 +2849,204 @@
             "type": "object"
           }
         },
-        "required": [
-          "status",
-          "errorMessage",
-          "data"
-        ]
+        "required": ["status", "errorMessage", "data"]
+      },
+      "ErrorResponseRecoverPassword": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "errorCode": {
+            "enum": [
+              "GENERAL",
+              "NOT_FOUND",
+              "MISSING_DATA",
+              "INVALID_DATA",
+              "EXPIRED_TOKEN",
+              "INVALID_TOKEN",
+              "INVALID_CODE",
+              "VERIFIED_ACCOUNT",
+              "FEDERATED_ACCOUNT",
+              "FIVE_MINUTES_DELAY_ERROR"
+            ],
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "errorCode": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": ["status", "errorMessage", "data"]
+      },
+      "Visit": {
+        "type": "object",
+        "properties": {
+          "Care Type": { "type": "string", "example": "Intermitent" },
+          "Classification": {
+            "type": "string",
+            "example": "Home Safety Check,Skin Check"
+          },
+          "Client First Name": { "type": "string", "example": "Connie" },
+          "Client Last Name": { "type": "string", "example": "Wimpee" },
+          "Client Address 1": {
+            "type": "string",
+            "example": "6331 W Cholla St"
+          },
+          "Client Address 2": { "type": "string", "nullable": true },
+          "Client Age": { "type": "string", "example": "72 years" },
+          "Client Cell": { "type": "string", "nullable": true },
+          "Client City": { "type": "string", "example": "Glendale" },
+          "Client County": { "type": "string", "example": "Maricopa" },
+          "Client DOB": { "type": "string", "example": "10/10/1952" },
+          "Client Email": { "type": "string", "nullable": true },
+          "Client Emergency Contact": {
+            "type": "string",
+            "example": "Wimpee, William"
+          },
+          "Client Emergency Contact #": {
+            "type": "string",
+            "example": "(623) 235-6301"
+          },
+          "Client ID": { "type": "integer", "example": 71251 },
+          "Client Group ID": { "type": "integer", "example": 71251 },
+          "Client LOB": { "type": "string", "example": "Adult Skilled" },
+          "Client Notes": { "type": "string", "nullable": true },
+          "Client Phone": { "type": "string", "example": "(623) 235-6301" },
+          "Client Signed": { "type": "string", "example": "No" },
+          "Client Signed Date": { "type": "string", "nullable": true },
+          "Client State": { "type": "string", "example": "AZ" },
+          "Clinician First Name": { "type": "string", "example": "Amber" },
+          "Clinician Last Name": { "type": "string", "example": "Miller" },
+          "Clinician Address 1": {
+            "type": "string",
+            "example": "409 E. Colter Street"
+          },
+          "Clinician Cell": { "type": "string", "example": "(602) 363-6358" },
+          "Clinician City": { "type": "string", "example": "Phoenix" },
+          "Clinician Confirmed": { "type": "string", "example": "No" },
+          "Clinician Date of Birth": {
+            "type": "string",
+            "example": "11/11/1976"
+          },
+          "Clinician Discipline": { "type": "string", "example": "PT" },
+          "Clinician Email": {
+            "type": "string",
+            "example": "ambermmillerpt@gmail.com"
+          },
+          "Clinician Gender": { "type": "string", "example": "Female" },
+          "Clinician ID": { "type": "integer", "example": 1027 },
+          "Clinician SSN": { "type": "string", "example": "474-30-2711" },
+          "Clinician State": { "type": "string", "example": "AZ" },
+          "Clinician Status": { "type": "string", "example": "Active" },
+          "Clinician Zip": { "type": "integer", "example": 85012 },
+          "eChart Status": { "type": "string", "example": "Open" },
+          "Episode Duration": { "type": "integer", "example": 60 },
+          "Episode Number": { "type": "integer", "example": 1 },
+          "Episode Start Date": { "type": "string", "example": "02/13/2025" },
+          "Episode End Date": { "type": "string", "example": "04/13/2025" },
+          "EVV Visit": { "type": "string", "example": "No" },
+          "Intake Status": { "type": "string", "example": "Ready to Schedule" },
+          "Month": { "type": "string", "example": "2025 - February" },
+          "Non-Billable Hours": { "type": "number", "example": 0.0 },
+          "Referral Date": { "type": "string", "example": "02/11/2025" },
+          "Schedule Status": { "type": "string", "example": "Planned" },
+          "Service": { "type": "string", "example": "PT SOC OASIS" },
+          "Service Code": { "type": "string", "example": "PT SOC" },
+          "SOC Date": { "type": "string", "example": "02/13/2025" },
+          "Visit Date": { "type": "string", "example": "02/13/2025" },
+          "Visit ID": { "type": "integer", "example": 4192052 },
+          "Visit Type": { "type": "string", "example": "Normal" },
+          "Week": { "type": "string", "example": "02/09/2025 - 02/15/2025" },
+          "Weekday": { "type": "string", "example": "Thursday" }
+        }
+      },
+      "SuccessResponseRecoverPassword": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          },
+          "errorCode": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "errorCode": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": ["status", "data"]
+      },
+      "UploadAudioResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "ok"
+          },
+          "data": {
+            "type": "string",
+            "example": "Audio file uploaded and message sent to SQS"
+          }
+        }
+      },
+      "Form": {
+        "type": "object",
+        "properties": {
+          "formTypeId": {
+            "type": "string",
+            "description": "The ID of the form type"
+          },
+          "form": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "questionCode": {
+                  "type": "string",
+                  "description": "The unique code of the question"
+                },
+                "questionType": {
+                  "type": "string",
+                  "description": "The type of the question (e.g., DROPDOWN, DATE, TEXT INPUT)"
+                },
+                "questionText": {
+                  "type": "string",
+                  "description": "The text of the question"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "A brief description of the question"
+                },
+                "required": {
+                  "type": "boolean",
+                  "description": "Whether the question is required"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "The value/answer provided for the question",
+                  "example": ""
+                }
+              }
+            },
+            "description": "A dynamic set of questions, identified by their questionCode"
+          }
+        },
+        "required": ["formTypeId", "form"]
       }
     },
     "responses": {},

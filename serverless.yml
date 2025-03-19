@@ -1,0 +1,16 @@
+service: my-service
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+
+functions:
+  app:
+    handler: src/index.handler
+    events:
+      - http:
+          path: /
+          method: any
+
+plugins:
+  - serverless-offline

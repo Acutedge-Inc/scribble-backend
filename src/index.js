@@ -7,7 +7,8 @@ const helmet = require("helmet");
 const methodOverride = require("method-override");
 const { randomUUID } = require("crypto");
 
-const routes = require("./routes");
+const routes = require("./routes/index.js");
+const { session } = require("./lib");
 
 const app = express();
 
@@ -17,7 +18,7 @@ app.disable("x-powered-by");
 app.use(
   cors({
     maxAge: 86400,
-  }),
+  })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -30,8 +31,10 @@ app.use(helmet.noSniff());
 app.use(
   helmet.frameguard({
     action: "sameorigin",
-  }),
+  })
 );
+
+session.handleSessionExpiry();
 
 // Sets "X-XSS-Protection: 1; mode=block"
 app.use((req, res, next) => {
@@ -42,9 +45,12 @@ app.use((req, res, next) => {
 });
 
 const swaggerDocument = require("./swagger/swagger.json");
-
+const swaggerUrl =
+  process.env.NODE_ENV === "local"
+    ? `http://localhost:3000/api/`
+    : `${process.env.API_URL}/api/`;
 swaggerDocument.servers.push({
-  url: `https://ntitmak4a4r45djrvtdvicvngm0xyujl.lambda-url.us-west-2.on.aws/api/`,
+  url: swaggerUrl,
 });
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -64,7 +70,7 @@ app.use(
       mediaSrc: ["'self'"],
       requireTrustedTypesFor: ["'script'"],
     },
-  }),
+  })
 );
 
 // setup routers
@@ -93,10 +99,7 @@ app.use((err, req, res, next) => {
 
   return res.status(err?.statusCode || err?.errorCode || 500).json({
     status: "error",
-    errorMessage:
-      err?.statusCode === 404 || err?.errorCode === 400
-        ? err?.message
-        : "Some unexpected error found!",
+    errorMessage: err?.message ? err?.message : "Some unexpected error found!",
     data: {},
   });
 });
