@@ -266,6 +266,11 @@ const listAssessment = async (req, res) => {
 
 const getAssessmentById = async (req, res) => {
   try {
+    if (!req.params.id) {
+      return res
+        .status(500)
+        .json(new ErrorResponse("Please specify id in parameter"));
+    }
     logger.debug(`Getting assessment by id: ${req.params.id}`);
     const { id } = req.params;
     const { connection, session } = await startDatabaseSession(req.tenantDb);
@@ -757,6 +762,11 @@ const startDatabaseSession = async (tenantDb) => {
 
 const updateVisit = async (req, res) => {
   try {
+    if (!req.params.id) {
+      return res
+        .status(500)
+        .json(new ErrorResponse("Please specify id in parameter"));
+    }
     logger.debug(`Updating visit with id: ${req.params.id}`);
     const { connection, session } = await startDatabaseSession(req.tenantDb);
     const VisitModel = Visit(connection);
@@ -772,6 +782,11 @@ const updateVisit = async (req, res) => {
 
 const updateAssessment = async (req, res) => {
   try {
+    if (!req.params.id) {
+      return res
+        .status(500)
+        .json(new ErrorResponse("Please specify id in parameter"));
+    }
     logger.debug(`Updating assessment with id: ${req.params.id}`);
     const { connection, session } = await startDatabaseSession(req.tenantDb);
     const AssessmentModel = Assessment(connection);
@@ -786,10 +801,6 @@ const updateAssessment = async (req, res) => {
     logger.debug(`Updated assessment: ${assessment._id}`);
 
     if (req.body.status === "Submitted to EMR") {
-      // const rpaInput = assessment.assessmentQuestion.map((question) => {
-      //   question.value = question.answer_code;
-      //   return question;
-      // });
       const rpaInput = transformData(assessment.assessmentQuestion);
       const visitId = assessment.visitId;
       const VisitModel = Visit(connection);
@@ -1065,6 +1076,11 @@ const getForm = async (req, res) => {
 };
 
 const getFormbyId = async (req, res) => {
+  if (!req.params.id) {
+    return res
+      .status(500)
+      .json(new ErrorResponse("Please specify id in parameter"));
+  }
   const { connection, session } = await startDatabaseSession(req.tenantDb);
   const FormModel = Form(connection);
   const form = await FormModel.findById(req.params.id);
@@ -1074,6 +1090,11 @@ const getFormbyId = async (req, res) => {
 };
 
 const updateForm = async (req, res) => {
+  if (!req.params.id) {
+    return res
+      .status(500)
+      .json(new ErrorResponse("Please specify id in parameter"));
+  }
   const { connection, session } = await startDatabaseSession(req.tenantDb);
   const FormModel = Form(connection);
   const form = await FormModel.findByIdAndUpdate(req.params.id, req.body, {

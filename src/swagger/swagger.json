@@ -945,7 +945,7 @@
         ]
       }
     },
-    "/v1/user/clinician/:id": {
+    "/v1/user/clinician/{id}": {
       "put": {
         "responses": {
           "200": {
@@ -1104,7 +1104,34 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResponseModel"
+                  "$ref": "#/components/schemas/AssessmentResponse"
+                },
+                "example": {
+                  "status": "ok",
+                  "data": [
+                    {
+                      "_id": "67cf182ecd6dbb2d123519e8",
+                      "formTypeId": 1,
+                      "createdAt": "2025-03-10T16:49:50.961Z",
+                      "updatedAt": "2025-03-14T12:16:04.920Z",
+                      "__v": 0,
+                      "assessmentForm": [
+                        {
+                          "question_code": "A1110.A",
+                          "question": "What is your preferred language?",
+                          "question_type": "TEXT_INPUT",
+                          "options": [
+                            "0. English",
+                            "1. Spanish",
+                            "9. Unable to determine"
+                          ],
+                          "section": "Administrative"
+                        }
+                      ],
+                      "formName": "Start of Care"
+                    }
+                  ],
+                  "total_records_available": 1
                 }
               }
             }
@@ -1147,7 +1174,41 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResponseModel"
+                  "$ref": "#/components/schemas/FormPostResponse"
+                },
+                "example": {
+                  "status": "ok",
+                  "data": {
+                    "formName": "ROC",
+                    "assessmentForm": [
+                      {
+                        "question_code": "M1610",
+                        "question": "Have you been experiencing any issues with urinary leakage or incontinence? Do you currently use a urinary catheter?",
+                        "options": [
+                          "0. No incontinence or catheter (includes anuria or ostomy for urinary drainage)",
+                          "1. Patient is incontinent",
+                          "2. Patient requires a urinary catheter (specifically: external, indwelling, intermittent, or suprapubic)"
+                        ],
+                        "question_type": "TEXT_INPUT",
+                        "section": "Bladder and Bowel"
+                      },
+                      {
+                        "question_code": "M1028",
+                        "question": "Do you have any other active health conditions that we should be aware of?",
+                        "options": [
+                          "1. Peripheral Vascular Disease (PVD) or Peripheral Arterial Disease (PAD)",
+                          "2. Diabetes Mellitus (DM)",
+                          "3. None of the above"
+                        ],
+                        "question_type": "TEXT_INPUT",
+                        "section": "Medications"
+                      }
+                    ],
+                    "_id": "67db119962a34a167b810ade",
+                    "createdAt": "2025-03-19T18:48:57.085Z",
+                    "updatedAt": "2025-03-19T18:48:57.086Z",
+                    "__v": 0
+                  }
                 }
               }
             }
@@ -1182,52 +1243,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "formName": {
-                    "type": "string",
-                    "description": "The ID of the form type"
-                  },
-                  "assessmentForm": {
-                    "type": "object",
-                    "additionalProperties": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string",
-                          "description": "The unique identifier for the question"
-                        },
-                        "questionCode": {
-                          "type": "string",
-                          "description": "The unique code of the question"
-                        },
-                        "questionType": {
-                          "type": "string",
-                          "description": "The type of the question (e.g., DROPDOWN, DATE, TEXT INPUT)"
-                        },
-                        "questionText": {
-                          "type": "string",
-                          "description": "The text of the question"
-                        },
-                        "description": {
-                          "type": "string",
-                          "description": "A brief description of the question"
-                        },
-                        "required": {
-                          "type": "boolean",
-                          "description": "Whether the question is required"
-                        },
-                        "value": {
-                          "type": "string",
-                          "description": "The value/answer provided for the question",
-                          "example": ""
-                        }
-                      }
-                    },
-                    "description": "A dynamic set of questions, identified by their questionCode"
-                  }
-                },
-                "required": ["formName", "assessmentForm"]
+                "$ref": "#/components/schemas/FormPostRequest"
               }
             }
           }
@@ -1240,6 +1256,56 @@
       }
     },
     "/v1/visit/form/{id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormPutResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Get the form of the visit",
+        "operationId": "GET_v1-assessment-form",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
       "put": {
         "responses": {
           "200": {
@@ -1247,7 +1313,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserResponseModel"
+                  "$ref": "#/components/schemas/FormPutResponse"
                 }
               }
             }
@@ -1290,60 +1356,25 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/Form"
+              },
+              "example": {
+                "assessmentForm": [
+                  {
+                    "question_code": "A1110.A",
+                    "question": "What is your preferred language?",
+                    "question_type": "TEXT_INPUT",
+                    "options": [
+                      "0. English",
+                      "1. Spanish",
+                      "9. Unable to determine"
+                    ],
+                    "section": "Administrative"
+                  }
+                ]
               }
             }
           }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
-      },
-      "get": {
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UserResponseModel"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["Visit"],
-        "description": "Get the form of the visit",
-        "operationId": "GET_v1-assessment-form",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "content-type",
-            "schema": {
-              "type": "string",
-              "example": "application/json"
-            },
-            "required": true
-          },
-          {
-            "in": "header",
-            "name": "x-tenant-id",
-            "schema": {
-              "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
-            },
-            "required": false,
-            "description": "Tenant ID of the customer"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "security": [
           {
             "Bearer": []
@@ -1616,6 +1647,30 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TenantResponse"
+                },
+                "example": {
+                  "status": "ok",
+                  "data": {
+                    "_id": "67cf182ecd6dbb2d123519e8",
+                    "formTypeId": 1,
+                    "createdAt": "2025-03-10T16:49:50.961Z",
+                    "updatedAt": "2025-03-19T18:34:21.310Z",
+                    "__v": 0,
+                    "assessmentForm": [
+                      {
+                        "question_code": "A1110.A",
+                        "question": "What is your preferred language?",
+                        "question_type": "TEXT_INPUT",
+                        "options": [
+                          "0. English",
+                          "1. Spanish",
+                          "9. Unable to determine"
+                        ],
+                        "section": "Administrative"
+                      }
+                    ],
+                    "formName": "Start of Care"
+                  }
                 }
               }
             }
@@ -2423,6 +2478,69 @@
           }
         }
       },
+      "FormGetResponse": {},
+
+      "FormPutResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "formTypeId": {
+                "type": "integer"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "__v": {
+                "type": "integer"
+              },
+              "assessmentForm": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "question_code": {
+                      "type": "string"
+                    },
+                    "question": {
+                      "type": "string"
+                    },
+                    "question_type": {
+                      "type": "string",
+                      "enum": ["TEXT_INPUT", "CHECK_LIST", "RADIO", "DROPDOWN"]
+                    },
+                    "options": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "section": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "formName": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+
       "TenantResponse": {
         "type": "object",
         "properties": {
@@ -2604,6 +2722,151 @@
           "options"
         ]
       },
+
+      "AssessmentResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Assessment"
+            }
+          },
+          "total_records_available": {
+            "type": "integer"
+          }
+        }
+      },
+      "Assessment": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "formTypeId": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "__v": {
+            "type": "integer"
+          },
+          "assessmentForm": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssessmentForm"
+            }
+          },
+          "formName": {
+            "type": "string"
+          }
+        }
+      },
+      "AssessmentForm": {
+        "type": "object",
+        "properties": {
+          "question_code": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string"
+          },
+          "question_type": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "section": {
+            "type": "string"
+          }
+        }
+      },
+
+      "FormPostResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "formName": {
+                "type": "string"
+              },
+              "assessmentForm": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/AssessmentForm"
+                }
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "__v": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "FormPostRequest": {
+        "type": "object",
+        "properties": {
+          "formName": {
+            "type": "string"
+          },
+          "assessmentForm": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "question_code": {
+                  "type": "string"
+                },
+                "question": {
+                  "type": "string"
+                },
+                "question_type": {
+                  "type": "string",
+                  "enum": ["TEXT_INPUT", "CHECK_LIST", "RADIO", "DROPDOWN"]
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "section": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+
       "UserResponseModel": {
         "type": "object",
         "properties": {
@@ -2978,49 +3241,38 @@
           }
         }
       },
+
       "Form": {
         "type": "object",
         "properties": {
-          "formTypeId": {
-            "type": "string",
-            "description": "The ID of the form type"
-          },
-          "form": {
-            "type": "object",
-            "additionalProperties": {
+          "assessmentForm": {
+            "type": "array",
+            "items": {
               "type": "object",
               "properties": {
-                "questionCode": {
-                  "type": "string",
-                  "description": "The unique code of the question"
+                "question_code": {
+                  "type": "string"
                 },
-                "questionType": {
-                  "type": "string",
-                  "description": "The type of the question (e.g., DROPDOWN, DATE, TEXT INPUT)"
+                "question": {
+                  "type": "string"
                 },
-                "questionText": {
+                "question_type": {
                   "type": "string",
-                  "description": "The text of the question"
+                  "enum": ["TEXT_INPUT", "CHECK_LIST", "RADIO", "DROPDOWN"]
                 },
-                "description": {
-                  "type": "string",
-                  "description": "A brief description of the question"
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 },
-                "required": {
-                  "type": "boolean",
-                  "description": "Whether the question is required"
-                },
-                "value": {
-                  "type": "string",
-                  "description": "The value/answer provided for the question",
-                  "example": ""
+                "section": {
+                  "type": "string"
                 }
               }
-            },
-            "description": "A dynamic set of questions, identified by their questionCode"
+            }
           }
-        },
-        "required": ["formTypeId", "form"]
+        }
       }
     },
     "responses": {},

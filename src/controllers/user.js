@@ -123,6 +123,9 @@ const isValidDate = (dateString) => {
 };
 
 const updateClinician = async (req, res) => {
+  if (!req.params.id) {
+    throw new Error(`Please specify id in the parameter`);
+  }
   logger.debug(`Updating clinician with ID: ${req.params.id}`);
   try {
     const connection = await getTenantDB(req.tenantDb);
