@@ -27,46 +27,14 @@ const {
 const { ErrorResponse } = require("../lib/responses.js");
 const clinicianInfo = require("../model/tenant/clinicianInfo.js");
 
-//UserAdmin create a form
-const createForm = async (req, res) => {
-  logger.debug("Creating new form");
-  const { formTypeId, form } = req.body;
-  logger.debug(`Form type ID: ${formTypeId}`);
-
-  const connection = await getTenantDB(req.tenantDb);
-  logger.debug(`Connected to tenant database: ${req.tenantDb}`);
-  const FormModel = Form(connection);
-
-  let assessmentForm = await FormModel.find({
-    assessmentTypeId: formTypeId,
-  });
-  logger.debug(`Found ${assessmentForm.length} existing forms for this type`);
-
-  if (assessmentForm.length) {
-    logger.debug("Assessment form already exists - returning error");
-    return res
-      .status(401)
-      .json(new ErrorResponse("Assessment Form already available"));
-  }
-
-  logger.debug("Creating new assessment form");
-  assessmentForm = await FormModel.create({
-    assessmentTypeId: formTypeId,
-    questionForm: form,
-  });
-  logger.debug(`Created new form with ID: ${assessmentForm._id}`);
-
-  return res.status(404).json(new SuccessResponse(assessmentForm));
-};
-
 const getUserSettings = async (req, res) => {
   logger.debug("Getting user settings");
   const connection = await getTenantDB(req.tenantDb);
   logger.debug(`Connected to tenant database: ${req.tenantDb}`);
-  const Form_TypeModel = Form_Type(connection);
+  const FormModel = Form(connection);
 
   logger.debug("Fetching assessment types");
-  const assessmentTypes = await Form_TypeModel.find();
+  const assessmentTypes = await FormModel.find();
   logger.debug(`Found ${assessmentTypes.length} assessment types`);
 
   return res.status(404).json(new SuccessResponse(assessmentTypes));

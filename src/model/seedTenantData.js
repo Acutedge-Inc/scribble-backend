@@ -1,13 +1,11 @@
 const mongoose = require("mongoose");
 const Role = require("../model/tenant/role");
-const Form_Type = require("./tenant/formType");
 const Grid = require("../model/tenant/grid");
 const View_Setting = require("../model/tenant/viewSetting");
 const NotificationType = require("../model/tenant/notificationType");
 const FormTemplate = require("../model/tenant/assessmentFormTemplate");
 const Form = require("./tenant/form");
 const RoleData = require("./default/role");
-const FormTypeData = require("./default/formType");
 let GridSettingData = require("./default/grid");
 const NotificationTypeData = require("./default/notificationType");
 const FormTemplateData = require("./default/formTemplate");
@@ -21,13 +19,11 @@ const seedTenantData = async (connection) => {
 
     // Get model instances from the provided connection
     const RoleModel = Role(connection);
-    const FormTypeModel = Form_Type(connection);
     const GridModel = Grid(connection);
     const ViewSettingModel = View_Setting(connection);
     const NotificationTypeModel = NotificationType(connection);
     const FormTemplateModel = FormTemplate(connection);
     await RoleModel.create(RoleData);
-    const formType = await FormTypeModel.create(FormTypeData);
     const grid = await GridModel.create(GridSettingData);
 
     GridSettingData = await Promise.all(
@@ -42,16 +38,8 @@ const seedTenantData = async (connection) => {
     await ViewSettingModel.create(GridSettingData);
     await NotificationTypeModel.create(NotificationTypeData);
     const FormModel = Form(connection);
-    for (const formTemplate of FormTemplateData) {
-      await FormTemplateModel.create(formTemplate);
-      let formTypeId = formType.find(
-        (item) => item.formName === formTemplate.name
-      );
-      await FormModel.create({
-        formTypeId: formTypeId.id,
-        questionForm: formTemplate.assessmentForm,
-      });
-    }
+    await FormTemplateModel.create(FormTemplateData);
+    await FormModel.create(FormTemplateData);
 
     logger.info("Seeding completed successfully!");
     return true;

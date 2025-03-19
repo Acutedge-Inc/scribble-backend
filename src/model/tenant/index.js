@@ -30,7 +30,7 @@ tenantdb.init = async (dbName) => {
       "clientInfo.js",
       "notificationType.js",
       "notification.js",
-      "formType.js",
+      // "formType.js",
       "episode.js",
       "visit.js",
       "assessmentFormTemplate.js",

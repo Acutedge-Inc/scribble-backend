@@ -20,7 +20,7 @@ const Clinician_Info = require("../model/tenant/clinicianInfo.js");
 const Client_Info = require("../model/tenant/clientInfo.js");
 const Episode = require("../model/tenant/episode.js");
 const Visit = require("../model/tenant/visit.js");
-const Form_Type = require("../model/tenant/formType.js");
+// const Form_Type = require("../model/tenant/formType.js");
 const Form = require("../model/tenant/form.js");
 const Assessment = require("../model/tenant/assessment.js");
 const Notification = require("../model/tenant/notification.js");
@@ -45,44 +45,25 @@ const assessment = require("../model/tenant/assessment.js");
 //UserAdmin create a form
 const createForm = async (req, res) => {
   logger.debug(`Creating form with formTypeId: ${req.body.formTypeId}`);
-  const { formTypeId, form } = req.body;
+  const { formName, assessmentForm } = req.body;
   const connection = await getTenantDB(req.tenantDb);
   const FormModel = Form(connection);
 
-  let assessmentForm = await FormModel.find({
-    assessmentTypeId: formTypeId,
+  let form = await FormModel.find({
+    formName,
   });
-  logger.debug(`Found existing assessment forms: ${assessmentForm.length}`);
-  if (assessmentForm.length) {
+  logger.debug(`Found existing assessment forms: ${form.length}`);
+  if (form.length) {
     return res
       .status(401)
       .json(new ErrorResponse("Assessment Form already available"));
   }
-  assessmentForm = await FormModel.create({
-    formTypeId: formTypeId,
-    questionForm: form,
+  form = await FormModel.create({
+    formName,
+    assessmentForm,
   });
-  logger.debug(`Created new assessment form with id: ${assessmentForm._id}`);
-  return res.status(404).json(new SuccessResponse(assessmentForm));
-};
-
-const formTypes = async (req, res) => {
-  logger.debug("Fetching form types");
-  const connection = await getTenantDB(req.tenantDb);
-  const Form_TypeModel = Form_Type(connection);
-  const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
-  logger.debug(
-    `Query params: ${JSON.stringify(query)}, limit: ${parsedLimit}, offset: ${parsedOffset}`
-  );
-
-  const assessmentTypes = await Form_TypeModel.find(query)
-    .limit(parsedLimit)
-    .skip(parsedOffset);
-
-  const totalCount = await Form_TypeModel.countDocuments(query);
-  logger.debug(`Found ${totalCount} form types`);
-
-  return res.status(201).json(new SuccessResponse(assessmentTypes, totalCount));
+  logger.debug(`Created new assessment form with id: ${form._id}`);
+  return res.status(404).json(new SuccessResponse(form));
 };
 
 const listEpisode = async (req, res) => {
@@ -725,16 +706,16 @@ const createVisitRecord = async (
 /** Get or create a form */
 const getOrCreateForm = async (connection, session) => {
   logger.debug("Getting/Creating form");
-  const Form_TypeModel = Form_Type(connection);
+  // const Form_TypeModel = Form_Type(connection);
   const FormModel = Form(connection);
 
-  const formType = await Form_TypeModel.findOne({
-    formName: "Start of Care",
-  }).session(session);
-  logger.debug(`Found form type: ${formType ? formType._id : "not found"}`);
-  if (!formType) throw new Error("Form type not found");
+  // const formType = await Form_TypeModel.findOne({
+  //   formName: "Start of Care",
+  // }).session(session);
+  // logger.debug(`Found form type: ${formType ? formType._id : "not found"}`);
+  // if (!formType) throw new Error("Form type not found");
 
-  let form = await FormModel.findOne({ formTypeId: formType.id }).session(
+  let form = await FormModel.findOne({ formName: "Start of Care" }).session(
     session
   );
   logger.debug(`Found form: ${form ? form._id : "not found"}`);
@@ -755,7 +736,7 @@ const createAssessment = async (form, visitId, connection, session) => {
   if (existingAssessment) return existingAssessment;
 
   const assessment = await AssessmentModel.create(
-    [{ formId: form.id, visitId, assessmentQuestion: form.questionForm }],
+    [{ formId: form.id, visitId, assessmentQuestion: form.assessmentForm }],
     {
       session,
     }
@@ -1077,17 +1058,19 @@ const updateAssessmentFromRPA = async (err, data) => {
 const getForm = async (req, res) => {
   const { connection, session } = await startDatabaseSession(req.tenantDb);
   const FormModel = Form(connection);
-  const form = await FormModel.find().populate({
-    path: "formTypeId",
-    model: Form_Type,
-  });
+  const form = await FormModel.find();
   if (!form) return res.status(404).json(new ErrorResponse("Form not found"));
-  const formData = form.map((f) => {
-    f.formName = f.formTypeId.formName;
-    f.questionForm = JSON.parse(f.questionForm);
-    return f;
-  });
-  return res.status(200).json(new SuccessResponse(formData));
+
+  return res.status(200).json(new SuccessResponse(form));
+};
+
+const getFormbyId = async (req, res) => {
+  const { connection, session } = await startDatabaseSession(req.tenantDb);
+  const FormModel = Form(connection);
+  const form = await FormModel.findById(req.params.id);
+  if (!form) return res.status(404).json(new ErrorResponse("Form not found"));
+
+  return res.status(200).json(new SuccessResponse(form));
 };
 
 const updateForm = async (req, res) => {
@@ -1096,7 +1079,6 @@ const updateForm = async (req, res) => {
   const form = await FormModel.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
-  form.questionForm = JSON.parse(form.questionForm);
   return res.status(200).json(new SuccessResponse(form));
 };
 
@@ -1138,7 +1120,7 @@ const markVisitPastDue = async () => {
 module.exports = {
   createForm,
   createVisit,
-  formTypes,
+  // formTypes,
   listVisit,
   listEpisode,
   listAssessment,
@@ -1151,4 +1133,5 @@ module.exports = {
   getForm,
   updateForm,
   markVisitPastDue,
+  getFormbyId,
 };

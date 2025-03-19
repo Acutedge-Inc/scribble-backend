@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 
 const formSchema = new mongoose.Schema(
   {
-    formTypeId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Form_Type",
+    formName: {
+      type: String,
       required: true,
+      unique: true,
     },
-    questionForm: {
+    assessmentForm: {
       type: Array,
     },
   },

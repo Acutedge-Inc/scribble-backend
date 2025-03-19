@@ -2,7 +2,7 @@ const express = require("express");
 const {
   createForm,
   createVisit,
-  formTypes,
+  getFormbyId,
   listVisit,
   listEpisode,
   listAssessment,
@@ -42,6 +42,13 @@ visitRoutes.put(
   validateInputs,
   updateForm
 );
+visitRoutes.get(
+  "/form/:id",
+  auth.protect(["form.update"]),
+  checkMissingInputs,
+  validateInputs,
+  getFormbyId
+);
 
 visitRoutes.post(
   "/",
@@ -67,13 +74,13 @@ visitRoutes.get(
   listEpisode
 );
 
-visitRoutes.get(
-  "/formtypes",
-  auth.protect(["visit.read"]),
-  checkMissingInputs,
-  validateInputs,
-  formTypes
-);
+// visitRoutes.get(
+//   "/formtypes",
+//   auth.protect(["visit.read"]),
+//   checkMissingInputs,
+//   validateInputs,
+//   formTypes
+// );
 
 visitRoutes.get(
   "/assessment",

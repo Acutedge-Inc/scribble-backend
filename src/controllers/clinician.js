@@ -84,7 +84,7 @@ const processAudio = async (req, res) => {
     }
 
     logger.debug("Preparing form data for upload");
-    const form = assessment.formId.questionForm;
+    const form = assessment.formId.assessmentForm;
     const formBuffer = Buffer.from(JSON.stringify(form));
     if (!(formBuffer instanceof Buffer)) {
       logger.error("Failed to convert form to buffer");
