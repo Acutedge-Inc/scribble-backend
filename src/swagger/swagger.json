@@ -1,30 +1,35 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Scribble API spec",
-    "version": "1.0"
+    "title": "Scribble Healthcare API",
+    "version": "1.0",
+    "description": "Scribble is a comprehensive healthcare API that provides functionality for managing patient visits, assessments, clinician workflows, and administrative tasks in healthcare settings. This API supports both clinical and administrative operations.",
+    "contact": {
+      "name": "Scribble API Support",
+      "email": "support@scribble.com"
+    }
   },
   "servers": [],
   "tags": [
     {
       "name": "Auth",
-      "description": "Used by user to create user & login to system"
+      "description": "Authentication and authorization endpoints for user management, including login, tenant management, and role-based access control"
     },
     {
       "name": "Visit",
-      "description": "Used by user to create user & login to system"
+      "description": "Endpoints for managing patient visits, episodes of care, assessments, and clinical documentation"
     },
     {
       "name": "Settings",
-      "description": "Used by user to create user & login to system"
+      "description": "Configuration endpoints for customizing application behavior, user preferences, and display settings"
     },
     {
       "name": "User",
-      "description": "Used by user to create user & login to system"
+      "description": "User management endpoints for handling clinician and client profiles, notifications, and user-specific data"
     },
     {
       "name": "Dashboard",
-      "description": "Used by user to create user & login to system"
+      "description": "Analytics and reporting endpoints providing insights into clinical operations and patient care metrics"
     }
   ],
   "paths": {
@@ -73,8 +78,8 @@
           }
         },
         "tags": ["Auth"],
-        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "POST_v1-auth-login",
+        "description": "Authenticates users through multiple methods including email/password and VIN-based federation. Supports both standard user authentication and Single Sign-On (SSO) workflows. Returns a JWT token for subsequent API calls.",
+        "operationId": "post_auth_login",
         "parameters": [
           {
             "in": "header",
@@ -124,8 +129,8 @@
           }
         },
         "tags": ["Auth"],
-        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "POST_v1-auth-tenant",
+        "description": "Creates a new tenant in the system. Tenants represent separate healthcare organizations or facilities with their own set of users, patients, and configurations. Requires administrative privileges.",
+        "operationId": "post_auth_tenant_create",
         "parameters": [
           {
             "in": "header",
@@ -187,8 +192,8 @@
           }
         },
         "tags": ["Auth"],
-        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "GET_v1-auth-tenant",
+        "description": "Retrieves a list of all tenants accessible to the authenticated user. Supports pagination and filtering options for large-scale deployments.",
+        "operationId": "get_auth_tenant_list",
         "parameters": [
           {
             "in": "header",
@@ -246,7 +251,7 @@
         },
         "tags": ["Auth"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "GET_v1-auth-role",
+        "operationId": "get_auth_roles_list",
         "parameters": [
           {
             "in": "header",
@@ -537,7 +542,7 @@
           }
         ],
         "description": "Change new password",
-        "operationId": "PUT_v1_change_password",
+        "operationId": "put_auth_change_password",
         "requestBody": {
           "content": {
             "application/json": {
@@ -581,7 +586,7 @@
         },
         "tags": ["Auth"],
         "description": "Request to resend recover password email",
-        "operationId": "POST_v1_resend_recover_password_email",
+        "operationId": "post_auth_recover_password_email",
         "parameters": [
           {
             "in": "header",
@@ -659,7 +664,7 @@
         ],
         "tags": ["Auth"],
         "description": "Request to recover password email. This request should contain the authorization token in the header. User will get the auth token as a result of /recover-password-email api",
-        "operationId": "POST_v1_recover_password",
+        "operationId": "post_auth_recover_password",
         "security": [
           {
             "Bearer": []
@@ -708,7 +713,7 @@
         },
         "tags": ["Auth"],
         "description": "Clear the data from client and server side.",
-        "operationId": "POST_v1-auth-logout",
+        "operationId": "post_auth_logout",
         "parameters": [
           {
             "in": "header",
@@ -764,7 +769,7 @@
         },
         "tags": ["Auth"],
         "description": "Get new accesstoken by using refreshtoken",
-        "operationId": "POST_v1-auth-refresh",
+        "operationId": "post_auth_refresh_token",
         "parameters": [
           {
             "in": "header",
@@ -825,7 +830,7 @@
         },
         "tags": ["User"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "GET_v1-user-client",
+        "operationId": "get_user_client_list",
         "parameters": [
           {
             "in": "header",
@@ -893,7 +898,7 @@
         },
         "tags": ["User"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "GET_v1-user-clinician",
+        "operationId": "get_user_clinician_list",
         "parameters": [
           {
             "in": "header",
@@ -961,7 +966,7 @@
         },
         "tags": ["User"],
         "description": "Update a clinician",
-        "operationId": "PUT_v1-user-clinician-id",
+        "operationId": "put_user_clinician_update",
         "parameters": [
           {
             "in": "header",
@@ -986,8 +991,7 @@
             "name": "id",
             "in": "path",
             "schema": {
-              "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "type": "string"
             }
           }
         ],
@@ -1014,7 +1018,7 @@
         },
         "tags": ["User"],
         "description": "Get the visit details of the clinician",
-        "operationId": "GET_v1-user-clinician-visitDetails",
+        "operationId": "get_user_clinician_visit_details",
         "parameters": [
           {
             "in": "header",
@@ -1067,7 +1071,7 @@
         },
         "tags": ["User"],
         "description": "Get the notifications of the user",
-        "operationId": "GET_v1-user-notification",
+        "operationId": "get_user_notifications",
         "parameters": [
           {
             "in": "header",
@@ -1138,8 +1142,8 @@
           }
         },
         "tags": ["Visit"],
-        "description": "Get the form of the visit",
-        "operationId": "GET_v1-assessment-form",
+        "description": "Retrieves assessment forms and templates used for clinical documentation. Forms can include various types of clinical assessments, questionnaires, and documentation templates.",
+        "operationId": "get_visit_form_list",
         "parameters": [
           {
             "in": "header",
@@ -1215,8 +1219,8 @@
           }
         },
         "tags": ["Visit"],
-        "description": "Perform user registration. If the client passes a redirect URL and the SSO requires verification, the response of the verification call will be redirected to that URL.(Currently used in developer registeration)",
-        "operationId": "POST_v1-assessment-form",
+        "description": "Creates new assessment forms or documentation templates. Supports multiple question types including text input, checklists, radio buttons, and dropdowns. Forms can be organized by sections for better usability.",
+        "operationId": "post_visit_form_create",
         "parameters": [
           {
             "in": "header",
@@ -1332,7 +1336,7 @@
         },
         "tags": ["Visit"],
         "description": "Get the form of the visit",
-        "operationId": "GET_v1-assessment-form",
+        "operationId": "get_visit_form_by_id",
         "parameters": [
           {
             "in": "header",
@@ -1416,7 +1420,7 @@
         },
         "tags": ["Visit"],
         "description": "Update the form of the visit",
-        "operationId": "PUT_v1-assessment-form",
+        "operationId": "put_visit_form_update",
         "parameters": [
           {
             "in": "header",
@@ -1520,7 +1524,7 @@
         },
         "tags": ["Visit"],
         "description": "Get the form of the visit",
-        "operationId": "GET_v1-assessment-form",
+        "operationId": "get_visit_template_list",
         "parameters": [
           {
             "in": "header",
@@ -1564,8 +1568,8 @@
           }
         },
         "tags": ["Visit"],
-        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "GET_v1-visit",
+        "description": "Retrieves visit records with comprehensive details including patient information, clinician assignments, visit types, and scheduling information. Supports pagination and advanced filtering.",
+        "operationId": "get_visit_list",
         "parameters": [
           {
             "in": "header",
@@ -1630,8 +1634,8 @@
           }
         },
         "tags": ["Visit"],
-        "description": "Perform user registration. If the client passes a redirect URL and the SSO requires verification, the response of the verification call will be redirected to that URL.(Currently used in developer registeration)",
-        "operationId": "POST_v1-visit",
+        "description": "Creates new visit records. Captures essential visit details including patient information, assigned clinician, visit type, service codes, and scheduling information.",
+        "operationId": "post_visit_create",
         "parameters": [
           {
             "in": "header",
@@ -1684,7 +1688,7 @@
         },
         "tags": ["Visit"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "PUT_v1-visit",
+        "operationId": "put_visit_update",
         "parameters": [
           {
             "in": "header",
@@ -1745,8 +1749,8 @@
           }
         },
         "tags": ["Visit"],
-        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "GET_v1-assessment",
+        "description": "Retrieves completed or in-progress patient assessments. Supports filtering by visit ID and includes detailed clinical documentation and responses.",
+        "operationId": "get_visit_assessment_list",
         "parameters": [
           {
             "in": "header",
@@ -1845,7 +1849,7 @@
         },
         "tags": ["Visit"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for all other requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "GET_v1-assessment-id",
+        "operationId": "get_visit_assessment_by_id",
         "parameters": [
           {
             "in": "header",
@@ -1911,7 +1915,7 @@
         },
         "tags": ["Visit"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for all other requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "PUT_v1-assessment-id",
+        "operationId": "put_visit_assessment_update",
         "parameters": [
           {
             "in": "header",
@@ -1973,7 +1977,7 @@
         },
         "tags": ["Visit"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "GET_v1-visit-episode",
+        "operationId": "get_visit_episode_list",
         "parameters": [
           {
             "in": "header",
@@ -2041,7 +2045,7 @@
         },
         "tags": ["Settings"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "POST_v1-settings-gridview",
+        "operationId": "put_setting_grid_view_update",
         "parameters": [
           {
             "in": "header",
@@ -2169,7 +2173,7 @@
         },
         "tags": ["Settings"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "GET_v1-settings-gridview",
+        "operationId": "get_setting_grid_view",
         "parameters": [
           {
             "in": "header",
@@ -2225,7 +2229,7 @@
         },
         "tags": ["Dashboard"],
         "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
-        "operationId": "GET_v1-dashboard-admin",
+        "operationId": "get_dashboard_admin_metrics",
         "parameters": [
           {
             "in": "header",
@@ -2292,8 +2296,8 @@
           }
         },
         "tags": ["Clinician"],
-        "description": "Upload an audio file to S3 and push a message to SQS",
-        "operationId": "POST_v1-clinician-upload-audio",
+        "description": "Handles audio file uploads for clinical documentation. Supports voice recordings that can be processed for transcription and documentation purposes. Integrates with AWS S3 for storage and SQS for processing.",
+        "operationId": "post_clinician_upload_audio",
         "parameters": [
           {
             "in": "header",
