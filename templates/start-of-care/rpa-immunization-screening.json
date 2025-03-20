@@ -1,0 +1,388 @@
+[
+  {
+    "id": "immunization_section",
+    "sectionCode": "Section I",
+    "sectionName": "Immunization / Screening Tests",
+    "questionCode": "D001",
+    "questionType": "COMPOSITE",
+    "questionText": "Immunization",
+    "questions": [
+      {
+        "id": "q_h1n1",
+        "questionCode": "D001.A",
+        "questionType": "COMPOSITE",
+        "questionText": "H1N1",
+        "questions": [
+          {
+            "id": "q_status",
+            "questionCode": "D001.A.1",
+            "questionType": "DROPDOWN",
+            "questionText": "Status",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" },
+              { "value": "unknown", "label": "Unknown" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_date",
+            "questionCode": "D001.A.2",
+            "questionType": "DATE",
+            "questionText": "Date",
+            "placeholder": "Select Date",
+            "required": false
+          },
+          {
+            "id": "q_offered",
+            "questionCode": "D001.A.3",
+            "questionType": "DROPDOWN",
+            "questionText": "Immunization Offered",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_decline_reason",
+            "questionCode": "D001.A.4",
+            "questionType": "TEXT_INPUT",
+            "questionText": "Declined Reason",
+            "placeholder": "Enter reason for declining",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "q_flue",
+        "questionCode": "D001.B",
+        "questionType": "COMPOSITE",
+        "questionText": "Herpes Zoster (Shingles)",
+        "questions": [
+          {
+            "id": "q_status",
+            "questionCode": "D001.B.1",
+            "questionType": "DROPDOWN",
+            "questionText": "Status",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" },
+              { "value": "unknown", "label": "Unknown" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_date",
+            "questionCode": "D001.B.2",
+            "questionType": "DATE",
+            "questionText": "Date",
+            "placeholder": "Select Date",
+            "required": false
+          },
+          {
+            "id": "q_offered",
+            "questionCode": "D001.B.3",
+            "questionType": "DROPDOWN",
+            "questionText": "Immunization Offered",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_decline_reason",
+            "questionCode": "D001.B.4",
+            "questionType": "TEXT_INPUT",
+            "questionText": "Declined Reason",
+            "placeholder": "Enter reason for declining",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "q_pneumonia",
+        "questionCode": "D001.C",
+        "questionType": "COMPOSITE",
+        "questionText": "Herpes Zoster (Shingles)",
+        "questions": [
+          {
+            "id": "q_status",
+            "questionCode": "D001.C.1",
+            "questionType": "DROPDOWN",
+            "questionText": "Status",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" },
+              { "value": "unknown", "label": "Unknown" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_date",
+            "questionCode": "D001.C.2",
+            "questionType": "DATE",
+            "questionText": "Date",
+            "placeholder": "Select Date",
+            "required": false
+          },
+          {
+            "id": "q_offered",
+            "questionCode": "D001.C.3",
+            "questionType": "DROPDOWN",
+            "questionText": "Immunization Offered",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_decline_reason",
+            "questionCode": "D001.C.4",
+            "questionType": "TEXT_INPUT",
+            "questionText": "Declined Reason",
+            "placeholder": "Enter reason for declining",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "q_herpes_zoster",
+        "questionCode": "D001.D",
+        "questionType": "COMPOSITE",
+        "questionText": "Herpes Zoster (Shingles)",
+        "questions": [
+          {
+            "id": "q_status",
+            "questionCode": "D001.D.1",
+            "questionType": "DROPDOWN",
+            "questionText": "Status",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" },
+              { "value": "unknown", "label": "Unknown" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_date",
+            "questionCode": "D001.D.2",
+            "questionType": "DATE",
+            "questionText": "Date",
+            "placeholder": "Select Date",
+            "required": false
+          },
+          {
+            "id": "q_offered",
+            "questionCode": "D001.D.3",
+            "questionType": "DROPDOWN",
+            "questionText": "Immunization Offered",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_decline_reason",
+            "questionCode": "D001.D.4",
+            "questionType": "TEXT_INPUT",
+            "questionText": "Declined Reason",
+            "placeholder": "Enter reason for declining",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "q_tetanus",
+        "questionCode": "D001.E",
+        "questionType": "COMPOSITE",
+        "questionText": "Tetanus",
+        "questions": [
+          {
+            "id": "q_status",
+            "questionCode": "D001.E.1",
+            "questionType": "DROPDOWN",
+            "questionText": "Status",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" },
+              { "value": "unknown", "label": "Unknown" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_date",
+            "questionCode": "D001.E.2",
+            "questionType": "DATE",
+            "questionText": "Date",
+            "placeholder": "Select Date",
+            "required": false
+          },
+          {
+            "id": "q_offered",
+            "questionCode": "D001.E.3",
+            "questionType": "DROPDOWN",
+            "questionText": "Immunization Offered",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_decline_reason",
+            "questionCode": "D001.E.4",
+            "questionType": "TEXT_INPUT",
+            "questionText": "Declined Reason",
+            "placeholder": "Enter reason for declining",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "q_tb",
+        "questionCode": "D001.F",
+        "questionType": "COMPOSITE",
+        "questionText": "TB",
+        "questions": [
+          {
+            "id": "q_status",
+            "questionCode": "D001.F.1",
+            "questionType": "DROPDOWN",
+            "questionText": "Status",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" },
+              { "value": "unknown", "label": "Unknown" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_date",
+            "questionCode": "D001.F.2",
+            "questionType": "DATE",
+            "questionText": "Date",
+            "placeholder": "Select Date",
+            "required": false
+          },
+          {
+            "id": "q_offered",
+            "questionCode": "D001.F.3",
+            "questionType": "DROPDOWN",
+            "questionText": "Immunization Offered",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_decline_reason",
+            "questionCode": "D001.F.4",
+            "questionType": "TEXT_INPUT",
+            "questionText": "Declined Reason",
+            "placeholder": "Enter reason for declining",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "q_tb_exposure",
+        "questionCode": "D001.G",
+        "questionType": "COMPOSITE",
+        "questionText": "TB Exposure",
+        "questions": [
+          {
+            "id": "q_status",
+            "questionCode": "D001.G.1",
+            "questionType": "DROPDOWN",
+            "questionText": "Status",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" },
+              { "value": "unknown", "label": "Unknown" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_date",
+            "questionCode": "D001.G.2",
+            "questionType": "DATE",
+            "questionText": "Date",
+            "placeholder": "Select Date",
+            "required": false
+          },
+          {
+            "id": "q_offered",
+            "questionCode": "D001.G.3",
+            "questionType": "DROPDOWN",
+            "questionText": "Immunization Offered",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_decline_reason",
+            "questionCode": "D001.G.4",
+            "questionType": "TEXT_INPUT",
+            "questionText": "Declined Reason",
+            "placeholder": "Enter reason for declining",
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "q_hepatitis_b",
+        "questionCode": "D001.H",
+        "questionType": "COMPOSITE",
+        "questionText": "Hepatitis B",
+        "questions": [
+          {
+            "id": "q_status",
+            "questionCode": "D001.H.1",
+            "questionType": "DROPDOWN",
+            "questionText": "Status",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" },
+              { "value": "unknown", "label": "Unknown" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_date",
+            "questionCode": "D001.H.2",
+            "questionType": "DATE",
+            "questionText": "Date",
+            "placeholder": "Select Date",
+            "required": false
+          },
+          {
+            "id": "q_offered",
+            "questionCode": "D001.H.3",
+            "questionType": "DROPDOWN",
+            "questionText": "Immunization Offered",
+            "options": [
+              { "value": "yes", "label": "Yes" },
+              { "value": "no", "label": "No" }
+            ],
+            "required": false
+          },
+          {
+            "id": "q_decline_reason",
+            "questionCode": "D001.H.4",
+            "questionType": "TEXT_INPUT",
+            "questionText": "Declined Reason",
+            "placeholder": "Enter reason for declining",
+            "required": false
+          }
+        ]
+      }
+    ]
+  }
+]
