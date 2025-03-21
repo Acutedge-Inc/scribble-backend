@@ -1,0 +1,1229 @@
+[
+  {
+    "id": "beb39074-1906-40f2-bee8-e01f03c2d2e5",
+    "sectionCode": "Section A",
+    "sectionName": "Administrative Information",
+    "questions": [
+      {
+        "id": "da6288a7-3835-491b-bb94-54656d53dc59",
+        "questionCode": "M0018",
+        "questionType": "TEXT_INPUT",
+        "questionText": "National Provider Identifier (NPI)",
+        "placeholder": "Enter NPI",
+        "description": "NPI for the attending physician who has signed the plan of care",
+        "required": false,
+        "validationRules": {
+          "inputType": "number",
+          "maxLength": 10
+        },
+        "alternativeResponses": [
+          {
+            "id": "ac311929-a63e-4823-b167-01f376b086eb",
+            "value": "UK",
+            "label": "UK – Unknown or Not Available",
+            "controlName": "CHECKBOX"
+          }
+        ]
+      },
+      {
+        "id": "452ac603-b8a0-445c-b4bb-903f8eee80a4",
+        "questionCode": "M0010",
+        "questionType": "TEXT_INPUT",
+        "questionText": "CMS Certification Number",
+        "placeholder": "Enter CMS Certification Number",
+        "description": "CMS Certification Number",
+        "required": false,
+        "validationRules": {
+          "inputType": "text",
+          "maxLength": 6
+        }
+      },
+      {
+        "id": "c1cc098f-fdd8-4422-93a0-8b98bf501d75",
+        "questionCode": "M0014",
+        "questionType": "TEXT_INPUT",
+        "questionText": "Branch State",
+        "placeholder": "Enter Branch State",
+        "description": "",
+        "required": false,
+        "questionSettings": {
+          "inputType": "text",
+          "maxLength": 2
+        }
+      },
+      {
+        "id": "ec7edfb6-90a0-4dbe-85e7-f1b93b48138d",
+        "questionCode": "M0016",
+        "questionType": "TEXT_INPUT",
+        "questionText": "Branch ID Number",
+        "placeholder": "Enter Branch ID Number",
+        "description": "",
+        "required": false,
+        "questionSettings": {
+          "inputType": "number",
+          "maxLength": 10
+        }
+      },
+      {
+        "id": "25705d31-5897-4a9f-9704-59ca9139740f",
+        "questionCode": "M0020",
+        "questionType": "TEXT_INPUT",
+        "questionText": "Patient ID Number",
+        "placeholder": "Enter Patient ID Number",
+        "description": "",
+        "required": false,
+        "questionSettings": {
+          "inputType": "text",
+          "maxLength": 15
+        }
+      },
+      {
+        "id": "de5091c2-23a1-487c-a4d4-0ee806c6252d",
+        "questionCode": "M0030",
+        "questionType": "DATE",
+        "questionText": "Start of Care Date",
+        "placeholder": "Select Date",
+        "description": "",
+        "dataType": "date",
+        "required": false,
+        "questionSettings": {
+          "inputType": "date"
+        }
+      },
+      {
+        "id": "ebf9c912-2096-4ef9-870f-947d09a01934",
+        "questionCode": "M0040",
+        "questionType": "TEXT_INPUT",
+        "questionText": "Patient Name",
+        "placeholder": "Enter Patient Name",
+        "description": "",
+        "required": false,
+        "questionSettings": {
+          "inputType": "text",
+          "maxLength": 50
+        }
+      },
+      {
+        "id": "87ebf6b3-e0be-41e3-971a-2f3347ceae51",
+        "questionCode": "M0050",
+        "questionType": "TEXT_INPUT",
+        "questionText": "Patient State of Residence",
+        "placeholder": "Enter State",
+        "description": "",
+        "dataType": "text",
+        "required": false,
+        "questionSettings": {
+          "inputType": "text",
+          "maxLength": 2
+        }
+      },
+      {
+        "id": "1e9563c6-e4c5-4790-84df-8d74261c5732",
+        "questionCode": "M0060",
+        "questionType": "TEXT_INPUT",
+        "questionText": "Patient ZIP Code",
+        "placeholder": "Enter ZIP Code",
+        "description": "",
+        "required": false,
+        "questionSettings": {
+          "inputType": "number",
+          "maxLength": 5
+        }
+      },
+      {
+        "id": "b007e24b-c50d-4e9a-96ca-6397797f872b",
+        "questionCode": "M0064",
+        "questionType": "TEXT_INPUT",
+        "questionText": "Social Security Number",
+        "placeholder": "Enter SSN",
+        "description": "",
+        "dataType": "text",
+        "required": false,
+        "questionSettings": {
+          "inputType": "number",
+          "maxLength": 9
+        },
+        "alternativeResponses": [
+          {
+            "id": "ac311929-a63e-4823-b167-01f376b086eb",
+            "value": "UK",
+            "label": "UK – Unknown or Not Available",
+            "controlName": "CHECKBOX"
+          }
+        ]
+      },
+      {
+        "id": "302aa0e4-34a2-4592-b0ae-74d48f9ccdb2",
+        "questionCode": "M0063",
+        "questionType": "TEXT_INPUT",
+        "questionText": "Medicare Number",
+        "placeholder": "Enter Medicare Number",
+        "description": "",
+        "dataType": "text",
+        "required": false,
+        "questionSettings": {
+          "inputType": "text",
+          "maxLength": 11
+        },
+        "alternativeResponses": [
+          {
+            "id": "ac311929-a63e-4823-b167-01f376b086eb",
+            "value": "NA",
+            "label": "NA – No Medicare",
+            "controlName": "CHECKBOX"
+          }
+        ]
+      },
+      {
+        "id": "05901288-39de-4aae-b908-70bc81aff533",
+        "questionCode": "M0065",
+        "questionType": "TEXT_INPUT",
+        "questionText": "Medicaid Number",
+        "placeholder": "Enter Medicaid Number",
+        "description": "",
+        "dataType": "text",
+        "required": false,
+        "questionSettings": {
+          "inputType": "text",
+          "maxLength": 11,
+          "allowUnknown": true
+        },
+        "alternativeResponses": [
+          {
+            "id": "ac311929-a63e-4823-b167-01f376b086eb",
+            "value": "NA",
+            "label": "NA – No Medicare",
+            "controlName": "CHECKBOX"
+          }
+        ]
+      },
+      {
+        "id": "299d6fc3-e12d-4f2a-be81-a59005e4d3f8",
+        "questionCode": "M0069",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Gender",
+        "description": "Enter Code",
+        "options": [
+          {
+            "id": "dfda51e8-152e-4261-bece-c65ffeb12850",
+            "value": "1",
+            "label": "Male"
+          },
+          {
+            "id": "7cbc20aa-f191-4d25-b51c-2c8952968dfd",
+            "value": "2",
+            "label": "Female"
+          }
+        ],
+        "required": false,
+        "questionSettings": {}
+      },
+      {
+        "id": "337684fb-57c8-44ca-9e30-8a0090eb2ee5",
+        "questionCode": "M0066",
+        "questionType": "DATE",
+        "questionText": "Birth Date",
+        "description": "Enter the birth date",
+        "required": false
+      },
+      {
+        "id": "3509d4b3-4c3a-4bc6-870f-49e928b8ed5e",
+        "questionCode": "A1005",
+        "questionType": "CHECK_LIST",
+        "questionText": "Ethnicity",
+        "description": "Are you of Hispanic, Latino/a, or Spanish origin?",
+        "required": false,
+        "options": [
+          {
+            "id": "1604e9d8-c4f5-4835-9460-2a6d5050c178",
+            "value": "A",
+            "label": "No, not of Hispanic, Latino/a, or Spanish origin"
+          },
+          {
+            "id": "7f40b941-9869-4ab3-9370-012b88cce8c7",
+            "value": "B",
+            "label": "Yes, Mexican, Mexican American, Chicano/a"
+          },
+          {
+            "id": "7ce1f29a-0c8f-4310-ab30-b266cd3549b1",
+            "value": "C",
+            "label": "Yes, Puerto Rican"
+          },
+          {
+            "id": "0e5242f4-df76-4d1c-be0d-d00d29734e2f",
+            "value": "D",
+            "label": "Yes, Cuban"
+          },
+          {
+            "id": "3cb3f701-e51d-4138-9b45-bd0c17f9fce1",
+            "value": "E",
+            "label": "Yes, another Hispanic, Latino, or Spanish origin"
+          },
+          {
+            "id": "d3258650-fb53-4cf3-89d9-05c3c3d8175c",
+            "value": "X",
+            "label": "Patient unable to respond"
+          },
+          {
+            "id": "9f9ad1ef-25a1-4baa-a72d-155f8d3c0ed7",
+            "value": "Y",
+            "label": "Patient declines to respond"
+          }
+        ]
+      },
+      {
+        "id": "9637f12f-ab83-4254-be4f-ad9b7c80a108",
+        "questionCode": "A1010",
+        "questionType": "CHECK_LIST",
+        "questionText": "Race",
+        "description": "What is your race?",
+        "required": false,
+        "options": [
+          {
+            "id": "d8375737-cc10-41e3-902f-899f1d18d6b5",
+            "value": "A",
+            "label": "White"
+          },
+          {
+            "id": "e733b6e0-9eac-40cc-b90b-3e8f7933e8e9",
+            "value": "B",
+            "label": "Black or African American"
+          },
+          {
+            "id": "680b2cee-8e05-4fd8-bf08-567c08f7b811",
+            "value": "C",
+            "label": "American Indian or Alaska Native"
+          },
+          {
+            "id": "b9e31084-b0fd-4093-984c-e973da488354",
+            "value": "D",
+            "label": "Asian Indian"
+          },
+          {
+            "id": "f0eb49ce-4137-4061-b05f-31785fc55e8f",
+            "value": "E",
+            "label": "Chinese"
+          },
+          {
+            "id": "90efa1f5-c035-411a-bbd1-4d0739e5db98",
+            "value": "F",
+            "label": "Filipino"
+          },
+          {
+            "id": "1f5afec7-b13d-406f-86fa-312281af6dc9",
+            "value": "G",
+            "label": "Japanese"
+          },
+          {
+            "id": "14b9be4c-8b50-46b9-81f7-fba77b4e7aa6",
+            "value": "H",
+            "label": "Korean"
+          },
+          {
+            "id": "c57a1f74-84a8-4da0-a933-184c8344749e",
+            "value": "I",
+            "label": "Vietnamese"
+          },
+          {
+            "id": "b094785a-6ad7-4551-8d1b-d2d8c384e492",
+            "value": "J",
+            "label": "Other Asian"
+          },
+          {
+            "id": "d8271cea-1934-4a0d-8acd-d727b66b7842",
+            "value": "K",
+            "label": "Native Hawaiian"
+          },
+          {
+            "id": "e947fd8d-2fbb-49cc-9bb7-09a0e375826d",
+            "value": "L",
+            "label": "Guamanian or Chamorro"
+          },
+          {
+            "id": "e13652b0-eaff-4539-b77d-c7b4554d99ea",
+            "value": "M",
+            "label": "Samoan"
+          },
+          {
+            "id": "936f6c5a-0460-488c-9ec7-b98608ecff7f",
+            "value": "N",
+            "label": "Other Pacific Islander"
+          },
+          {
+            "id": "61c69920-ba79-4f93-a539-18a769e7301e",
+            "value": "X",
+            "label": "Patient unable to respond"
+          },
+          {
+            "id": "43d5adcf-b49a-445a-b4e7-91dbcb3a554e",
+            "value": "Y",
+            "label": "Patient declines to respond"
+          },
+          {
+            "id": "23799b46-03a7-4495-93aa-9a50f5eb6c3c",
+            "value": "Z",
+            "label": "None of the above"
+          }
+        ]
+      },
+      {
+        "id": "fbd02ac7-24c1-47bf-95c8-a2dd8d033d60",
+        "questionCode": "M0150",
+        "questionType": "CHECK_LIST",
+        "questionText": "Current Payment Sources for Home Care",
+        "description": "Check all that apply",
+        "required": false,
+        "options": [
+          {
+            "id": "d8449e99-8e82-410a-9aab-12f16e04cd55",
+            "value": "0",
+            "label": "None; no charge for current services"
+          },
+          {
+            "id": "dea0de37-7074-4121-8ba9-a95fd17f96f1",
+            "value": "1",
+            "label": "Medicare (traditional fee-for-service)"
+          },
+          {
+            "id": "f394abf5-8031-4f0f-a66b-64157548fbc3",
+            "value": "2",
+            "label": "Medicare (HMO/managed care/Advantage plan)"
+          },
+          {
+            "id": "283fbb19-e3ac-4636-befa-45aa751dc789",
+            "value": "3",
+            "label": "Medicaid (traditional fee-for-service)"
+          },
+          {
+            "id": "95d753c1-aef3-4d8d-ab56-4442f37057ef",
+            "value": "4",
+            "label": "Medicaid (HMO/managed care)"
+          },
+          {
+            "id": "78f472c9-d4ba-4560-92aa-bfce16fc33ce",
+            "value": "5",
+            "label": "Workers\u2019 compensation"
+          },
+          {
+            "id": "ff819fcc-0d50-4b02-962c-568a349c9984",
+            "value": "6",
+            "label": "Title programs (e.g., Title II, V, or XX)"
+          },
+          {
+            "id": "fb3b2d98-d1ca-494e-b4c3-d947cd3a5622",
+            "value": "7",
+            "label": "Other government (e.g., TriCare, VA)"
+          },
+          {
+            "id": "8c68d4be-d614-4126-a664-0289249b06b9",
+            "value": "8",
+            "label": "Private insurance"
+          },
+          {
+            "id": "a32b125d-dcdf-47b5-a290-55b31aadbf17",
+            "value": "9",
+            "label": "Private HMO/managed care"
+          },
+          {
+            "id": "9a61508e-bd8c-495e-839e-efbff2a1f298",
+            "value": "10",
+            "label": "Self-pay"
+          },
+          {
+            "id": "7e58de8a-84b2-4777-9fe1-79974bd4c00c",
+            "value": "11",
+            "label": "Other (specify)"
+          },
+          {
+            "id": "7a4e654f-1107-49a7-8911-bf9e8f801502",
+            "value": "UK",
+            "label": "Unknown"
+          }
+        ]
+      },
+      {
+        "id": "q_a1110",
+        "questionCode": "A1110",
+        "questionType": "TEXT_INPUT",
+        "questionText": "What is your preferred language?",
+        "placeholder": "Enter preferred language",
+        "required": false,
+        "validationRules": {
+          "inputType": "text",
+          "maxLength": 50
+        }
+      },
+      {
+        "id": "q_a1110_interpreter",
+        "questionCode": "A1110.B",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Do you need or want an interpreter to communicate with a doctor or health care staff?",
+        "required": false,
+        "options": [
+          { "id": "opt_no", "value": "0", "label": "No" },
+          { "id": "opt_yes", "value": "1", "label": "Yes" },
+          { "id": "opt_unknown", "value": "9", "label": "Unable to determine" }
+        ]
+      },
+      {
+        "id": "q_m0080",
+        "questionCode": "M0080",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Discipline of Person Completing Assessment",
+        "required": false,
+        "options": [
+          { "id": "opt_rn", "value": "1", "label": "RN" },
+          { "id": "opt_pt", "value": "2", "label": "PT" },
+          { "id": "opt_slp", "value": "3", "label": "SLP/ST" },
+          { "id": "opt_ot", "value": "4", "label": "OT" }
+        ]
+      },
+      {
+        "id": "q_m0090",
+        "questionCode": "M0090",
+        "questionType": "DATE",
+        "questionText": "Date Assessment Completed",
+        "placeholder": "Select date",
+        "required": false,
+        "validationRules": {
+          "inputType": "date"
+        }
+      },
+      {
+        "id": "q_m0100",
+        "questionCode": "M0100",
+        "questionType": "CHECK_LIST",
+        "questionText": "This Assessment is Currently Being Completed for the Following Reason",
+        "required": false,
+        "options": [
+          {
+            "id": "opt_start",
+            "value": "1",
+            "label": "Start of care – further visits planned"
+          },
+          {
+            "id": "opt_resumption",
+            "value": "2",
+            "label": "Resumption of care (after inpatient stay)"
+          },
+          {
+            "id": "opt_recertification",
+            "value": "4",
+            "label": "Recertification (follow-up) reassessment"
+          },
+          {
+            "id": "opt_other_follow_up",
+            "value": "5",
+            "label": "Other follow-up"
+          },
+          {
+            "id": "opt_transfer",
+            "value": "6",
+            "label": "Transferred to an inpatient facility – patient not discharged from agency"
+          },
+          {
+            "id": "opt_transfer_discharged",
+            "value": "7",
+            "label": "Transferred to an inpatient facility – patient discharged from agency"
+          },
+          { "id": "opt_death_home", "value": "8", "label": "Death at home" },
+          {
+            "id": "opt_discharge",
+            "value": "9",
+            "label": "Discharge from agency"
+          }
+        ]
+      },
+      {
+        "id": "q_m0102",
+        "questionCode": "M0102",
+        "questionType": "DATE",
+        "questionText": "Date of Physician-Ordered Start of Care (Resumption of Care)",
+        "placeholder": "Select date",
+        "required": false,
+        "validationRules": {
+          "inputType": "date"
+        },
+        "alternativeResponses": [
+          {
+            "id": "alt_na",
+            "value": "NA",
+            "label": "No specific SOC/ROC date ordered by physician",
+            "controlName": "CHECKBOX"
+          }
+        ],
+        "notes": "Skip to M0110, Episode timing, if date entered"
+      },
+      {
+        "id": "q_m0104",
+        "questionCode": "M0104",
+        "questionType": "DATE",
+        "questionText": "Date of Referral",
+        "placeholder": "Select date",
+        "required": false,
+        "validationRules": {
+          "inputType": "date"
+        }
+      },
+      {
+        "id": "q_m0110",
+        "questionCode": "M0110",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Episode Timing",
+        "required": false,
+        "options": [
+          { "id": "opt_early", "value": "1", "label": "Early" },
+          { "id": "opt_later", "value": "2", "label": "Later" },
+          { "id": "opt_unknown", "value": "UK", "label": "Unknown" },
+          { "id": "opt_na", "value": "NA", "label": "Not Applicable" }
+        ]
+      },
+      {
+        "id": "a1250-question",
+        "questionCode": "A1250",
+        "questionType": "CHECK_LIST",
+        "questionText": "Transportation (NACCH \u24c9)",
+        "description": "Has lack of transportation kept you from medical appointments, meetings, work, or from getting things needed for daily living?",
+        "required": false,
+        "options": [
+          {
+            "id": "a1250_1",
+            "value": "A",
+            "label": "Yes, it has kept me from medical appointments or from getting my medications"
+          },
+          {
+            "id": "a1250_2",
+            "value": "B",
+            "label": "Yes, it has kept me from non-medical meetings, appointments, work, or from getting things that I need"
+          },
+          { "id": "a1250_3", "value": "C", "label": "No" },
+          {
+            "id": "a1250_4",
+            "value": "X",
+            "label": "Patient unable to respond"
+          },
+          {
+            "id": "a1250_5",
+            "value": "Y",
+            "label": "Patient declines to respond"
+          }
+        ]
+      },
+      {
+        "id": "m1000-question",
+        "questionCode": "M1000",
+        "questionType": "CHECK_LIST",
+        "questionText": "From which of the following Inpatient Facilities was the patient discharged within the past 14 days?",
+        "description": "Check all that apply",
+        "required": false,
+        "options": [
+          {
+            "id": "m1000_1",
+            "value": "1",
+            "label": "Long-term nursing facility (NF)"
+          },
+          {
+            "id": "m1000_2",
+            "value": "2",
+            "label": "Skilled nursing facility (SNF/TCU)"
+          },
+          {
+            "id": "m1000_3",
+            "value": "3",
+            "label": "Short-stay acute hospital (IPPS)"
+          },
+          {
+            "id": "m1000_4",
+            "value": "4",
+            "label": "Long-term care hospital (LTCH)"
+          },
+          {
+            "id": "m1000_5",
+            "value": "5",
+            "label": "Inpatient rehabilitation hospital or unit (IRF)"
+          },
+          {
+            "id": "m1000_6",
+            "value": "6",
+            "label": "Psychiatric hospital or unit"
+          },
+          { "id": "m1000_7", "value": "7", "label": "Other (specify)" },
+          {
+            "id": "m1000_8",
+            "value": "NA",
+            "label": "Patient was not discharged from an inpatient facility"
+          }
+        ]
+      },
+      {
+        "id": "m1005-question",
+        "questionCode": "M1005",
+        "questionType": "DATE",
+        "questionText": "Inpatient Discharge Date (most recent)",
+        "description": "Provide the most recent inpatient discharge date",
+        "required": false,
+        "questionSettings": {
+          "inputType": "date"
+        }
+      },
+      {
+        "id": "m0200-question",
+        "questionCode": "M0200",
+        "questionType": "TEXT_INPUT",
+        "questionText": "Date of Referral",
+        "description": "Indicate the date that the written or verbal referral for initiation or resumption of care was received by the HHA.",
+        "required": false,
+        "questionSettings": {
+          "inputType": "date"
+        }
+      },
+      {
+        "id": "a1250-question",
+        "questionCode": "A1250",
+        "questionType": "CHECK_LIST",
+        "questionText": "Transportation (NACCH \u24c9)",
+        "description": "Has lack of transportation kept you from medical appointments, meetings, work, or from getting things needed for daily living?",
+        "required": false,
+        "options": [
+          {
+            "id": "a1250_1",
+            "value": "A",
+            "label": "Yes, it has kept me from medical appointments or from getting my medications"
+          },
+          {
+            "id": "a1250_2",
+            "value": "B",
+            "label": "Yes, it has kept me from non-medical meetings, appointments, work, or from getting things that I need"
+          },
+          { "id": "a1250_3", "value": "C", "label": "No" },
+          {
+            "id": "a1250_4",
+            "value": "X",
+            "label": "Patient unable to respond"
+          },
+          {
+            "id": "a1250_5",
+            "value": "Y",
+            "label": "Patient declines to respond"
+          }
+        ],
+        "notes": "Adapted from: NACHC© 2019. National Association of Community Health Centers, Inc., Association of Asian Pacific Community\nHealth Organizations, Oregon Primary Care Association. PRAPARE and its resources are proprietary information of NACHC and\nits partners, intended for use by NACHC, its partners, and authorized recipients. Do not publish, copy, or distribute this\ninformation in part or whole without written consent from NACHC."
+      },
+      {
+        "id": "m1000-question",
+        "questionCode": "M1000",
+        "questionType": "CHECK_LIST",
+        "questionText": "From which of the following Inpatient Facilities was the patient discharged within the past 14 days?",
+        "description": "Check all that apply",
+        "required": false,
+        "options": [
+          {
+            "id": "m1000_1",
+            "value": "1",
+            "label": "Long-term nursing facility (NF)"
+          },
+          {
+            "id": "m1000_2",
+            "value": "2",
+            "label": "Skilled nursing facility (SNF/TCU)"
+          },
+          {
+            "id": "m1000_3",
+            "value": "3",
+            "label": "Short-stay acute hospital (IPPS)"
+          },
+          {
+            "id": "m1000_4",
+            "value": "4",
+            "label": "Long-term care hospital (LTCH)"
+          },
+          {
+            "id": "m1000_5",
+            "value": "5",
+            "label": "Inpatient rehabilitation hospital or unit (IRF)"
+          },
+          {
+            "id": "m1000_6",
+            "value": "6",
+            "label": "Psychiatric hospital or unit"
+          },
+          { "id": "m1000_7", "value": "7", "label": "Other (specify)" },
+          {
+            "id": "m1000_8",
+            "value": "NA",
+            "label": "Patient was not discharged from an inpatient facility"
+          }
+        ]
+      },
+      {
+        "id": "m1005-question",
+        "questionCode": "M1005",
+        "questionType": "DATE",
+        "questionText": "Inpatient Discharge Date (most recent)",
+        "description": "Provide the most recent inpatient discharge date",
+        "required": false,
+        "questionSettings": {
+          "inputType": "date"
+        }
+      }
+    ]
+  },
+  {
+    "id": "beb39074-1906-40f2-bee8-e01f03c2d2e5",
+    "sectionCode": "Section B",
+    "sectionName": "Hearing, Speech, and Vision",
+    "questions": [
+      {
+        "id": "b0200",
+        "questionCode": "B0200",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Hearing",
+        "description": "Ability to hear (with hearing aid or hearing appliances if normally used)",
+        "required": false,
+        "options": [
+          {
+            "id": "b0200_0",
+            "value": "0",
+            "label": "Adequate – no difficulty in normal conversation, social interaction, listening to TV"
+          },
+          {
+            "id": "b0200_1",
+            "value": "1",
+            "label": "Minimal difficulty – difficulty in some environments (e.g., when person speaks softly, or setting is noisy)"
+          },
+          {
+            "id": "b0200_2",
+            "value": "2",
+            "label": "Moderate difficulty – speaker has to increase volume and speak distinctly"
+          },
+          {
+            "id": "b0200_3",
+            "value": "3",
+            "label": "Highly impaired – absence of useful hearing"
+          }
+        ],
+        "questionSettings": {
+          "inputType": "radio"
+        }
+      },
+      {
+        "id": "3c3e3f1f-5fd0-4d3a-9e2d-f7e34f8d8a1b",
+        "questionCode": "B1000",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Vision",
+        "description": "Ability to see in adequate light (with glasses or other visual appliances)",
+        "required": false,
+        "options": [
+          { "id": "opt1", "value": "0", "label": "Adequate – sees fine detail, such as regular print in newspapers/books" },
+          { "id": "opt2", "value": "1", "label": "Impaired – sees large print, but not regular print in newspapers/books" },
+          { "id": "opt3", "value": "2", "label": "Moderately impaired – limited vision; not able to see newspaper headlines but can identify objects" },
+          { "id": "opt4", "value": "3", "label": "Highly impaired – object identification in question, but yes appear to follow objects" },
+          { "id": "opt5", "value": "4", "label": "Severely impaired – no vision or sees only light, colors or shapes; eyes do not appear to follow objects" }
+        ]
+      },
+      {
+        "id": "4d4e5f6a-7e8b-4d9c-bd10-6f7b8e9d8b6c",
+        "questionCode": "B1300",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Health Literacy",
+        "description": "How often do you need to have someone help you when you read instructions, pamphlets, or other written material from your doctor or pharmacy?",
+        "required": false,
+        "options": [
+          { "id": "opt1", "value": "0", "label": "Never" },
+          { "id": "opt2", "value": "1", "label": "Rarely" },
+          { "id": "opt3", "value": "2", "label": "Sometimes" },
+          { "id": "opt4", "value": "3", "label": "Often" },
+          { "id": "opt5", "value": "4", "label": "Always" },
+          { "id": "opt6", "value": "7", "label": "Patient declines to respond" },
+          { "id": "opt7", "value": "8", "label": "Patient unable to respond" }
+        ],
+        "notes": "The Single Item Literacy Screener is licensed under a Creative Commons Attribution-Noncommercial 4.0 International License."
+      }
+    ]
+  },
+  {
+    "id": "1ab050b2-c119-4971-8c2e-d17dacf77085",
+    "sectionCode": "Section C",
+    "sectionName": "Cognitive Patterns",
+    "questions": [
+      {
+        "id": "e51ea797-f40b-428b-a738-039524e9515e",
+        "questionCode": "C0100",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Should Brief Interview for Mental Status (C0200–C0500) be Conducted?",
+        "description": "Attempt to conduct interview with all patients.",
+        "required": false,
+        "options": [
+          {
+            "id": "aa448908-5387-4f5d-bd44-b17433a34557",
+            "value": "0",
+            "label": "No (patient is rarely/never understood)"
+          },
+          {
+            "id": "0fadb005-e6d5-4da5-8b22-4fb12afa7bd5",
+            "value": "1",
+            "label": "Yes"
+          }
+        ]
+      },
+      {
+        "id": "c1bfd572-4d9e-4a0f-ac16-c95584686586",
+        "questionCode": "C0200",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Repetition of Three Words",
+        "description": "Ask patient to repeat words after first attempt.",
+        "required": false,
+        "options": [
+          {
+            "id": "43053548-ce1f-4919-8850-89dc75b22c0b",
+            "value": "0",
+            "label": "None"
+          },
+          {
+            "id": "2ca63e1c-d13c-464d-8734-51792bd18d12",
+            "value": "1",
+            "label": "One"
+          },
+          {
+            "id": "7516cce0-25b9-4851-9762-bc6799d2d11c",
+            "value": "2",
+            "label": "Two"
+          },
+          {
+            "id": "92b8e34b-d27d-4778-950a-32ba8a7419b0",
+            "value": "3",
+            "label": "Three"
+          }
+        ],
+        "notes": "Ask patient: \"I am going to say three words for you to remember. Please repeat the words after I have said all\nthree. The words are: sock, blue, and bed. Now tell me the three words.\" After the patient's first attempt, repeat the words using cues (\"sock, something to wear; blue, a color; bed, a\npiece of furniture\"). You may repeat the words up to two more times"
+      },
+      {
+        "id": "d869d8bb-e9ed-4b67-90ab-18379d6ab4ea",
+        "questionCode": "C0300",
+        "questionType": "COMPOSITE",
+        "questionText": "Temporal Orientation",
+        "description": "Orientation to year, month, and day.",
+        "required": false
+      },
+      {
+        "id": "20cf8f45-39d5-4381-83bf-873afd19819d",
+        "questionCode": "C0300.A",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Able to report correct year",
+        "description": "Orientation to year, month, and day.",
+        "required": false,
+        "options": [
+          {
+            "id": "2d8d3a52-7cc6-47e1-b075-dc11434348b2",
+            "value": "0",
+            "label": "Missed by > 5 years or no answer"
+          },
+          {
+            "id": "f2b1cacc-dedb-4e55-9616-8838872a3ae0",
+            "value": "1",
+            "label": "Missed by 2–5 years"
+          },
+          {
+            "id": "3c7d9d43-6f97-4673-bbdd-b4ef28d6d2c8",
+            "value": "2",
+            "label": "Missed by 1 year"
+          },
+          {
+            "id": "11aa7110-4570-4f83-a0ac-30c39560cc52",
+            "value": "3",
+            "label": "Correct"
+          }
+        ],
+        "notes": "Ask patient: \"Please tell me what year it is right now.\""
+      },
+      {
+        "id": "8c0982e4-0636-4a24-b68a-32b3891e8cb8",
+        "questionCode": "C0300.B",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Able to report correct month",
+        "description": "",
+        "options": [
+          {
+            "id": "f0d9c6f0-31b4-4d66-85f9-153c338d7eba",
+            "value": "0",
+            "label": "Missed by > 1 month or no answer"
+          },
+          {
+            "id": "9940b64a-9bb5-4bc7-a16f-f9c0c746c72b",
+            "value": "1",
+            "label": "Missed by 6 days to 1 month"
+          },
+          {
+            "id": "091b83bc-fd59-48b2-a7a7-6f01e682078f",
+            "value": "2",
+            "label": "Accurate within 5 days"
+          }
+        ],
+        "notes": "Ask patient: \"What month are we in right now?\""
+      },
+      {
+        "id": "2024c115-29c5-4437-910d-6bba6cc2da08",
+        "questionCode": "C0300.C",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Able to report correct day of the week",
+        "options": [
+          {
+            "id": "e3def0a5-f13e-4b13-a64c-d4f2e85fd8ca",
+            "value": "0",
+            "label": "Incorrect or no answer"
+          },
+          {
+            "id": "75876333-0530-45b8-837f-cd7648585253",
+            "value": "1",
+            "label": "Correct"
+          }
+        ],
+        "notes": "Ask patient: \"What day of the week is today?\""
+      },
+      {
+        "id": "7ab9ce2b-f92f-4b93-bbf8-0a7481891652",
+        "questionCode": "C0400",
+        "questionType": "COMPOSITE",
+        "questionText": "Recall",
+        "description": "Ask patient to recall words with or without cueing.",
+        "required": false
+      },
+      {
+        "id": "244f0761-1a4c-46f3-a777-7289df3d78eb",
+        "questionCode": "C0400.A",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Able to recall 'sock'",
+        "description": "Recall of the word 'sock'.",
+        "required": false,
+        "options": [
+          {
+            "id": "bc765cdb-0294-408e-8c2f-eba59f1b1200",
+            "value": "0",
+            "label": "No – could not recall"
+          },
+          {
+            "id": "a0586d15-d834-4aef-8278-8736d6eb2e77",
+            "value": "1",
+            "label": "Yes, after cueing ('something to wear')"
+          },
+          {
+            "id": "1f455a24-19c9-4428-99f4-05f7b5bfb440",
+            "value": "2",
+            "label": "Yes, no cue required"
+          }
+        ],
+        "notes": "Ask patient: 'What were those three words that I asked you to repeat?' (Word: 'sock')"
+      },
+      {
+        "id": "5c07e658-56b1-4f9e-bc96-9b33411e45bb",
+        "questionCode": "C0400.B",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Able to recall 'blue'",
+        "description": "Recall of the word 'blue'.",
+        "required": false,
+        "options": [
+          {
+            "id": "c3d776f9-3912-4c91-9d4c-65c5c5b4f52a",
+            "value": "0",
+            "label": "No – could not recall"
+          },
+          {
+            "id": "b6d2d676-9d45-4d4a-9ec6-7a3152f19c29",
+            "value": "1",
+            "label": "Yes, after cueing ('a color')"
+          },
+          {
+            "id": "3ff9d55c-01b6-4d58-8e4e-67c28f9c6a8e",
+            "value": "2",
+            "label": "Yes, no cue required"
+          }
+        ],
+        "notes": "Ask patient: 'What were those three words that I asked you to repeat?' (Word: 'blue')"
+      },
+      {
+        "id": "ff4c1e28-bad0-4b08-96d4-5c7a4b1c4e4b",
+        "questionCode": "C0400.C",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Able to recall 'bed'",
+        "description": "Recall of the word 'bed'.",
+        "required": false,
+        "options": [
+          {
+            "id": "8e4e34d5-8b2e-4cb4-8a2e-62bbbc4f30ab",
+            "value": "0",
+            "label": "No – could not recall"
+          },
+          {
+            "id": "e7bbf9d4-583e-4bdb-9d45-b6e1e67d8e2c",
+            "value": "1",
+            "label": "Yes, after cueing ('a piece of furniture')"
+          },
+          {
+            "id": "c2e5b9d1-4d7e-4f8e-83b9-6e1bcb9fdb7e",
+            "value": "2",
+            "label": "Yes, no cue required"
+          }
+        ],
+        "notes": "Ask patient: 'What were those three words that I asked you to repeat?' (Word: 'bed')"
+      },
+      {
+        "id": "e2ca886b-1785-4cca-ac23-5e60293ffd40",
+        "questionCode": "C0500",
+        "questionType": "TEXT_INPUT",
+        "questionText": "BIMS Summary Score",
+        "description": "Add scores for questions C0200–C0400 and fill in total score (00–15).",
+        "required": false,
+        "validationRules": {
+          "inputType": "number",
+          "maxLength": 15,
+          "alternativeResponse": {
+            "id": "8370496c-15fa-4a94-a44e-a87de0b48a41",
+            "value": "99",
+            "label": "Patient was unable to complete the interview"
+          }
+        }
+      },
+      {
+        "id": "8370496c-15fa-4a94-a44e-a87de0b48a42",
+        "questionCode": "C1310",
+        "questionType": "COMPOSITE",
+        "questionText": "Signs and Symptoms of Delirium (from CAMO)",
+        "description": "Code after completing Brief Interview for Mental Status and reviewing medical record.",
+        "required": false,
+        "notes": "Adapted from: Inouye SK, et al. Ann Intern Med. 1990; 113: 941-948. Confusion Assessment Method. Copyright 2003, Hospital\nElder Life Program, LLC. Not to be reproduced without permission."
+      },
+      {
+        "id": "8370496c-15fa-4a94-a44e-a87de0b48a41",
+        "questionCode": "C1310.A",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Signs and Symptoms of Delirium (from CAMO)",
+        "description": "Code after completing Brief Interview for Mental Status and reviewing medical record.",
+        "required": false,
+        "options": [
+          { "id": "opt0", "value": "0", "label": "No" },
+          { "id": "opt1", "value": "1", "label": "Yes" }
+        ]
+      },
+      {
+        "id": "8370496c-15fa-4a94-a44e-a87de0b48aad",
+        "questionCode": "C1310.B",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Inattention – Did the patient have difficulty focusing attention, for\nexample, being easily distractible or having difficulty keeping track of\nwhat was being said?",
+        "description": "Is there evidence of an acute change in mental status from the patient's baseline?",
+        "required": false,
+        "options": [
+          {
+            "id": "8e4e34d5-8b2e-4cb4-8a2e-62bbbc4f30ab",
+            "value": "0",
+            "label": "Behavior not present"
+          },
+          {
+            "id": "e7bbf9d4-583e-4bdb-9d45-b6e1e67d8e2c",
+            "value": "1",
+            "label": "Behavior continuously\npresent, does not fluctuate"
+          },
+          {
+            "id": "c2e5b9d1-4d7e-4f8e-83b9-6e1bcb9fdb7e",
+            "value": "2",
+            "label": "Behavior present, fluctuates\n(comes and goes, changes in\nseverity)"
+          }
+        ]
+      },
+      {
+        "id": "8370496c-15fa-4a94-a44e-a87de0b48a65",
+        "questionCode": "C1340.C",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Disorganized thinking – Was the patient's thinking disorganized or\nincoherent (rambling or irrelevant conversation, unclear or illogical\nflow of ideas, or unpredictable switching from subject to subject)?",
+        "description": "",
+        "required": false,
+        "options": [
+          {
+            "id": "8e4e34d5-8b2e-4cb4-8a2e-62bbbc4f30ab",
+            "value": "0",
+            "label": "Behavior not present"
+          },
+          {
+            "id": "e7bbf9d4-583e-4bdb-9d45-b6e1e67d8e2c",
+            "value": "1",
+            "label": "Behavior continuously\npresent, does not fluctuate"
+          },
+          {
+            "id": "c2e5b9d1-4d7e-4f8e-83b9-6e1bcb9fdb7e",
+            "value": "2",
+            "label": "Behavior present, fluctuates\n(comes and goes, changes in\nseverity)"
+          }
+        ]
+      },
+      {
+        "id": "8370496c-15fa-4a94-a44e-a87de0b48a65",
+        "questionCode": "C1340.D",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Altered level of consciousness – Did the patient have altered level of\nconsciousness, as indicated by any of the following criteria?",
+        "description": "\uF0A7 vigilant – startled easily to any sound or touch\n\uF0A7 lethargic – repeatedly dozed off when being asked questions,\nbut responded to voice or touch\n\uF0A7 stuporous – very difficult to arouse and keep aroused for the\ninterview\n\uF0A7 comatose – could not be aroused",
+        "required": false,
+        "options": [
+          {
+            "id": "8e4e34d5-8b2e-4cb4-8a2e-62bbbc4f30ab",
+            "value": "0",
+            "label": "Behavior not present"
+          },
+          {
+            "id": "e7bbf9d4-583e-4bdb-9d45-b6e1e67d8e2c",
+            "value": "1",
+            "label": "Behavior continuously\npresent, does not fluctuate"
+          },
+          {
+            "id": "c2e5b9d1-4d7e-4f8e-83b9-6e1bcb9fdb7e",
+            "value": "2",
+            "label": "Behavior present, fluctuates\n(comes and goes, changes in\nseverity)"
+          }
+        ]
+      },
+      {
+        "id": "m1700",
+        "questionCode": "M1700",
+        "questionType": "RADIO_GROUP",
+        "questionText": "Cognitive Functioning",
+        "description": "Patient's current (day of assessment) level of alertness, orientation, comprehension, concentration, and immediate memory for simple commands.",
+        "required": false,
+        "options": [
+          { "id": "opt0", "value": "0", "label": "Alert/oriented, able to focus and shift attention, comprehends and recalls task directions independently." },
+          { "id": "opt1", "value": "1", "label": "Requires prompting under stressful or unfamiliar conditions." },
+          { "id": "opt2", "value": "2", "label": "Requires assistance and some direction in specific situations." },
+          { "id": "opt3", "value": "3", "label": "Requires considerable assistance in routine situations." },
+          { "id": "opt4", "value": "4", "label": "Totally dependent due to disturbances such as constant disorientation, coma, persistent vegetative state, or delirium." }
+        ]
+      },
+      {
+        "id": "m1710",
+        "questionCode": "M1710",
+        "questionType": "RADIO_GROUP",
+        "questionText": "When Confused",
+        "description": "Reported or Observed Within the Last 14 Days",
+        "required": false,
+        "options": [
+          { "id": "opt0", "value": "0", "label": "Never" },
+          { "id": "opt1", "value": "1", "label": "On awakening or at night only" },
+          { "id": "opt2", "value": "2", "label": "During the day and evening, but not constantly" },
+          { "id": "opt3", "value": "3", "label": "Constantly" },
+          { "id": "optNA", "value": "NA", "label": "Patient nonresponsive" }
+        ]
+      },
+      {
+        "id": "m1720",
+        "questionCode": "M1720",
+        "questionType": "RADIO_GROUP",
+        "questionText": "When Anxious",
+        "description": "Reported or Observed Within the Last 14 Days",
+        "required": false,
+        "options": [
+          { "id": "opt0", "value": "0", "label": "None of the time" },
+          { "id": "opt1", "value": "1", "label": "Less often than daily" },
+          { "id": "opt2", "value": "2", "label": "Daily, but not constantly" },
+          { "id": "opt3", "value": "3", "label": "All of the time" },
+          { "id": "optNA", "value": "NA", "label": "Patient nonresponsive" }
+        ]
+      }
+    ]
+  }
+]
