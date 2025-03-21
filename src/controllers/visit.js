@@ -44,25 +44,30 @@ const assessment = require("../model/tenant/assessment.js");
 //UserAdmin create a form
 const createForm = async (req, res) => {
   logger.debug(`Creating form with formTypeId: ${req.body.formTypeId}`);
-  const { formName, assessmentForm } = req.body;
-  const connection = await getTenantDB(req.tenantDb);
-  const FormModel = Form(connection);
+  try {
+    const { formName, assessmentForm } = req.body;
+    const connection = await getTenantDB(req.tenantDb);
+    const FormModel = Form(connection);
 
-  let form = await FormModel.find({
-    formName,
-  });
-  logger.debug(`Found existing assessment forms: ${form.length}`);
-  if (form.length) {
-    return res
-      .status(401)
-      .json(new ErrorResponse("Assessment Form already available"));
+    let form = await FormModel.find({
+      formName,
+    });
+    logger.debug(`Found existing assessment forms: ${form.length}`);
+    if (form.length) {
+      return res
+        .status(401)
+        .json(new ErrorResponse("Assessment Form already available"));
+    }
+    form = await FormModel.create({
+      formName,
+      assessmentForm,
+    });
+    logger.debug(`Created new assessment form with id: ${form._id}`);
+    return res.status(200).json(new SuccessResponse(form));
+  } catch (error) {
+    logger.error(`Error listing episodes: ${error.message}`);
+    return res.status(500).json(new ErrorResponse(error.message));
   }
-  form = await FormModel.create({
-    formName,
-    assessmentForm,
-  });
-  logger.debug(`Created new assessment form with id: ${form._id}`);
-  return res.status(404).json(new SuccessResponse(form));
 };
 
 const listEpisode = async (req, res) => {
