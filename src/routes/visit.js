@@ -12,6 +12,7 @@ const {
   getForm,
   getFormTemplate,
   updateForm,
+  deleteForm,
 } = require("../controllers/visit.js");
 const {
   checkMissingInputs,
@@ -51,6 +52,15 @@ visitRoutes.put(
   validateInputs,
   updateForm
 );
+
+visitRoutes.delete(
+  "/form/:id",
+  auth.protect(["form.update"]),
+  checkMissingInputs,
+  validateInputs,
+  deleteForm
+);
+
 visitRoutes.get(
   "/form/:id",
   auth.protect(["form.update"]),

@@ -51,6 +51,7 @@ const createForm = async (req, res) => {
 
     let form = await FormModel.find({
       formName,
+      isDeleted: false,
     });
     logger.debug(`Found existing assessment forms: ${form.length}`);
     if (form.length) {
@@ -724,9 +725,10 @@ const getOrCreateForm = async (connection, session) => {
   // logger.debug(`Found form type: ${formType ? formType._id : "not found"}`);
   // if (!formType) throw new Error("Form type not found");
 
-  let form = await FormModel.findOne({ formName: "Start of Care" }).session(
-    session
-  );
+  let form = await FormModel.findOne({
+    formName: "Start of Care",
+    isDeleted: false,
+  }).session(session);
   logger.debug(`Found form: ${form ? form._id : "not found"}`);
   if (!form) throw new Error("Form not found");
 
@@ -1074,7 +1076,15 @@ const getForm = async (req, res) => {
   try {
     const { connection, session } = await startDatabaseSession(req.tenantDb);
     const FormModel = Form(connection);
-    const form = await FormModel.find();
+    const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    query.isDeleted = false;
+    logger.debug(
+      `Query params: ${JSON.stringify(query)}, limit: ${parsedLimit}, offset: ${parsedOffset}`
+    );
+
+    const form = await FormModel.find(query)
+      .limit(parsedLimit)
+      .skip(parsedOffset);
     if (!form) return res.status(404).json(new ErrorResponse("Form not found"));
 
     return res.status(200).json(new SuccessResponse(form));
@@ -1088,7 +1098,16 @@ const getFormTemplate = async (req, res) => {
   try {
     const { connection, session } = await startDatabaseSession(req.tenantDb);
     const Form_TemplateModel = Form_Template(connection);
-    const formTemplate = await Form_TemplateModel.find();
+
+    const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    query.isDeleted = false;
+    logger.debug(
+      `Query params: ${JSON.stringify(query)}, limit: ${parsedLimit}, offset: ${parsedOffset}`
+    );
+
+    const formTemplate = await Form_TemplateModel.find(query)
+      .limit(parsedLimit)
+      .skip(parsedOffset);
     if (!formTemplate)
       return res
         .status(404)
@@ -1102,66 +1121,106 @@ const getFormTemplate = async (req, res) => {
 };
 
 const getFormbyId = async (req, res) => {
-  if (!req.params.id) {
-    return res
-      .status(500)
-      .json(new ErrorResponse("Please specify id in parameter"));
-  }
-  const { connection, session } = await startDatabaseSession(req.tenantDb);
-  const FormModel = Form(connection);
-  const form = await FormModel.findById(req.params.id);
-  if (!form) return res.status(404).json(new ErrorResponse("Form not found"));
+  try {
+    if (!req.params.id) {
+      return res
+        .status(500)
+        .json(new ErrorResponse("Please specify id in parameter"));
+    }
+    const { connection, session } = await startDatabaseSession(req.tenantDb);
+    const FormModel = Form(connection);
+    const form = await FormModel.findById(req.params.id);
+    if (!form) return res.status(404).json(new ErrorResponse("Form not found"));
 
-  return res.status(200).json(new SuccessResponse(form));
+    return res.status(200).json(new SuccessResponse(form));
+  } catch (error) {
+    logger.error(`message container error: ${error.toString()}`);
+    return res.status(500).json(new ErrorResponse(error.message));
+  }
 };
 
 const updateForm = async (req, res) => {
-  if (!req.params.id) {
-    return res
-      .status(500)
-      .json(new ErrorResponse("Please specify id in parameter"));
+  try {
+    if (!req.params.id) {
+      return res
+        .status(500)
+        .json(new ErrorResponse("Please specify id in parameter"));
+    }
+    const { connection, session } = await startDatabaseSession(req.tenantDb);
+    const FormModel = Form(connection);
+    const form = await FormModel.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    return res.status(200).json(new SuccessResponse(form));
+  } catch (error) {
+    logger.error(`message container error: ${error.toString()}`);
+    return res.status(500).json(new ErrorResponse(error.message));
   }
-  const { connection, session } = await startDatabaseSession(req.tenantDb);
-  const FormModel = Form(connection);
-  const form = await FormModel.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  });
-  return res.status(200).json(new SuccessResponse(form));
+};
+
+const deleteForm = async (req, res) => {
+  try {
+    if (!req.params.id) {
+      return res
+        .status(500)
+        .json(new ErrorResponse("Please specify id in parameter"));
+    }
+    const { connection, session } = await startDatabaseSession(req.tenantDb);
+    const FormModel = Form(connection);
+    const form = await FormModel.findByIdAndUpdate(
+      req.params.id,
+      { isDeleted: true },
+      {
+        new: true,
+      }
+    );
+    return res.status(200).json(new SuccessResponse(form));
+  } catch (error) {
+    logger.error(`message container error: ${error.toString()}`);
+    return res.status(500).json(new ErrorResponse(error.message));
+  }
 };
 
 const markVisitPastDue = async () => {
-  const tenants = await Tenant.find();
-  logger.debug(`Found ${tenants.length} tenants`);
+  try {
+    const tenants = await Tenant.find();
+    logger.debug(`Found ${tenants.length} tenants`);
 
-  tenants.forEach(async (tenant) => {
-    logger.debug(`Marking visits past due for tenant: ${tenant.databaseName}`);
-    const connection = await getTenantDB(tenant.databaseName);
-    const VisitModel = Visit(connection);
-    const visits = await VisitModel.find({
-      status: { $nin: ["Completed", "Submitted", "Past Due"] },
-      visitDate: { $lt: new Date() },
+    tenants.forEach(async (tenant) => {
+      logger.debug(
+        `Marking visits past due for tenant: ${tenant.databaseName}`
+      );
+      const connection = await getTenantDB(tenant.databaseName);
+      const VisitModel = Visit(connection);
+      const visits = await VisitModel.find({
+        status: { $nin: ["Completed", "Submitted", "Past Due"] },
+        visitDate: { $lt: new Date() },
+      });
+      logger.debug(
+        `Found ${visits.length} visits to mark as past due in tenant ${tenant.databaseName}`
+      );
+      visits.forEach(async (visit) => {
+        const visitDate = new Date(visit.visitDate);
+        if (visitDate < new Date()) {
+          logger.debug(`Marking visit ${visit._id} as past due`);
+          await VisitModel.findByIdAndUpdate(visit._id, { status: "Past Due" });
+          await createNotification(
+            visit.clinicianId,
+            `Visit ${visit.visitNo} is past due`,
+            "Visit Past Due",
+            connection
+          );
+        } else {
+          logger.debug(
+            `Visit ${visit._id} is of date ${visitDate} and is not past due`
+          );
+        }
+      });
     });
-    logger.debug(
-      `Found ${visits.length} visits to mark as past due in tenant ${tenant.databaseName}`
-    );
-    visits.forEach(async (visit) => {
-      const visitDate = new Date(visit.visitDate);
-      if (visitDate < new Date()) {
-        logger.debug(`Marking visit ${visit._id} as past due`);
-        await VisitModel.findByIdAndUpdate(visit._id, { status: "Past Due" });
-        await createNotification(
-          visit.clinicianId,
-          `Visit ${visit.visitNo} is past due`,
-          "Visit Past Due",
-          connection
-        );
-      } else {
-        logger.debug(
-          `Visit ${visit._id} is of date ${visitDate} and is not past due`
-        );
-      }
-    });
-  });
+  } catch (error) {
+    logger.error(`message container error: ${error.toString()}`);
+    return res.status(500).json(new ErrorResponse(error.message));
+  }
 };
 
 module.exports = {
@@ -1182,4 +1241,5 @@ module.exports = {
   updateForm,
   markVisitPastDue,
   getFormbyId,
+  deleteForm,
 };

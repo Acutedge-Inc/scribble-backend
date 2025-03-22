@@ -10,6 +10,14 @@ const formSchema = new mongoose.Schema(
     assessmentForm: {
       type: Array,
     },
+    isPublished: {
+      type: Boolean,
+      default: false,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
 );
