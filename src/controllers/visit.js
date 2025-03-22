@@ -1087,7 +1087,9 @@ const getForm = async (req, res) => {
       .skip(parsedOffset);
     if (!form) return res.status(404).json(new ErrorResponse("Form not found"));
 
-    return res.status(200).json(new SuccessResponse(form));
+    const totalCount = await FormModel.countDocuments(query);
+
+    return res.status(200).json(new SuccessResponse(form, totalCount));
   } catch (error) {
     logger.error(`message container error: ${error.toString()}`);
     return res.status(500).json(new ErrorResponse(error.message));
@@ -1111,8 +1113,9 @@ const getFormTemplate = async (req, res) => {
       return res
         .status(404)
         .json(new ErrorResponse("Form Templates not found"));
+    const totalCount = await Form_TemplateModel.countDocuments(query);
 
-    return res.status(200).json(new SuccessResponse(formTemplate));
+    return res.status(200).json(new SuccessResponse(formTemplate, totalCount));
   } catch (error) {
     logger.error(`message container error: ${error.toString()}`);
     return res.status(500).json(new ErrorResponse(error.message));
@@ -1173,7 +1176,9 @@ const deleteForm = async (req, res) => {
         new: true,
       }
     );
-    return res.status(200).json(new SuccessResponse(form));
+    return res
+      .status(200)
+      .json(new SuccessResponse({ message: "Form Deleted Successfully" }));
   } catch (error) {
     logger.error(`message container error: ${error.toString()}`);
     return res.status(500).json(new ErrorResponse(error.message));

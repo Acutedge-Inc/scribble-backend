@@ -1163,6 +1163,29 @@
             },
             "required": false,
             "description": "Tenant ID of the customer"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Filter"
+            }
           }
         ],
         "security": [
