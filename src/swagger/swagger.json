@@ -1684,6 +1684,92 @@
         ]
       }
     },
+    "/v1/visit/template/{id}": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormPutResponse"
+                },
+                "example": {
+                  "status": "ok",
+                  "data": {
+                    "formName": "ROC",
+                    "assessmentForm": [
+                      {
+                        "question_code": "M1610",
+                        "question": "Have you been experiencing any issues with urinary leakage or incontinence? Do you currently use a urinary catheter?",
+                        "options": [
+                          "0. No incontinence or catheter (includes anuria or ostomy for urinary drainage)",
+                          "1. Patient is incontinent",
+                          "2. Patient requires a urinary catheter (specifically: external, indwelling, intermittent, or suprapubic)"
+                        ],
+                        "question_type": "TEXT_INPUT",
+                        "section": "Bladder and Bowel"
+                      },
+                      {
+                        "question_code": "M1028",
+                        "question": "Do you have any other active health conditions that we should be aware of?",
+                        "options": [
+                          "1. Peripheral Vascular Disease (PVD) or Peripheral Arterial Disease (PAD)",
+                          "2. Diabetes Mellitus (DM)",
+                          "3. None of the above"
+                        ],
+                        "question_type": "TEXT_INPUT",
+                        "section": "Medications"
+                      }
+                    ],
+                    "_id": "67db119962a34a167b810ade",
+                    "createdAt": "2025-03-19T18:48:57.085Z",
+                    "updatedAt": "2025-03-19T18:48:57.086Z",
+                    "__v": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Get the form template of the visit",
+        "operationId": "get_visit_template_by_id",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67cf182ecd6dbb2d123519ea"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
     "/v1/visit": {
       "get": {
         "responses": {

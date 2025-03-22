@@ -13,6 +13,7 @@ const {
   getFormTemplate,
   updateForm,
   deleteForm,
+  getFormTemplatebyId,
 } = require("../controllers/visit.js");
 const {
   checkMissingInputs,
@@ -43,6 +44,14 @@ visitRoutes.get(
   checkMissingInputs,
   validateInputs,
   getFormTemplate
+);
+
+visitRoutes.get(
+  "/template/:id",
+  auth.protect(["form.update"]),
+  checkMissingInputs,
+  validateInputs,
+  getFormTemplatebyId
 );
 
 visitRoutes.put(

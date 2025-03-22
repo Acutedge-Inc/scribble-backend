@@ -1141,6 +1141,26 @@ const getFormbyId = async (req, res) => {
   }
 };
 
+const getFormTemplatebyId = async (req, res) => {
+  try {
+    if (!req.params.id) {
+      return res
+        .status(500)
+        .json(new ErrorResponse("Please specify id in parameter"));
+    }
+    const { connection, session } = await startDatabaseSession(req.tenantDb);
+    const Form_TemplateModel = Form_Template(connection);
+    const formTemplate = await Form_TemplateModel.findById(req.params.id);
+    if (!formTemplate)
+      return res.status(404).json(new ErrorResponse("Form Template not found"));
+
+    return res.status(200).json(new SuccessResponse(formTemplate));
+  } catch (error) {
+    logger.error(`message container error: ${error.toString()}`);
+    return res.status(500).json(new ErrorResponse(error.message));
+  }
+};
+
 const updateForm = async (req, res) => {
   try {
     if (!req.params.id) {
@@ -1246,4 +1266,5 @@ module.exports = {
   markVisitPastDue,
   getFormbyId,
   deleteForm,
+  getFormTemplatebyId,
 };
