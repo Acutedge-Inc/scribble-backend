@@ -1100,7 +1100,6 @@ const getFormTemplate = async (req, res) => {
     const Form_TemplateModel = Form_Template(connection);
 
     const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
-    query.isDeleted = false;
     logger.debug(
       `Query params: ${JSON.stringify(query)}, limit: ${parsedLimit}, offset: ${parsedOffset}`
     );
