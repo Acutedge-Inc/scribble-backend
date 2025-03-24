@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - develop
+      - prod
 
 jobs:
-  deploy:
+  deploy-dev:
+    if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
 
     steps:
@@ -23,6 +25,29 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i deploy_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd ${{ secrets.EC2_PATH }}
             git pull origin develop
+            docker-compose down
+            docker-compose up -d --build
+            docker ps  # Check if containers are running
+          EOF
+
+  deploy-prod:
+    if: github.ref == 'refs/heads/prod'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup SSH Key
+        run: |
+          echo "${{ secrets.PROD_EC2_SSH_KEY }}" > deploy_key
+          chmod 600 deploy_key
+
+      - name: Deploy to EC2 via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no -i deploy_key ${{ secrets.PROD_EC2_USER }}@${{ secrets.PROD_EC2_HOST }} << 'EOF'
+            cd ${{ secrets.PROD_EC2_PATH }}
+            git pull origin prod
             docker-compose down
             docker-compose up -d --build
             docker ps  # Check if containers are running
