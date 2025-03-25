@@ -21,7 +21,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: adminpassword
     volumes:
       - mongo1_data:/data/db
-      - ./mongo-keyfile:/data/mongo-keyfile
+      - ./mongo-keyfile:/data/mongo-keyfile:ro # Read-only keyfile
 
   mongo2:
     image: mongo:latest
@@ -43,7 +43,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: adminpassword
     volumes:
       - mongo2_data:/data/db
-      - ./mongo-keyfile:/data/mongo-keyfile
+      - ./mongo-keyfile:/data/mongo-keyfile:ro # Read-only keyfile
 
   mongo3:
     image: mongo:latest
@@ -65,7 +65,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: adminpassword
     volumes:
       - mongo3_data:/data/db
-      - ./mongo-keyfile:/data/mongo-keyfile
+      - ./mongo-keyfile:/data/mongo-keyfile:ro # Read-only keyfile
 
   mongo-init:
     image: mongo:latest
@@ -78,7 +78,7 @@ services:
       [
         "bash",
         "-c",
-        'sleep 10 && mongosh --host mongo1:27017 -u admin -p adminpassword --authenticationDatabase admin --eval ''rs.initiate({_id: "rs0", members: [{ _id: 0, host: "mongo1:27017" }, { _id: 1, host: "mongo2:27017" }, { _id: 2, host: "mongo3:27017" }]})''',
+        'sleep 20 && mongosh --host mongo1:27017 -u admin -p adminpassword --authenticationDatabase admin --eval ''rs.initiate({_id: "rs0", members: [{ _id: 0, host: "mongo1:27017" }, { _id: 1, host: "mongo2:27017" }, { _id: 2, host: "mongo3:27017" }]})''',
       ]
 
   redis:
