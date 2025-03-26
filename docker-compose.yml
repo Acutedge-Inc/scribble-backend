@@ -22,8 +22,6 @@ services:
     volumes:
       - mongo1_data:/data/db
       - ./mongo-keyfile:/data/mongo-keyfile
-    networks:
-      - scribble_network # ✅ Assigning to the custom network
 
   mongo2:
     image: mongo:latest
@@ -46,8 +44,6 @@ services:
     volumes:
       - mongo2_data:/data/db
       - ./mongo-keyfile:/data/mongo-keyfile
-    networks:
-      - scribble_network # ✅ Assigning to the custom network
 
   mongo3:
     image: mongo:latest
@@ -70,8 +66,6 @@ services:
     volumes:
       - mongo3_data:/data/db
       - ./mongo-keyfile:/data/mongo-keyfile
-    networks:
-      - scribble_network # ✅ Assigning to the custom network
 
   mongo-init:
     image: mongo:latest
@@ -86,8 +80,6 @@ services:
         "-c",
         'sleep 10 && mongosh --host mongo1:27017 -u admin -p adminpassword --authenticationDatabase admin --eval ''rs.initiate({_id: "rs0", members: [{ _id: 0, host: "mongo1:27017" }, { _id: 1, host: "mongo2:27017" }, { _id: 2, host: "mongo3:27017" }]})''',
       ]
-    networks:
-      - scribble_network # ✅ Assigning to the custom network
 
   redis:
     image: redis:latest
@@ -98,8 +90,6 @@ services:
     command: ["redis-server", "--bind", "0.0.0.0", "--protected-mode", "no"]
     volumes:
       - redis_data:/data
-    networks:
-      - scribble_network # ✅ Assigning to the custom network
 
   scribble-api:
     build: .
@@ -116,15 +106,9 @@ services:
       MONGO_URI: "mongodb://admin:adminpassword@mongo1:27017,mongo2:27017,mongo3:27017/ADMIN_DB?authSource=admin&replicaSet=rs0"
       REDIS_HOST: "redis"
       REDIS_PORT: "6379"
-    networks:
-      - scribble_network # ✅ Assigning to the custom network
 
 volumes:
   mongo1_data:
   mongo2_data:
   mongo3_data:
   redis_data:
-
-networks:
-  scribble_network: # ✅ This is required at the bottom to define the network
-    driver: bridge
