@@ -21,6 +21,8 @@ const upload = multer({
       "video/x-matroska",
     ];
 
+    console.log("test");
+
     if (!validExtensions.test(file.originalname)) {
       return cb(
         new ErrorResponse(

@@ -38,7 +38,9 @@
     "multer": "^1.4.5-lts.1",
     "nconf": "^0.12.1",
     "node-cache": "^5.1.2",
+    "node-schedule": "^2.1.1",
     "nodemailer": "^6.10.0",
+    "nodemon": "^3.1.9",
     "path": "^0.12.7",
     "serverless-http": "^3.2.0",
     "swagger-ui-express": "^5.0.1",
@@ -50,7 +52,6 @@
     "@eslint/js": "^9.18.0",
     "eslint": "^9.18.0",
     "globals": "^15.14.0",
-    "nodemon": "^3.1.9",
     "prettier": "^3.4.2",
     "serverless-offline": "^14.4.0"
   }
