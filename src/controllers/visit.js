@@ -726,7 +726,7 @@ const getOrCreateForm = async (connection, session) => {
   // if (!formType) throw new Error("Form type not found");
 
   let form = await FormModel.findOne({
-    formName: "amitSOC1",
+    formName: "Start of Care",
     isDeleted: false,
   }).session(session);
   logger.debug(`Found form: ${form ? form._id : "not found"}`);
