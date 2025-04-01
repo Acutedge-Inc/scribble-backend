@@ -561,9 +561,9 @@ const getOrUpdateClinician = async (data, connection, session) => {
   const updatedClinician = await Clinician_InfoModel.findOneAndUpdate(
     { clinicianNo: data.clinicianNo.toString() },
     {
-      firstName: data.clinicianFirstName,
-      lastName: data.clinicianLastName,
-      status: data.clinicianStatus,
+      // firstName: data.clinicianFirstName,
+      // lastName: data.clinicianLastName,
+      // status: data.clinicianStatus,
       age: data.clinicianAge,
       gender: data.clinicianGender,
       dob: data.clinicianDOB,
