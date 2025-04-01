@@ -9,10 +9,7 @@ const getAccountLabel = (APPSTORE_NAME) => {
   };
 };
 
-module.exports = (code, role, oemName) => {
-  const APPSTORE_NAME = oemName === "skoda" ? "Skoda" : "Allgo";
-  const accountLable = getAccountLabel(APPSTORE_NAME);
-
+module.exports = (password, firstName) => {
   return `<html>
 
     <head>
@@ -122,30 +119,27 @@ module.exports = (code, role, oemName) => {
     <body>
         <div class="fixed-header">
             <div class="container">
-                <img class="header-image" src=${`${nconf.get(
-                  "API_BASE_URL",
-                )}/api/v1/asset/allgo.png`}></img>
+                <a href=${process.env.WEB_URL}>Your Journey with Scribble Starts Here</a>
             </div>
         </div>
-        <div class="fixed-body">
-            <h1 style="color: #e7792b">Welcome to Scribble!</h1>
-            ${
-              role === "user"
-                ? `<p class="grey-text">Please click on the button below to verify your email
-                address and activate your ${accountLable[role] || `${APPSTORE_NAME} App Store`} account.</p>
-                <a href=${`${nconf.get("WEB_BASE_URL")}/verification/${code}`}>VERIFY NOW</a>
-                <p  class="grey-text" style="margin-bottom: 60px;">Please note, this link expires 24 hours
-                after your original verification request.</p>`
-                : `<p>Your password is <b>${code}</b>. Please create your new password in scribble<p/>`
-            }
-            <hr />
-            <p class="grey-text bold">We'd love to help!</p>
+        <div class="fixed-body" style="text-align: left;">
+            <p>
+                Hi ${firstName.charAt(0).toUpperCase() + firstName.slice(1)},<br><br>
+                Welcome to Scribble! We're excited to have you on board as we work together to transform healthcare.<br><br>
+                To get you started, we've generated a temporary password for your account:<br><br>
+                <strong>Temporary Password: ${password}</strong><br><br>
+                For your security, you'll need to update this password when you log in for the first time. Here’s how:<br>
+                Click on the login link below.<br>
+                Enter your email and the temporary password provided above.<br>
+                Follow the prompts to set a new, secure password of your choice.<br><br>
+                If you run into any issues or have questions, our support team is here to help. You can reach us at <a href="mailto:support@goscribble.ai">support@goscribble.ai</a>.<br><br>
+                Thank you for choosing Scribble!<br><br>
+                Best regards,<br><br>
+                The Scribble Team
+            </p>
         </div>
         <div class="fixed-footer">
-            <div class="container">
-                <p>Thanks</p>
-                <p>The Scribble Team</p>
-            </div>
+            <div class="container"><a href=${process.env.WEB_URL}>goscribble.ai </a></div>
         </div>
     </body>
 

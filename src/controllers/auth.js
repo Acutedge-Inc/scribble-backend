@@ -70,7 +70,7 @@ async function createAdminUser(adminDbUrl) {
 }
 
 async function adminLogin(req, res) {
-  logger.debug("Admin login attempt for email:", req.body.email);
+  logger.debug(`Admin login attempt for email: ${req.body.email}`);
   try {
     const { email, password } = req.body;
 
@@ -80,7 +80,7 @@ async function adminLogin(req, res) {
     );
 
     if (!adminUser) {
-      logger.warn("Login failed - admin not found for email:", email);
+      logger.warn(`Login failed - admin not found for email: ${email}`);
       return res.status(404).json(new ErrorResponse("Admin not found"));
     }
 
@@ -111,13 +111,13 @@ async function adminLogin(req, res) {
       },
       accessTokenTtl
     );
-    logger.debug("Generated access token for admin");
+    logger.debug(`Generated access token for admin`);
 
     const refreshToken = await tokens.createRefreshToken(
       adminUser._id,
       refreshTokenttl
     );
-    logger.debug("Generated refresh token for admin");
+    logger.debug(`Generated refresh token for admin`);
 
     await session.storeAccessToken(adminUser._id, accessToken, accessTokenTtl);
     await session.storeRefreshToken(
@@ -141,7 +141,7 @@ async function adminLogin(req, res) {
       created: adminUser.createdAt,
       updated: adminUser.updatedAt,
     };
-    logger.info("Admin login successful for:", email);
+    logger.info(`Admin login successful for: ${email}`);
     return res.json(new SuccessResponse(responseInst));
   } catch (err) {
     logger.error(`Error on Admin Login ${err}`);
@@ -320,8 +320,7 @@ const createTenant = async (req, res) => {
   try {
     const existingTenant = await Tenant.findOne({ uniqueName });
     logger.debug(
-      "Checked for existing tenant:",
-      existingTenant ? "found" : "not found"
+      `Checked for existing tenant: ${existingTenant ? "found" : "not found"}`
     );
 
     if (existingTenant) {
@@ -345,7 +344,7 @@ const createTenant = async (req, res) => {
     createFolder(uniqueName);
     logger.debug("Created tenant folder");
 
-    logger.info("Successfully created new tenant:", uniqueName);
+    logger.info(`Successfully created new tenant: ${uniqueName}`);
     return res.status(201).json(new SuccessResponse(tenant));
   } catch (error) {
     logger.error("Tenant creation error:", error);
@@ -430,7 +429,7 @@ async function createUserInfo({ userId, roleName, req, connection, session }) {
     firstName,
     lastName,
     status,
-    discipline,
+    disciplineId,
     jobTitle,
     age,
     dob,
@@ -455,7 +454,7 @@ async function createUserInfo({ userId, roleName, req, connection, session }) {
             firstName,
             lastName,
             status,
-            discipline,
+            disciplineId,
             jobTitle,
             age,
             dob,
@@ -484,7 +483,7 @@ async function createUserInfo({ userId, roleName, req, connection, session }) {
             firstName,
             lastName,
             status,
-            discipline,
+            disciplineId,
             jobTitle,
             age,
             dob,
@@ -509,10 +508,9 @@ async function createUserInfo({ userId, roleName, req, connection, session }) {
 
 const register = async (req, res) => {
   let session;
-  logger.debug("User registration request received", {
-    email: req.body.email,
-    tenantId: req.body["x-tenant-id"] || req.tenantId,
-  });
+  logger.debug(
+    `User registration request received: ${req.body.email} on tenant: ${req.body["x-tenant-id"] || req.tenantId}`
+  );
 
   try {
     let { email, roleId, "x-tenant-id": tenantId } = req.body;
@@ -574,16 +572,16 @@ const register = async (req, res) => {
     logger.debug("Sent verification email");
 
     await session.commitTransaction();
-    logger.info("Successfully registered new user:", email);
+    logger.info(`Successfully registered new user: ${email}`);
 
     res.status(201).json(new SuccessResponse(newUser[0]));
   } catch (err) {
-    logger.error("Registration error:", err);
+    logger.error(`Registration error: ${err}`);
     if (session && session.inTransaction()) {
       await session.abortTransaction();
       logger.debug("Aborted database transaction");
     }
-    res.status(500).json(new ErrorResponse(err.message));
+    res.status(500).json(new ErrorResponse(err?.message || err));
   } finally {
     if (session) {
       await session.endSession();
@@ -597,7 +595,7 @@ const health = async (req, res) => {
   try {
     return res.json({ message: "health" });
   } catch (err) {
-    logger.error("Health check error:", err);
+    logger.error(`Health check error: ${err}`);
     return res.send({ err });
   }
 };
@@ -617,10 +615,10 @@ const getAccessToken = async (req, res) => {
     const accessTokenTtl = "600000";
 
     const response = await session.checkIfRefreshTokenExists(req.user.id);
-    logger.debug("Checked refresh token exists:", response ? "yes" : "no");
+    logger.debug(`Checked refresh token exists: ${response ? "yes" : "no"}`);
 
     if (!response || response !== refreshToken) {
-      logger.warn("Session expired for user:", req.user.id);
+      logger.warn(`Session expired for user: ${req.user.id}`);
       throw new HTTPError(
         401,
         "Session expired! Login again",

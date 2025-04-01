@@ -140,54 +140,22 @@ async function sendAccountVerificationEmail(email, code) {
   return sendEmailSMTP(email, subject, htmlBody);
 }
 
-async function sendEmailSESWithAttachment(destination, subject, htmlBody) {
-  const mailContent = mimemessage.factory({
-    contentType: "multipart/mixed",
-    body: [],
-  });
-  const domainPrefix = `${nconf.get("AWS_ENV")}.${nconf.get("OEM")}.${
-    nconf.get("AWS_DEFAULT_REGION").split("-")[0]
-  }`;
-  mailContent.header("From", `admin@${domainPrefix}.appstore.visteoncloud.com`);
-  mailContent.header("To", destination);
-  mailContent.header("Subject", subject);
+/**
+ * Generate account verification email
+ * @param {string} email recepient
+ * @param {string} url url to include in the body
+ */
+async function sendAlertEmail(error, type) {
+  logger.info(`Sending alert email`);
 
-  const alternateEntity = mimemessage.factory({
-    contentType: "multipart/alternate",
-    body: [],
-  });
+  const subject = `${process.env.NODE_ENV} Scribble Alert - ${type}`;
+  const htmlBody = error;
 
-  const htmlEntity = mimemessage.factory({
-    contentType: "text/html;charset=utf-8",
-    body: htmlBody,
+  // send email using SMTP
+  const alertEmails = JSON.parse(process.env.ALERT_EMAIL);
+  alertEmails.forEach((email) => {
+    sendEmailSMTP(email, subject, htmlBody);
   });
-  const plainEntity = mimemessage.factory({
-    body: "Please see the attached file for a list of    customers to contact.",
-  });
-  alternateEntity.body.push(htmlEntity);
-  alternateEntity.body.push(plainEntity);
-
-  mailContent.body.push(alternateEntity);
-
-  const data = fs.readFileSync(
-    `${replace(__dirname, /\\/g, "/")}/allgo-logo.png`
-  );
-  const attachmentEntity = mimemessage.factory({
-    contentType: "image/png",
-    contentTransferEncoding: "base64",
-    body: data.toString("base64").replace(/([^\0]{76})/g, "$1\n"),
-    cid: "logo",
-  });
-  attachmentEntity.header(
-    "Content-Disposition",
-    "attachment ;filename='allgo-logo.png'"
-  );
-  attachmentEntity.header("Content-ID", "logo");
-  mailContent.body.push(attachmentEntity);
-
-  return ses
-    .sendRawEmail({ RawMessage: { Data: mailContent.toString() } })
-    .promise();
 }
 
 /**
@@ -251,4 +219,5 @@ module.exports = {
   sendAccountVerificationEmail,
   sendPasswordResetEmail,
   sendEmailSES,
+  sendAlertEmail,
 };

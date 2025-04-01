@@ -6,6 +6,7 @@ const useragent = require("express-useragent");
 const helmet = require("helmet");
 const methodOverride = require("method-override");
 const { randomUUID } = require("crypto");
+const { sendAlertEmail } = require("./lib/emails.js");
 
 const routes = require("./routes/index.js");
 const { session } = require("./lib");
@@ -89,6 +90,7 @@ app.use((req, res, next) => {
 // error handler
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
+  sendAlertEmail(err, "Unhandled Error");
   if (err.message === "Invalid Content-Type")
     return res.status(err?.statusCode || 400).json({
       status: "error",

@@ -41,10 +41,10 @@ const visitSchema = new mongoose.Schema(
       type: String,
       enum: [
         "New",
-        "Missed",
         "In Progress",
+        "Visit Not Conducted",
         "Past Due",
-        "Submitted",
+        "Submitted for Processing",
         "Completed",
       ],
       default: "New",

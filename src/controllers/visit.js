@@ -21,6 +21,8 @@ const Client_Info = require("../model/tenant/clientInfo.js");
 const Episode = require("../model/tenant/episode.js");
 const Visit = require("../model/tenant/visit.js");
 const Form = require("../model/tenant/form.js");
+const Form_Type = require("../model/tenant/formType.js");
+const Discipline = require("../model/tenant/discipline.js");
 const Assessment = require("../model/tenant/assessment.js");
 const Notification = require("../model/tenant/notification.js");
 const NotificationType = require("../model/tenant/notificationType.js");
@@ -45,7 +47,7 @@ const assessment = require("../model/tenant/assessment.js");
 const createForm = async (req, res) => {
   logger.debug(`Creating form with formTypeId: ${req.body.formTypeId}`);
   try {
-    const { formName, assessmentForm } = req.body;
+    const { formName, assessmentForm, disciplineId, formTypeId } = req.body;
     const connection = await getTenantDB(req.tenantDb);
     const FormModel = Form(connection);
 
@@ -62,6 +64,8 @@ const createForm = async (req, res) => {
     form = await FormModel.create({
       formName,
       assessmentForm,
+      disciplineId,
+      formTypeId,
     });
     logger.debug(`Created new assessment form with id: ${form._id}`);
     return res.status(200).json(new SuccessResponse(form));
@@ -105,7 +109,7 @@ const listVisit = async (req, res) => {
     }
     if (req.query.status === "Completed") {
       req.query.status = {
-        $in: ["Completed", "Submitted"],
+        $in: ["Completed", "Submitted for Processing"],
       };
     }
 
@@ -326,10 +330,13 @@ const createVisit = async (req, res) => {
     if (!visit)
       return res.status(400).json(new ErrorResponse("Visit already exists"));
 
-    const form = await getOrCreateForm(connection, session);
-    logger.debug(`Found/Created form: ${form.id}`);
+    const forms = await getOrCreateForm(
+      clinician.disciplineId,
+      connection,
+      session
+    );
 
-    await createAssessment(form, visit.id, connection, session);
+    await createAssessment(forms, visit.id, connection, session);
     logger.debug("Created assessment");
 
     await createNotification(
@@ -345,6 +352,7 @@ const createVisit = async (req, res) => {
     logger.debug("Transaction committed successfully");
     return res.status(201).json(new SuccessResponse(visit));
   } catch (error) {
+    sendAlertEmail(error.message);
     logger.error(`Error creating visit: ${error.message}`);
     await session.abortTransaction();
     return res.status(500).json(new ErrorResponse(error.message));
@@ -414,10 +422,13 @@ const createVisitFromRPA = async (err, data) => {
       logger.debug(`Created visit: ${visit ? visit._id : "failed"}`);
       if (!visit) throw new Error("Visit already exists");
 
-      const form = await getOrCreateForm(connection, session);
-      logger.debug(`Found/Created form: ${form.id}`);
+      const forms = await getOrCreateForm(
+        clinician.disciplineId,
+        connection,
+        session
+      );
 
-      await createAssessment(form, visit.id, connection, session);
+      await createAssessment(forms, visit.id, connection, session);
       logger.debug("Created assessment");
 
       await createNotification(
@@ -440,6 +451,7 @@ const createVisitFromRPA = async (err, data) => {
       session.endSession();
     }
   } catch (error) {
+    sendAlertEmail(error.message);
     logger.error(`message container error: ${error.toString()}`);
     await pushToQueue(process.env.RPA_DATA_QUEUE_DLQ, {
       msgStatus: false,
@@ -550,7 +562,6 @@ const getOrUpdateClinician = async (data, connection, session) => {
       firstName: data.clinicianFirstName,
       lastName: data.clinicianLastName,
       status: data.clinicianStatus,
-      discipline: data.clinicianDiscipline,
       age: data.clinicianAge,
       gender: data.clinicianGender,
       dob: data.clinicianDOB,
@@ -714,46 +725,53 @@ const createVisitRecord = async (
 };
 
 /** Get or create a form */
-const getOrCreateForm = async (connection, session) => {
+const getOrCreateForm = async (disciplineId, connection, session) => {
   logger.debug("Getting/Creating form");
-  // const Form_TypeModel = Form_Type(connection);
   const FormModel = Form(connection);
 
-  // const formType = await Form_TypeModel.findOne({
-  //   formName: "Start of Care",
-  // }).session(session);
-  // logger.debug(`Found form type: ${formType ? formType._id : "not found"}`);
-  // if (!formType) throw new Error("Form type not found");
-
-  let form = await FormModel.findOne({
-    formName: "Start of Care",
+  let forms = await FormModel.find({
+    disciplineId,
     isDeleted: false,
   }).session(session);
-  logger.debug(`Found form: ${form ? form._id : "not found"}`);
-  if (!form) throw new Error("Form not found");
+  logger.debug(`Found form: ${forms ? forms.length : "not found"}`);
+  if (!forms) throw new Error("Form not found");
 
-  return form;
+  return forms;
 };
 
 /** Create an assessment record */
-const createAssessment = async (form, visitId, connection, session) => {
-  logger.debug(`Creating assessment for form ${form.id} and visit ${visitId}`);
-  const AssessmentModel = Assessment(connection);
+const createAssessment = async (forms, visitId, connection, session) => {
+  const assessments = await Promise.all(
+    forms.map(async (form) => {
+      logger.debug(
+        `Creating assessment for form ${form.id} and visit ${visitId}`
+      );
+      const AssessmentModel = Assessment(connection);
 
-  const existingAssessment = await AssessmentModel.findOne({
-    formId: form.id,
-    visitId,
-  }).session(session);
-  if (existingAssessment) return existingAssessment;
+      const existingAssessment = await AssessmentModel.findOne({
+        formId: form.id,
+        visitId,
+      }).session(session);
+      if (existingAssessment) return existingAssessment;
 
-  const assessment = await AssessmentModel.create(
-    [{ formId: form.id, visitId, assessmentQuestion: form.assessmentForm }],
-    {
-      session,
-    }
+      const assessment = await AssessmentModel.create(
+        [
+          {
+            formId: form.id,
+            visitId,
+            assessmentQuestion: form.assessmentForm,
+            assessmentName: form.formName,
+          },
+        ],
+        {
+          session,
+        }
+      );
+      logger.debug(`Created assessment: ${assessment[0]._id}`);
+      return assessment[0];
+    })
   );
-  logger.debug(`Created assessment: ${assessment[0]._id}`);
-  return assessment[0];
+  return assessments;
 };
 
 /** Start a database session and return connection + session */
@@ -874,7 +892,7 @@ const updateAssessment = async (req, res) => {
         });
       } else if (allSubmittedToEMR) {
         await VisitModel.findByIdAndUpdate(assessment.visitId, {
-          status: "Submitted",
+          status: "Submitted for Processing",
         });
       }
     }
@@ -985,7 +1003,7 @@ const processAIOutput = async (err, data) => {
         $set: {
           assessmentQuestion: processedAnswer,
           assessmentAnswer: assessmentAnswer,
-          status: "Validation",
+          status: "Ready for Review",
         },
       }
     );
@@ -1054,7 +1072,7 @@ const updateAssessmentFromRPA = async (err, data) => {
       });
     } else if (allSubmittedToEMR) {
       await VisitModel.findByIdAndUpdate(msg.visitId, {
-        status: "Submitted",
+        status: "Submitted for Processing",
       });
     }
 
@@ -1100,13 +1118,23 @@ const getFormTemplate = async (req, res) => {
   try {
     const { connection, session } = await startDatabaseSession(req.tenantDb);
     const Form_TemplateModel = Form_Template(connection);
-
+    const DisciplineModel = Discipline(connection);
+    const Form_TypeModel = Form_Type(connection);
     const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
     logger.debug(
       `Query params: ${JSON.stringify(query)}, limit: ${parsedLimit}, offset: ${parsedOffset}`
     );
-
     const formTemplate = await Form_TemplateModel.find(query)
+      .populate({
+        path: "disciplineId",
+        model: "Discipline",
+        select: "name",
+      })
+      .populate({
+        path: "formTypeId",
+        model: "Form_Type",
+        select: "name",
+      })
       .limit(parsedLimit)
       .skip(parsedOffset);
     if (!formTemplate)
@@ -1217,7 +1245,7 @@ const markVisitPastDue = async () => {
       const connection = await getTenantDB(tenant.databaseName);
       const VisitModel = Visit(connection);
       const visits = await VisitModel.find({
-        status: { $nin: ["Completed", "Submitted", "Past Due"] },
+        status: { $nin: ["Completed", "Submitted for Processing", "Past Due"] },
         visitDate: { $lt: new Date() },
       });
       logger.debug(

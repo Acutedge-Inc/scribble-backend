@@ -12,6 +12,14 @@ const assessmentFormTemplateSchema = new mongoose.Schema(
       type: Array,
       required: true,
     },
+    disciplineId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Discipline",
+    },
+    formTypeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Form_Type",
+    },
   },
   {
     timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" },

@@ -192,7 +192,11 @@ const listClinicianVisitDetails = async (req, res) => {
           },
           completedVisits: {
             $sum: {
-              $cond: [{ $in: ["$status", ["Completed", "Submitted"]] }, 1, 0],
+              $cond: [
+                { $in: ["$status", ["Completed", "Submitted for Processing"]] },
+                1,
+                0,
+              ],
             },
           },
         },
@@ -259,7 +263,11 @@ const listClinicianVisitDetails = async (req, res) => {
           },
           completedVisits: {
             $sum: {
-              $cond: [{ $in: ["$status", ["Completed", "Submitted"]] }, 1, 0],
+              $cond: [
+                { $in: ["$status", ["Completed", "Submitted for Processing"]] },
+                1,
+                0,
+              ],
             },
           },
         },

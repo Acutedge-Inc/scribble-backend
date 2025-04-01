@@ -7,6 +7,14 @@ const formSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    disciplineId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Discipline",
+    },
+    formTypeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Form_Type",
+    },
     assessmentForm: {
       type: Array,
     },

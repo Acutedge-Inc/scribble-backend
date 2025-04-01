@@ -390,7 +390,7 @@
                   },
                   "employeeId": {
                     "type": "string",
-                    "example": "VS2891"
+                    "example": "2001"
                   },
                   "primaryPhone": {
                     "type": "string",
@@ -417,9 +417,9 @@
                     "enum": ["Active", "Inactive"],
                     "example": "Active"
                   },
-                  "discipline": {
+                  "disciplineId": {
                     "type": "string",
-                    "example": "Physical Therapy"
+                    "example": "67c03a5914563c13b59a7829"
                   },
                   "jobTitle": {
                     "type": "string",
@@ -1274,6 +1274,8 @@
               },
               "example": {
                 "formName": "ROC",
+                "disciplineId": "67eb2eb2c9c8d85d9568ce14",
+                "formTypeId": "67eb2eb2c9c8d85d9568ce21",
                 "assessmentForm": [
                   {
                     "question_code": "M1610",
@@ -1604,7 +1606,14 @@
                   "data": [
                     {
                       "_id": "67cf182ecd6dbb2d123519e8",
-                      "formTypeId": 1,
+                      "disciplineId": {
+                        "_id": "67eb2eb2c9c8d85d9568ce11",
+                        "name": "RN"
+                      },
+                      "formTypeId": {
+                        "_id": "67eb2eb2c9c8d85d9568ce23",
+                        "name": "Fall Risk"
+                      },
                       "createdAt": "2025-03-10T16:49:50.961Z",
                       "updatedAt": "2025-03-14T12:16:04.920Z",
                       "__v": 0,
@@ -3017,10 +3026,10 @@
             "type": "string",
             "enum": [
               "New",
-              "Missed",
               "In Progress",
+              "Visit Not Conducted",
               "Past Due",
-              "Submitted",
+              "Submitted for Processing",
               "Completed"
             ],
             "example": "In Progress"
@@ -3035,10 +3044,13 @@
             "enum": [
               "Not Started",
               "In Progress",
+              "Draft Saved",
               "Submitted to AI",
-              "Validation",
+              "Ready for Review",
               "Submitted to EMR",
-              "Completed"
+              "Completed",
+              "AI Processing Failed",
+              "EMR Processing Failed"
             ],
             "example": "In Progress"
           }
@@ -3116,6 +3128,28 @@
         "properties": {
           "status": {
             "type": "string"
+          },
+          "disciplineId": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "formTypeId": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
           },
           "data": {
             "type": "array",

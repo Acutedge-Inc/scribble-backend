@@ -12,6 +12,9 @@ const assessmentSchema = new mongoose.Schema(
       ref: "Form",
       required: true,
     },
+    assessmentName: {
+      type: String,
+    },
     assessmentQuestion: {
       type: Array,
     },
@@ -26,10 +29,13 @@ const assessmentSchema = new mongoose.Schema(
       enum: [
         "Not Started",
         "In Progress",
+        "Draft Saved",
         "Submitted to AI",
-        "Validation",
+        "Ready for Review",
         "Submitted to EMR",
         "Completed",
+        "AI Processing Failed",
+        "EMR Processing Failed",
       ],
       default: "Not Started",
     },
