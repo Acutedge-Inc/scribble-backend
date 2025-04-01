@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 
 const assessmentFormTemplateSchema = new mongoose.Schema(
   {
-    name: {
+    formName: {
       type: String,
       required: true,
       unique: true,

@@ -48,7 +48,7 @@ const seedTenantData = async (connection) => {
 
     let formTemplate = FormTemplateData.map((item) => ({
       assessmentForm: item.assessmentForm,
-      name: item.formName,
+      formName: item.formName,
       disciplineId: discipline.find((dis) => item.discipline === dis.name).id,
       formTypeId: formType.find((ft) => item.formType === ft.name).id,
     }));
