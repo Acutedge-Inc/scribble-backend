@@ -11,9 +11,8 @@ const {
   transformData,
 } = require("../lib/utils.js");
 
-const { sendAccountVerificationEmail } = require("../lib/emails.js");
+const { sendAlertEmail } = require("../lib/emails.js");
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
 
 const tenantModels = require("../model/tenant/index.js");
 const Clinician_Info = require("../model/tenant/clinicianInfo.js");
