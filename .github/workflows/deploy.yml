@@ -25,9 +25,12 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i deploy_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd ${{ secrets.EC2_PATH }}
             git pull origin develop
+            timestamp=$(date +%Y%m%d%H%M%S)
+            docker logs scribble-api > /var/log/scribble-api/docker_$timestamp.log 
             docker-compose down
             docker-compose up -d --build
             docker ps  # Check if containers are running
+
           EOF
 
   deploy-prod:
@@ -48,6 +51,8 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i deploy_key ${{ secrets.PROD_EC2_USER }}@${{ secrets.PROD_EC2_HOST }} << 'EOF'
             cd ${{ secrets.PROD_EC2_PATH }}
             git pull origin prod
+            timestamp=$(date +%Y%m%d%H%M%S)
+            docker logs scribble-api > /var/log/scribble-api/docker_$timestamp.log 
             docker-compose down
             docker-compose up -d --build
             docker ps  # Check if containers are running
