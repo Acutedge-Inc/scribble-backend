@@ -146,19 +146,18 @@ async function sendAccountVerificationEmail(email, code) {
  * @param {string} url url to include in the body
  */
 async function sendAlertEmail(error, type) {
+  logger.info(`Sending alert email`);
+
+  const subject = `${process.env.NODE_ENV} Scribble Alert - ${type}`;
+  const htmlBody = error;
+
   try {
-    logger.info(`Sending alert email`);
-
-    const subject = `${process.env.NODE_ENV} Scribble Alert - ${type}`;
-    const htmlBody = error;
-
-    // send email using SMTP
     const alertEmails = JSON.parse(process.env.ALERT_EMAIL);
-    alertEmails.forEach((email) => {
-      sendEmailSMTP(email, subject, htmlBody);
-    });
-  } catch (error) {
-    logger.error(`Error sending alert email: ${error}`);
+    await Promise.all(
+      alertEmails.map((email) => sendEmailSMTP(email, subject, htmlBody))
+    );
+  } catch (err) {
+    logger.error(`Error sending alert email: ${err}`);
   }
 }
 
