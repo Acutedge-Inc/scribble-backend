@@ -66,6 +66,8 @@ const createForm = async (req, res) => {
       assessmentForm,
       disciplineId,
       formTypeId,
+      createdBy: req.user.id,
+      updatedBy: req.user.id,
     });
     logger.debug(`Created new assessment form with id: ${form._id}`);
     return res.status(200).json(new SuccessResponse(form));
@@ -1198,6 +1200,7 @@ const updateForm = async (req, res) => {
     }
     const { connection, session } = await startDatabaseSession(req.tenantDb);
     const FormModel = Form(connection);
+    req.body.updatedBy = req.user.id;
     const form = await FormModel.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
@@ -1219,7 +1222,7 @@ const deleteForm = async (req, res) => {
     const FormModel = Form(connection);
     const form = await FormModel.findByIdAndUpdate(
       req.params.id,
-      { isDeleted: true },
+      { isDeleted: true, updatedBy: req.user.id },
       {
         new: true,
       }
