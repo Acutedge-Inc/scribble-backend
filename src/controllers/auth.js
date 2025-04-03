@@ -269,6 +269,7 @@ async function userLogin(req, res) {
       age: userDetails?.age,
       jobTitle: userDetails?.jobTitle,
       primaryPhone: userDetails?.primaryPhone,
+      disciplineId: userDetails?.disciplineId,
       roles,
       scopes,
       accessToken,
