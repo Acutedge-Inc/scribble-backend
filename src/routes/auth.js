@@ -11,6 +11,7 @@ const {
   getTenant,
   getRoles,
   logout,
+  updateProfile,
 } = require("../controllers/auth.js");
 const { checkMissingInputs, validateInputs } = require("../middlewares");
 const { auth } = require("../lib/index.js");
@@ -79,6 +80,14 @@ authRoutes.put(
   checkMissingInputs,
   validateInputs,
   changePassword
+);
+
+authRoutes.put(
+  "/me",
+  auth.protect(["self.update"]),
+  checkMissingInputs,
+  validateInputs,
+  updateProfile
 );
 
 // Send Email with link to recover password [AG-839]

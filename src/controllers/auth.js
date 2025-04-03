@@ -722,6 +722,48 @@ const changePassword = async (req, res) => {
 };
 
 /**
+ * PUT /change-password
+ * Update the password for the authenticated account [AG-904]
+ * @param {Object} req
+ * @param {Object} req.body
+ * @param {String} req.user.id (from token)
+ * @param {String} req.body.newPassword
+ * @param {String} req.body.oldPassword
+ * @returns Response stating the password update status
+ */
+const updateProfile = async (req, res) => {
+  logger.debug(`Update profile received for user: ${req.user.id}`);
+  try {
+    const connection = await getTenantDB(req.tenantDb);
+    const { roleName, scope } = req.user.roleId;
+
+    if (roleName === "user") {
+      const Clinician_InfoModel = Clinician_Info(connection);
+      await Clinician_InfoModel.updateOne(
+        { userId: req.user?.id }, // Filter: Find user by email
+        { $set: req.body } // Update password field
+      );
+    } else {
+      const Admin_InfoModel = Admin_Info(connection);
+      await Admin_InfoModel.updateOne(
+        { userId: req.user?.id }, // Filter: Find user by email
+        { $set: req.body } // Update password field
+      );
+    }
+
+    logger.debug(`Updated profile in database: ${req.user.email}`);
+
+    logger.info(`Successfully updated profile for user: ${req.user.email}`);
+    res.json(new SuccessResponse({ message: "Password updated." }));
+  } catch (err) {
+    logger.error(`Update profile error: ${err}`);
+    res
+      .status(err.statusCode || 500)
+      .json(new ErrorResponse(err, err.errorCode, req?.apiId, err.data));
+  }
+};
+
+/**
  * POST /auth/v1/recover-password-email
  * @description Send password recovery email containing a link to reset the password
  * @param {String} req.body.email The email of the user who wants to reset their password
@@ -967,4 +1009,5 @@ module.exports = {
   createAdminUser,
   getRoles,
   logout,
+  updateProfile,
 };

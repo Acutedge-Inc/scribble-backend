@@ -14,6 +14,8 @@ const {
   updateForm,
   deleteForm,
   getFormTemplatebyId,
+  formTypes,
+  listDiscipline,
 } = require("../controllers/visit.js");
 const {
   checkMissingInputs,
@@ -102,13 +104,21 @@ visitRoutes.get(
   listEpisode
 );
 
-// visitRoutes.get(
-//   "/formtypes",
-//   auth.protect(["visit.read"]),
-//   checkMissingInputs,
-//   validateInputs,
-//   formTypes
-// );
+visitRoutes.get(
+  "/formtypes",
+  auth.protect(["visit.read"]),
+  checkMissingInputs,
+  validateInputs,
+  formTypes
+);
+
+visitRoutes.get(
+  "/discipline",
+  auth.protect(["visit.read"]),
+  checkMissingInputs,
+  validateInputs,
+  formTypes
+);
 
 visitRoutes.get(
   "/assessment",

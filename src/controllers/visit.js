@@ -99,6 +99,52 @@ const listEpisode = async (req, res) => {
   }
 };
 
+const listDiscipline = async (req, res) => {
+  try {
+    logger.debug("Listing Discipline");
+    const connection = await getTenantDB(req.tenantDb);
+    const DisciplineModel = Discipline(connection);
+    const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    logger.debug(
+      `Query params: ${JSON.stringify(query)}, limit: ${parsedLimit}, offset: ${parsedOffset}`
+    );
+
+    const discipline = await DisciplineModel.find(query)
+      .limit(parsedLimit)
+      .skip(parsedOffset);
+    const totalCount = await DisciplineModel.countDocuments(query);
+    logger.debug(`Found ${totalCount} discipline`);
+
+    return res.status(201).json(new SuccessResponse(discipline, totalCount));
+  } catch (error) {
+    logger.error(`Error listing Discipline: ${error.message}`);
+    return res.status(500).json(new ErrorResponse(error.message));
+  }
+};
+
+const formTypes = async (req, res) => {
+  try {
+    logger.debug("Listing Form Types");
+    const connection = await getTenantDB(req.tenantDb);
+    const Form_TypeModel = Form_Type(connection);
+    const { query, parsedLimit, parsedOffset } = getFilterQuery(req.query);
+    logger.debug(
+      `Query params: ${JSON.stringify(query)}, limit: ${parsedLimit}, offset: ${parsedOffset}`
+    );
+
+    const formTypes = await Form_TypeModel.find(query)
+      .limit(parsedLimit)
+      .skip(parsedOffset);
+    const totalCount = await Form_TypeModel.countDocuments(query);
+    logger.debug(`Found ${totalCount} Form Types`);
+
+    return res.status(201).json(new SuccessResponse(formTypes, totalCount));
+  } catch (error) {
+    logger.error(`Error listing Form Types: ${error.message}`);
+    return res.status(500).json(new ErrorResponse(error.message));
+  }
+};
+
 const listVisit = async (req, res) => {
   try {
     logger.debug("Listing visits");
@@ -1280,7 +1326,7 @@ const markVisitPastDue = async () => {
 module.exports = {
   createForm,
   createVisit,
-  // formTypes,
+  formTypes,
   listVisit,
   listEpisode,
   listAssessment,
@@ -1297,4 +1343,5 @@ module.exports = {
   getFormbyId,
   deleteForm,
   getFormTemplatebyId,
+  listDiscipline,
 };
