@@ -5,7 +5,7 @@ const fs = require("fs");
 const path = require("path");
 
 const { getTenantDB } = require("../lib/dbManager.js");
-const { getFilterQuery } = require("../lib/utils.js");
+const { transformAssessmentForAI } = require("../lib/utils.js");
 const { sendAccountVerificationEmail } = require("../lib/emails.js");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
@@ -28,6 +28,7 @@ const {
 const { ErrorResponse } = require("../lib/responses.js");
 const { uploadFile, pushToQueue } = require("../lib/aws.js");
 const nconf = require("nconf");
+
 const processAudio = async (req, res) => {
   try {
     logger.debug("Starting audio processing");
@@ -85,7 +86,8 @@ const processAudio = async (req, res) => {
 
     logger.debug("Preparing form data for upload");
     const form = assessment.formId.assessmentForm;
-    const formBuffer = Buffer.from(JSON.stringify(form));
+    const aiFormatForm = transformAssessmentForAI(form);
+    const formBuffer = Buffer.from(JSON.stringify(aiFormatForm));
     if (!(formBuffer instanceof Buffer)) {
       logger.error("Failed to convert form to buffer");
       return res

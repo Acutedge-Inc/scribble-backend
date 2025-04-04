@@ -117,7 +117,7 @@ visitRoutes.get(
   auth.protect(["visit.read"]),
   checkMissingInputs,
   validateInputs,
-  formTypes
+  listDiscipline
 );
 
 visitRoutes.get(

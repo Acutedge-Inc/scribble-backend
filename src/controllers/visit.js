@@ -8,7 +8,8 @@ const { getTenantDB } = require("../lib/dbManager.js");
 const {
   getFilterQuery,
   sendMessageToUIPath,
-  transformData,
+  transformAssessmentForAI,
+  updateQuestions,
 } = require("../lib/utils.js");
 
 const { sendAlertEmail } = require("../lib/emails.js");
@@ -24,7 +25,7 @@ const Form_Type = require("../model/tenant/formType.js");
 const Discipline = require("../model/tenant/discipline.js");
 const Assessment = require("../model/tenant/assessment.js");
 const Notification = require("../model/tenant/notification.js");
-const NotificationType = require("../model/tenant/notificationType.js");
+const Notification_Type = require("../model/tenant/notificationType.js");
 const Form_Template = require("../model/tenant/assessmentFormTemplate.js");
 const nconf = require("nconf");
 const {
@@ -401,10 +402,16 @@ const createVisit = async (req, res) => {
   } catch (error) {
     sendAlertEmail(error.message);
     logger.error(`Error creating visit: ${error.message}`);
-    await session.abortTransaction();
-    return res.status(500).json(new ErrorResponse(error.message));
+    if (session && session.inTransaction()) {
+      await session.abortTransaction();
+      logger.debug("Aborted database transaction");
+    }
+    res.status(500).json(new ErrorResponse(error?.message || error));
   } finally {
-    session.endSession();
+    if (session) {
+      await session.endSession();
+      logger.debug("Ended database session");
+    }
   }
 };
 
@@ -492,10 +499,16 @@ const createVisitFromRPA = async (err, data) => {
       return { msgStatus: true, reason: "Visit created successfully" };
     } catch (error) {
       logger.error(`Error in transaction: ${error.message}`);
-      await session.abortTransaction();
+      if (session && session.inTransaction()) {
+        await session.abortTransaction();
+        logger.debug("Aborted database transaction");
+      }
       throw error;
     } finally {
-      session.endSession();
+      if (session) {
+        await session.endSession();
+        logger.debug("Ended database session");
+      }
     }
   } catch (error) {
     sendAlertEmail(error.message);
@@ -523,7 +536,7 @@ const createNotification = async (
   logger.debug(
     `Creating notification for clinician ${clinicianId} of type ${type}`
   );
-  const NotificationTypeModel = NotificationType(connection);
+  const NotificationTypeModel = Notification_Type(connection);
   const notificationType = await NotificationTypeModel.findOne({
     name: type,
   }).session(session);
@@ -872,7 +885,7 @@ const updateAssessment = async (req, res) => {
     logger.debug(`Updated assessment: ${assessment._id}`);
 
     if (req.body.status === "Submitted to EMR") {
-      const rpaInput = transformData(assessment.assessmentQuestion);
+      const rpaInput = transformAssessmentForAI(assessment.assessmentQuestion);
       const visitId = assessment.visitId;
       const VisitModel = Visit(connection);
       const visitRecord = await VisitModel.aggregate([
@@ -1027,29 +1040,29 @@ const processAIOutput = async (err, data) => {
       throw new Error("Assessment not found");
     }
 
-    let assessmentAnswer = msg.aiOutput.Responses;
-
-    let processedAnswer = assessment.assessmentQuestion.map((question) => {
-      question.answer_context =
-        assessmentAnswer.find((a) => a.question_code === question.question_code)
-          .answer_context || "Not Generated";
-      question.answer_text =
-        assessmentAnswer.find((a) => a.question_code === question.question_code)
-          .answer_text || "Not Generated";
-      question.answer_code =
-        assessmentAnswer.find((a) => a.question_code === question.question_code)
-          .answer_code || "Not Generated";
-      return question;
+    let answers = msg.aiOutput.Responses;
+    const answersMap = new Map();
+    answers.forEach((answer) => {
+      answersMap.set(answer.question_code, {
+        answer_context: answer.answer_context,
+        answer_text: answer.answer_text,
+        answer_code: answer.answer_code,
+      });
     });
 
-    logger.debug(`Processed answer: ${JSON.stringify(processedAnswer)}`);
+    let processedAnswer = updateQuestions(
+      assessment.assessmentQuestion,
+      answersMap
+    );
+
+    // logger.debug(`Processed answer: ${JSON.stringify(processedAnswer)}`);
 
     await AssessmentModel.updateOne(
       { _id: msg.assessment_id },
       {
         $set: {
           assessmentQuestion: processedAnswer,
-          assessmentAnswer: assessmentAnswer,
+          assessmentAnswer: answers,
           status: "Ready for Review",
         },
       }
@@ -1064,12 +1077,14 @@ const processAIOutput = async (err, data) => {
     );
     logger.debug("Created notification");
   } catch (error) {
-    logger.error(`message container error: ${error.toString()}`);
+    logger.error(`Message container error: ${error.toString()}`);
+
     await pushToQueue(process.env.AI_OUTPUT_DLQ_QUEUE_URL, {
       msgStatus: false,
       reason: error.message,
       body: data.Body,
     });
+    sendAlertEmail(error);
     return { msgStatus: false, reason: error.message };
   } finally {
     await deleteMessageFromQueue(process.env.AI_OUTPUT_QUEUE_URL, data);
@@ -1078,7 +1093,13 @@ const processAIOutput = async (err, data) => {
 
 const updateAssessmentFromRPA = async (err, data) => {
   let msg;
-
+  // {
+  //   "tenantDb":"localtesting",
+  //   "assessmentId":"67eefb3c4128e538122af83c",
+  //   "visitId":"67eefb3c4128e538122af837",
+  //   "status":"Completed/EMR Processing Failed",
+  //   "reason":"Success"
+  // }
   try {
     logger.debug("Updating assessment from RPA");
     if (err) {
@@ -1095,9 +1116,10 @@ const updateAssessmentFromRPA = async (err, data) => {
 
     const { connection, session } = await startDatabaseSession(msg.tenantDb);
     const AssessmentModel = Assessment(connection);
+
     const assessment = await AssessmentModel.findByIdAndUpdate(
       msg.assessmentId,
-      { status: "Completed" },
+      { status: msg.status },
       {
         new: true,
       }
@@ -1106,14 +1128,19 @@ const updateAssessmentFromRPA = async (err, data) => {
 
     const assessments = await AssessmentModel.find({ visitId: msg.visitId });
     const allSubmittedToEMR = assessments.every(
-      (a) => a.status === "Submitted to EMR"
+      (a) => a.status === "Submitted to EMR" || a.status === "Completed"
     );
     const allCompleted = assessments.every((a) => a.status === "Completed");
 
     logger.debug(`allSubmittedToEMR: ${allSubmittedToEMR}`);
     logger.debug(`allCompleted: ${allCompleted}`);
+    const VisitModel = Visit(connection);
 
-    if (allCompleted) {
+    if ("EMR Processing Failed") {
+      await VisitModel.findByIdAndUpdate(msg.visitId, {
+        status: "Needs Attention",
+      });
+    } else if (allCompleted) {
       await VisitModel.findByIdAndUpdate(msg.visitId, {
         status: "Completed",
       });
@@ -1121,9 +1148,13 @@ const updateAssessmentFromRPA = async (err, data) => {
       await VisitModel.findByIdAndUpdate(msg.visitId, {
         status: "Submitted for Processing",
       });
+    } else {
+      await VisitModel.findByIdAndUpdate(msg.visitId, {
+        status: "Needs Attention",
+      });
     }
 
-    return res.status(200).json(new SuccessResponse(assessment));
+    return true;
   } catch (error) {
     logger.error(`message container error: ${error.toString()}`);
     await pushToQueue(process.env.RPA_UPDATE_DLQ_QUEUE_URL, {
@@ -1131,6 +1162,7 @@ const updateAssessmentFromRPA = async (err, data) => {
       reason: error.message,
       body: data.Body,
     });
+    sendAlertEmail(error);
     return { msgStatus: false, reason: error.message };
   } finally {
     await deleteMessageFromQueue(process.env.RPA_UPDATE_QUEUE_URL, data);

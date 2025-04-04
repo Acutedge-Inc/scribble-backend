@@ -182,4 +182,72 @@ module.exports = {
       throw new Error("Failed to send message to UiPath queue");
     }
   },
+
+  // Function to transform the JSON from assessment form to AI processing format
+  transformAssessmentForAI: (data) => {
+    const transformed = [];
+
+    data.forEach((section) => {
+      if (
+        section.container &&
+        section.container.controlName === "step-container"
+      ) {
+        const sectionName = section.container.subHeading || "Unknown Section";
+
+        section.items.forEach((item) => {
+          if (item.controlName) {
+            const transformedItem = {
+              question_code: item.questionCode || "",
+              question: item.description || "",
+              question_type: item.controlName || "",
+              labelName: item.labelName || "",
+              section: sectionName,
+            };
+            item.answer_context
+              ? (transformedItem.answer_context = item.answer_context)
+              : "";
+            item.answer_text
+              ? (transformedItem.answer_text = item.answer_text)
+              : "";
+            item.answer_code
+              ? (transformedItem.answer_code = item.answer_code)
+              : "";
+            if (
+              item.controlName === "radio-group" ||
+              item.controlName === "checklist" ||
+              item.controlName === "select-drop-down"
+            ) {
+              transformedItem.options = (item.items || []).map(
+                (option) => option.label || ""
+              );
+            }
+
+            transformed.push(transformedItem);
+          }
+        });
+      }
+    });
+
+    return transformed;
+  },
+
+  // Function to recursively update the JSON structure
+  updateQuestions: function (items, answersMap) {
+    const updateQuestions = (items, answersMap) => {
+      items.forEach((item) => {
+        if (item.questionCode && answersMap.has(item.questionCode)) {
+          const answer = answersMap.get(item.questionCode);
+          item.answer_context = answer.answer_context;
+          item.answer_text = answer.answer_text;
+          item.answer_code = answer.answer_code;
+        }
+        if (item.items && Array.isArray(item.items)) {
+          updateQuestions(item.items, answersMap);
+        }
+      });
+    };
+
+    updateQuestions(items, answersMap);
+    return items;
+  },
 };
