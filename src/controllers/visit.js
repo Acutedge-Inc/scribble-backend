@@ -874,7 +874,7 @@ const updateAssessment = async (req, res) => {
     logger.debug(`Updating assessment with id: ${req.params.id}`);
     const { connection, session } = await startDatabaseSession(req.tenantDb);
     const AssessmentModel = Assessment(connection);
-
+    req.body.updatedBy = req.user.id;
     const assessment = await AssessmentModel.findByIdAndUpdate(
       req.params.id,
       req.body,
