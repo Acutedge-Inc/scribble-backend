@@ -1,0 +1,96 @@
+[
+  {
+    "container": {
+      "id": "fokk8854gzmagli617rrdg",
+      "controlName": "step-container",
+      "displayText": "Add Section",
+      "itemType": "container",
+      "heading": "Section Code",
+      "subHeading": "Question Category"
+    },
+    "items": [
+      {
+        "id": "abwe2utjzci0c16nhduh61c",
+        "questionCode": "AAA",
+        "controlName": "text-field",
+        "displayText": "Question Label",
+        "placeholder": "Placeholder",
+        "description": "Question Description",
+        "labelName": "Question Label",
+        "itemType": "control",
+        "dataType": "text",
+        "required": false,
+        "containerId": "fokk8854gzmagli617rrdg",
+        "_tempId": 1742526799706,
+        "isContainer": false,
+        "level": 0
+      },
+      {
+        "id": "fphdt72hbspbkoueugqb",
+        "questionCode": "BBB",
+        "controlName": "radio-group",
+        "displayText": "Radio",
+        "description": "Question Description",
+        "labelName": "Label for Radio",
+        "itemType": "control",
+        "required": false,
+        "items": [
+          {
+            "id": "9ovycpygwlkomnu4ma2uq",
+            "value": "1",
+            "label": "Button 1"
+          },
+          {
+            "id": "3jangmh0dxj3wchonlztd7",
+            "value": "2",
+            "label": "Button 2"
+          }
+        ],
+        "containerId": "fokk8854gzmagli617rrdg",
+        "_tempId": 1742526804629,
+        "isContainer": false,
+        "level": 0
+      },
+      {
+        "id": "lxo04mo65eie0fres9l9dg",
+        "controlName": "sub-container",
+        "displayText": "Add Sub Section",
+        "itemType": "subcontainer",
+        "heading": "Sub Section Code",
+        "subHeading": "Sub Section Name",
+        "containerId": "fokk8854gzmagli617rrdg",
+        "isContainer": true,
+        "level": 1,
+        "items": [
+          {
+            "id": "qw5d85x823qek114tbkojo",
+            "questionCode": "",
+            "controlName": "checklist",
+            "displayText": "Checklist",
+            "description": "Question Description",
+            "labelName": "Label for Checklist",
+            "itemType": "control",
+            "required": false,
+            "items": [
+              {
+                "id": "y85c1zcr6dse12plapm9f",
+                "value": "1",
+                "label": "Check 1"
+              },
+              {
+                "id": "g57ncnqayag0jllv4w7iu4",
+                "value": "2",
+                "label": "Check 2"
+              }
+            ],
+            "containerId": "lxo04mo65eie0fres9l9dg",
+            "_tempId": 1742526812297,
+            "index": 0,
+            "isContainer": false,
+            "level": 1
+          }
+        ]
+      }
+    ]
+  }
+]

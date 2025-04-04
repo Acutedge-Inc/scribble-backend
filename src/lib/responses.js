@@ -12,7 +12,7 @@ const ERROR_CODES = {
   INVALID_SIGNER: "INVALID_SIGNER",
   ACCOUNT_VERIFICATION_PENDING: "ACCOUNT_VERIFICATION_PENDING",
 };
-
+const { sendAlertEmail } = require("./emails.js");
 class SuccessResponse {
   constructor(data = {}, total = null, otherValues = null) {
     this.status = "ok";
@@ -35,7 +35,7 @@ class ErrorResponse {
     error = "",
     apiId = null,
     errorCode = ERROR_CODES.GENERAL_ERROR,
-    data = null,
+    data = null
   ) {
     logger.error("Error on Processing Request ::", {
       error: error instanceof Error ? error?.stack : error,
@@ -50,6 +50,7 @@ class ErrorResponse {
     this.errorMessage = errorMessage;
     this.errorCode = errorCode;
     this.data = data;
+    sendAlertEmail(errorMessage, "Handled Error");
   }
 }
 
@@ -80,7 +81,7 @@ class HTTPError extends Error {
     errorCode = 500,
     message = null,
     fileName = null,
-    lineNumber = null,
+    lineNumber = null
   ) {
     super(message, fileName, lineNumber);
     this.errorCode = errorCode;

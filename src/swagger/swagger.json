@@ -95,7 +95,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID (optional)"
@@ -282,7 +282,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID (optional)"
@@ -370,7 +370,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID (optional)"
@@ -390,7 +390,7 @@
                   },
                   "employeeId": {
                     "type": "string",
-                    "example": "VS2891"
+                    "example": "2001"
                   },
                   "primaryPhone": {
                     "type": "string",
@@ -417,9 +417,9 @@
                     "enum": ["Active", "Inactive"],
                     "example": "Active"
                   },
-                  "discipline": {
+                  "disciplineId": {
                     "type": "string",
-                    "example": "Physical Therapy"
+                    "example": "67c03a5914563c13b59a7829"
                   },
                   "jobTitle": {
                     "type": "string",
@@ -535,7 +535,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID (optional)"
@@ -556,6 +556,195 @@
                   }
                 },
                 "required": ["newPassword", "oldPassword"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      },
+      "parameters": []
+    },
+    "/v1/auth/user/{id}": {
+      "put": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangePasswordResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67eb5eb3c3d820ec805c8e8d"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "example": "67eb5eb3c3d820ec805c8e8d"
+            }
+          }
+        ],
+        "description": "Change new password",
+        "operationId": "put_auth_user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "isDeleted": {
+                    "type": "boolean"
+                  }
+                },
+                "required": ["isDeleted"],
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/auth/me": {
+      "put": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangePasswordResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Auth"],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67eb5eb3c3d820ec805c8e8d"
+            },
+            "required": false,
+            "description": "Tenant ID (optional)"
+          }
+        ],
+        "description": "Change new password",
+        "operationId": "put_auth_me",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "disciplineId": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "jobTitle": {
+                    "type": "string"
+                  },
+                  "primaryPhone": {
+                    "type": "string"
+                  },
+                  "dob": {
+                    "type": "string"
+                  }
+                },
+                "required": [],
                 "type": "object"
               }
             }
@@ -602,7 +791,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID (optional)"
@@ -656,7 +845,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID (optional)"
@@ -729,7 +918,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID (optional)"
@@ -785,7 +974,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID (optional)"
@@ -846,7 +1035,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -914,7 +1103,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -982,7 +1171,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -1034,7 +1223,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -1087,7 +1276,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -1159,7 +1348,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -1259,7 +1448,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID (optional)"
@@ -1274,6 +1463,8 @@
               },
               "example": {
                 "formName": "ROC",
+                "disciplineId": "67eb2eb2c9c8d85d9568ce14",
+                "formTypeId": "67eb2eb2c9c8d85d9568ce21",
                 "assessmentForm": [
                   {
                     "question_code": "M1610",
@@ -1375,7 +1566,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -1459,7 +1650,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -1568,7 +1759,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -1604,7 +1795,14 @@
                   "data": [
                     {
                       "_id": "67cf182ecd6dbb2d123519e8",
-                      "formTypeId": 1,
+                      "disciplineId": {
+                        "_id": "67eb2eb2c9c8d85d9568ce11",
+                        "name": "RN"
+                      },
+                      "formTypeId": {
+                        "_id": "67eb2eb2c9c8d85d9568ce23",
+                        "name": "Fall Risk"
+                      },
                       "createdAt": "2025-03-10T16:49:50.961Z",
                       "updatedAt": "2025-03-14T12:16:04.920Z",
                       "__v": 0,
@@ -1648,7 +1846,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -1750,7 +1948,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -1802,7 +2000,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -1868,7 +2066,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID (optional)"
@@ -1921,7 +2119,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -1983,7 +2181,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -2082,7 +2280,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -2148,7 +2346,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -2210,7 +2408,143 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Filter"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/visit/formTypes": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VisitListResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "get_visit_formtype_list",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67eb5eb3c3d820ec805c8e8d"
+            },
+            "required": false,
+            "description": "Tenant ID of the customer"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "10"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Filter"
+            }
+          }
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ]
+      }
+    },
+    "/v1/visit/discipline": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VisitListResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Visit"],
+        "description": "Perform federated user authentication. This returns an extended user model with added apiKey property to use for allother requests. Basically it is login api for web portal(dev). There are 2 ways to login. 1. Email Login 2. VIN login. For VIN login, Client will get the jwt from routing server and attach it in the header using which we are going to login the user",
+        "operationId": "get_visit_discipline_list",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "content-type",
+            "schema": {
+              "type": "string",
+              "example": "application/json"
+            },
+            "required": true
+          },
+          {
+            "in": "header",
+            "name": "x-tenant-id",
+            "schema": {
+              "type": "string",
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -2287,7 +2621,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -2406,7 +2740,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -2462,7 +2796,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -2530,7 +2864,7 @@
             "name": "x-tenant-id",
             "schema": {
               "type": "string",
-              "example": "67cf182ecd6dbb2d123519ea"
+              "example": "67eb5eb3c3d820ec805c8e8d"
             },
             "required": false,
             "description": "Tenant ID of the customer"
@@ -3017,10 +3351,10 @@
             "type": "string",
             "enum": [
               "New",
-              "Missed",
               "In Progress",
+              "Visit Not Conducted",
               "Past Due",
-              "Submitted",
+              "Submitted for Processing",
               "Completed"
             ],
             "example": "In Progress"
@@ -3035,10 +3369,13 @@
             "enum": [
               "Not Started",
               "In Progress",
+              "Draft Saved",
               "Submitted to AI",
-              "Validation",
+              "Ready for Review",
               "Submitted to EMR",
-              "Completed"
+              "Completed",
+              "AI Processing Failed",
+              "EMR Processing Failed"
             ],
             "example": "In Progress"
           }
@@ -3116,6 +3453,28 @@
         "properties": {
           "status": {
             "type": "string"
+          },
+          "disciplineId": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "formTypeId": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
           },
           "data": {
             "type": "array",

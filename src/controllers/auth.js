@@ -70,7 +70,7 @@ async function createAdminUser(adminDbUrl) {
 }
 
 async function adminLogin(req, res) {
-  logger.debug("Admin login attempt for email:", req.body.email);
+  logger.debug(`Admin login attempt for email: ${req.body.email}`);
   try {
     const { email, password } = req.body;
 
@@ -80,7 +80,7 @@ async function adminLogin(req, res) {
     );
 
     if (!adminUser) {
-      logger.warn("Login failed - admin not found for email:", email);
+      logger.warn(`Login failed - admin not found for email: ${email}`);
       return res.status(404).json(new ErrorResponse("Admin not found"));
     }
 
@@ -111,13 +111,13 @@ async function adminLogin(req, res) {
       },
       accessTokenTtl
     );
-    logger.debug("Generated access token for admin");
+    logger.debug(`Generated access token for admin`);
 
     const refreshToken = await tokens.createRefreshToken(
       adminUser._id,
       refreshTokenttl
     );
-    logger.debug("Generated refresh token for admin");
+    logger.debug(`Generated refresh token for admin`);
 
     await session.storeAccessToken(adminUser._id, accessToken, accessTokenTtl);
     await session.storeRefreshToken(
@@ -141,7 +141,7 @@ async function adminLogin(req, res) {
       created: adminUser.createdAt,
       updated: adminUser.updatedAt,
     };
-    logger.info("Admin login successful for:", email);
+    logger.info(`Admin login successful for: ${email}`);
     return res.json(new SuccessResponse(responseInst));
   } catch (err) {
     logger.error(`Error on Admin Login ${err}`);
@@ -269,6 +269,7 @@ async function userLogin(req, res) {
       age: userDetails?.age,
       jobTitle: userDetails?.jobTitle,
       primaryPhone: userDetails?.primaryPhone,
+      disciplineId: userDetails?.disciplineId,
       roles,
       scopes,
       accessToken,
@@ -320,8 +321,7 @@ const createTenant = async (req, res) => {
   try {
     const existingTenant = await Tenant.findOne({ uniqueName });
     logger.debug(
-      "Checked for existing tenant:",
-      existingTenant ? "found" : "not found"
+      `Checked for existing tenant: ${existingTenant ? "found" : "not found"}`
     );
 
     if (existingTenant) {
@@ -345,7 +345,7 @@ const createTenant = async (req, res) => {
     createFolder(uniqueName);
     logger.debug("Created tenant folder");
 
-    logger.info("Successfully created new tenant:", uniqueName);
+    logger.info(`Successfully created new tenant: ${uniqueName}`);
     return res.status(201).json(new SuccessResponse(tenant));
   } catch (error) {
     logger.error("Tenant creation error:", error);
@@ -430,7 +430,7 @@ async function createUserInfo({ userId, roleName, req, connection, session }) {
     firstName,
     lastName,
     status,
-    discipline,
+    disciplineId,
     jobTitle,
     age,
     dob,
@@ -455,7 +455,7 @@ async function createUserInfo({ userId, roleName, req, connection, session }) {
             firstName,
             lastName,
             status,
-            discipline,
+            disciplineId,
             jobTitle,
             age,
             dob,
@@ -484,7 +484,7 @@ async function createUserInfo({ userId, roleName, req, connection, session }) {
             firstName,
             lastName,
             status,
-            discipline,
+            disciplineId,
             jobTitle,
             age,
             dob,
@@ -509,10 +509,9 @@ async function createUserInfo({ userId, roleName, req, connection, session }) {
 
 const register = async (req, res) => {
   let session;
-  logger.debug("User registration request received", {
-    email: req.body.email,
-    tenantId: req.body["x-tenant-id"] || req.tenantId,
-  });
+  logger.debug(
+    `User registration request received: ${req.body.email} on tenant: ${req.body["x-tenant-id"] || req.tenantId}`
+  );
 
   try {
     let { email, roleId, "x-tenant-id": tenantId } = req.body;
@@ -555,6 +554,8 @@ const register = async (req, res) => {
           roleId,
           tenantId,
           isFirstLogin: true,
+          createdBy: req.user.id,
+          updatedBy: req.user.id,
         },
       ],
       { session }
@@ -574,16 +575,16 @@ const register = async (req, res) => {
     logger.debug("Sent verification email");
 
     await session.commitTransaction();
-    logger.info("Successfully registered new user:", email);
+    logger.info(`Successfully registered new user: ${email}`);
 
     res.status(201).json(new SuccessResponse(newUser[0]));
   } catch (err) {
-    logger.error("Registration error:", err);
+    logger.error(`Registration error: ${err}`);
     if (session && session.inTransaction()) {
       await session.abortTransaction();
       logger.debug("Aborted database transaction");
     }
-    res.status(500).json(new ErrorResponse(err.message));
+    res.status(500).json(new ErrorResponse(err?.message || err));
   } finally {
     if (session) {
       await session.endSession();
@@ -597,7 +598,7 @@ const health = async (req, res) => {
   try {
     return res.json({ message: "health" });
   } catch (err) {
-    logger.error("Health check error:", err);
+    logger.error(`Health check error: ${err}`);
     return res.send({ err });
   }
 };
@@ -617,12 +618,12 @@ const getAccessToken = async (req, res) => {
     const accessTokenTtl = "600000";
 
     const response = await session.checkIfRefreshTokenExists(req.user.id);
-    logger.debug("Checked refresh token exists:", response ? "yes" : "no");
+    logger.debug(`Checked refresh token exists: ${response ? "yes" : "no"}`);
 
     if (!response || response !== refreshToken) {
-      logger.warn("Session expired for user:", req.user.id);
+      logger.warn(`Session expired for user: ${req.user.id}`);
       throw new HTTPError(
-        401,
+        419,
         "Session expired! Login again",
         ERROR_CODES.EXPIRED_TOKEN
       );
@@ -720,6 +721,69 @@ const changePassword = async (req, res) => {
     res
       .status(err.statusCode || 500)
       .json(new ErrorResponse(err, err.errorCode, req?.apiId, err.data));
+  }
+};
+
+/**
+ * PUT /change-password
+ * Update the password for the authenticated account [AG-904]
+ * @param {Object} req
+ * @param {Object} req.body
+ * @param {String} req.user.id (from token)
+ * @param {String} req.body.newPassword
+ * @param {String} req.body.oldPassword
+ * @returns Response stating the password update status
+ */
+const updateProfile = async (req, res) => {
+  logger.debug(`Update profile received for user: ${req.user.id}`);
+  try {
+    const connection = await getTenantDB(req.tenantDb);
+    const { roleName, scope } = req.user.roleId;
+
+    if (roleName === "user") {
+      const Clinician_InfoModel = Clinician_Info(connection);
+      await Clinician_InfoModel.updateOne(
+        { userId: req.user?.id }, // Filter: Find user by email
+        { $set: req.body } // Update password field
+      );
+    } else {
+      const Admin_InfoModel = Admin_Info(connection);
+      await Admin_InfoModel.updateOne(
+        { userId: req.user?.id }, // Filter: Find user by email
+        { $set: req.body } // Update password field
+      );
+    }
+
+    logger.debug(`Updated profile in database: ${req.user.email}`);
+
+    logger.info(`Successfully updated profile for user: ${req.user.email}`);
+    res.json(new SuccessResponse({ message: "Password updated." }));
+  } catch (err) {
+    logger.error(`Update profile error: ${err}`);
+    res
+      .status(err.statusCode || 500)
+      .json(new ErrorResponse(err, err.errorCode, req?.apiId, err.data));
+  }
+};
+
+const updateUser = async (req, res) => {
+  logger.debug(`Update user: ${req.user.id}`);
+  try {
+    if (!req.params.id) {
+      return res
+        .status(500)
+        .json(new ErrorResponse("Please specify id in parameter"));
+    }
+    const connection = await getTenantDB(req.tenantDb);
+    const UserModel = User(connection);
+    req.body.updatedBy = req.user.id;
+    const user = await UserModel.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    return res.status(200).json(new SuccessResponse(user));
+  } catch (error) {
+    logger.error(`Error on updating user: ${error.toString()}`);
+    return res.status(500).json(new ErrorResponse(error.message));
   }
 };
 
@@ -940,7 +1004,7 @@ const logout = async (req, res) => {
     // Validate if it exists in session store
     if (!response || response !== refreshToken) {
       throw new HTTPError(
-        401,
+        419,
         "Session expired! Login again",
         ERROR_CODES.EXPIRED_TOKEN
       );
@@ -969,4 +1033,6 @@ module.exports = {
   createAdminUser,
   getRoles,
   logout,
+  updateProfile,
+  updateUser,
 };

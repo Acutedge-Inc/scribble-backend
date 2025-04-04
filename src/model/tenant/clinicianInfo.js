@@ -22,8 +22,10 @@ const clinitianInfoSchema = new mongoose.Schema(
     status: {
       type: String,
     },
-    discipline: {
-      type: String,
+    disciplineId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Discipline",
+      required: true,
     },
     jobTitle: {
       type: String,

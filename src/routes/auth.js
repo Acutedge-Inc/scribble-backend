@@ -11,6 +11,8 @@ const {
   getTenant,
   getRoles,
   logout,
+  updateProfile,
+  updateUser,
 } = require("../controllers/auth.js");
 const { checkMissingInputs, validateInputs } = require("../middlewares");
 const { auth } = require("../lib/index.js");
@@ -43,6 +45,15 @@ authRoutes.post(
   checkMissingInputs,
   validateInputs,
   register
+);
+
+// Register a user under a tenant's database
+authRoutes.put(
+  "/user/:id",
+  auth.protect(["user.update"]),
+  checkMissingInputs,
+  validateInputs,
+  updateUser
 );
 
 // Register a user under a tenant's database
@@ -79,6 +90,14 @@ authRoutes.put(
   checkMissingInputs,
   validateInputs,
   changePassword
+);
+
+authRoutes.put(
+  "/me",
+  auth.protect(["self.update"]),
+  checkMissingInputs,
+  validateInputs,
+  updateProfile
 );
 
 // Send Email with link to recover password [AG-839]

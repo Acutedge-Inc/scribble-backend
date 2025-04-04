@@ -1,0 +1,481 @@
+[
+  {
+    "container": {
+      "id": "fokk8854gzmagli617rrdg",
+      "controlName": "step-container",
+      "displayText": "Add Section",
+      "itemType": "container",
+      "heading": "Section A",
+      "subHeading": "Clinical Records (Administrative)"
+    },
+    "items": [
+      {
+        "id": "7496vnfya6j92qiwmp0y3h",
+        "questionCode": "A1110.A1",
+        "controlName": "select-drop-down",
+        "displayText": "Dropdown",
+        "description": "What is your preferred language?\n",
+        "labelName": "Language ",
+        "itemType": "control",
+        "icon": {
+          "displayName": "SquareCheckBig"
+        },
+        "required": false,
+        "items": [
+          {
+            "id": "n89o1ojaiqpdjktyo09cki",
+            "value": "1",
+            "label": "English"
+          },
+          {
+            "id": "qxruub5ps4ewgcw5anwsc",
+            "value": "2",
+            "label": "Armenian"
+          },
+          {
+            "id": "g12yjghtwnr7yp1vngn0m5",
+            "value": "3",
+            "label": "Chinese"
+          },
+          {
+            "id": "1y6f8gymu8idrhej0phrot",
+            "value": "4",
+            "label": "Farsi"
+          },
+          {
+            "id": "y3i7sy9pabg9zjrq98ul3",
+            "value": "5",
+            "label": "French"
+          },
+          {
+            "id": "e8hav6frphf0prabdpnkll",
+            "value": "6",
+            "label": "Not assessed/no information"
+          }
+        ],
+        "containerId": "fokk8854gzmagli617rrdg",
+        "_tempId": 1742733579804,
+        "isContainer": false,
+        "level": 0,
+        "answer_code": "n89o1ojaiqpdjktyo09cki"
+      },
+      {
+        "id": "iqocear3cmnsh96q96m1j",
+        "questionCode": "A1110.A2",
+        "controlName": "toggle",
+        "displayText": "Toggle",
+        "description": "What is your preferred language?",
+        "labelName": "Language",
+        "placeholder": "Not assessed/no information",
+        "itemType": "control",
+        "icon": {
+          "displayName": "Radio"
+        },
+        "required": false,
+        "containerId": "fokk8854gzmagli617rrdg",
+        "_tempId": 1743226909962,
+        "isContainer": false,
+        "level": 0
+      },
+      {
+        "id": "rwl8wgvpz4ijni8jev994n",
+        "questionCode": "A1110.B",
+        "controlName": "radio-group",
+        "displayText": "Radio",
+        "description": "Do you need language interpreter?",
+        "labelName": "Language",
+        "itemType": "control",
+        "icon": {
+          "displayName": "Radio"
+        },
+        "required": false,
+        "items": [
+          {
+            "id": "e6nd33y8tld9cvqa54yazv",
+            "value": "0",
+            "label": "0 -  \tNo"
+          },
+          {
+            "id": "zgp65oyv7lg50c2q2nc80u",
+            "value": "1",
+            "label": "1 -  \tYes"
+          },
+          {
+            "id": "z1br9ac5voe2mgjckjuyby",
+            "value": "9",
+            "label": "9 -  \tUnable to determine"
+          }
+        ],
+        "containerId": "fokk8854gzmagli617rrdg",
+        "_tempId": 1742734119340,
+        "isContainer": false,
+        "level": 0
+      }
+    ]
+  },
+  {
+    "container": {
+      "id": "n2nnaaszf49p6h4ktinci9",
+      "controlName": "step-container",
+      "displayText": "Add Section",
+      "itemType": "container",
+      "heading": "Section",
+      "subHeading": "Sensory"
+    },
+    "items": [
+      {
+        "id": "ez9mcz2tqw54j0i2s2bz6f",
+        "questionCode": "B0200",
+        "controlName": "radio-group",
+        "displayText": "Radio",
+        "description": "Can you hear well with your hearing aid or hearing appliances?",
+        "labelName": "Hearing: Ability to hear (with hearing aid or hearing appliances if normally used)",
+        "itemType": "control",
+        "icon": {
+          "displayName": "Radio"
+        },
+        "required": false,
+        "items": [
+          {
+            "id": "ed3pocmly9m55bcubvzh5k",
+            "value": "0",
+            "label": "0. Adequate - no difficulty in normal conversation, social interaction, listening to TV"
+          },
+          {
+            "id": "h4fppj53dv4wp5lmggmhcg",
+            "value": "1",
+            "label": "1. Minimal difficulty – difficulty in some environments (e.g., when person speaks softly, or setting is noisy)"
+          },
+          {
+            "id": "fedrdxfcjr3nek55vsskg",
+            "value": "2",
+            "label": "2. Moderate difficulty - speaker has to increase volume and speak distinctly"
+          },
+          {
+            "id": "6tdrqhj866hfb2n69bkf97",
+            "value": "3",
+            "label": "3. Highly impaired - absence of useful hearing"
+          }
+        ],
+        "containerId": "n2nnaaszf49p6h4ktinci9",
+        "_tempId": 1742910353975,
+        "isContainer": false,
+        "level": 0
+      },
+      {
+        "id": "glfbi9ba6loun3s6xk2nx9",
+        "questionCode": "B1000",
+        "controlName": "radio-group",
+        "displayText": "Radio",
+        "description": "Can you see well with your glasses or visual appliances in adequate light?\n",
+        "labelName": "Vision: Ability to see in adequate light (with glasses or other visual appliances)",
+        "itemType": "control",
+        "icon": {
+          "displayName": "Radio"
+        },
+        "required": false,
+        "items": [
+          {
+            "id": "ed3pocmly9m55bcubvzh5k",
+            "value": "0",
+            "label": "0. Adequate - sees fine detail, such as regular print in newspapers/books"
+          },
+          {
+            "id": "7z1r3snvjzmwvvobfhp9k",
+            "value": "1",
+            "label": "1. Impaired – sees large print, but not regular print in newspapers/books"
+          },
+          {
+            "id": "l7gkfdysdsp1vcoqneol2o",
+            "value": "2",
+            "label": "2. Moderately impaired – limited vision; not able to see newspaper headlines but can identify objects"
+          },
+          {
+            "id": "xyfmjszm02jeudofo6jsc",
+            "value": "3",
+            "label": "3. Highly impaired - object identification in question, but eyes appear to follow objects"
+          },
+          {
+            "id": "w3wkpsf0gtfzgt68zyyq",
+            "value": "4",
+            "label": "4. Severely impaired -– no vision or sees only light, colors or shapes; eyes do not appear to follow objects"
+          }
+        ],
+        "containerId": "n2nnaaszf49p6h4ktinci9",
+        "_tempId": 1742910432425,
+        "index": 0,
+        "isContainer": false,
+        "level": 0
+      },
+      {
+        "id": "knt7uthp06ysuc4qh3xao",
+        "questionCode": "B1300",
+        "controlName": "radio-group",
+        "displayText": "Radio",
+        "description": "How often do you need to have someone help you when you read instructions, pamphlets, or other written material from your doctor or pharmacy?\n",
+        "labelName": "Health Literacy (From Creative Commons ©)",
+        "itemType": "control",
+        "icon": {
+          "displayName": "Radio"
+        },
+        "required": false,
+        "items": [
+          {
+            "id": "ed3pocmly9m55bcubvzh5k",
+            "value": "0",
+            "label": "0. Never"
+          },
+          {
+            "id": "h4fppj53dv4wp5lmggmhcg",
+            "value": "1",
+            "label": "1. Rarely"
+          },
+          {
+            "id": "y6tygk7kl7befmnmu2b3i",
+            "value": "2",
+            "label": "2. Sometimes"
+          },
+          {
+            "id": "gh3dpu5z0km0guxpu5su",
+            "value": "3",
+            "label": "3. Often"
+          },
+          {
+            "id": "eorplnl5a675d3y8x489e",
+            "value": "4",
+            "label": "4. Always"
+          },
+          {
+            "id": "grqujqi79la66y0d7tsyi",
+            "value": "7",
+            "label": "7. Patient declines to respond"
+          },
+          {
+            "id": "902b454866nk22l1spt3df",
+            "value": "8",
+            "label": "8. Patient unable to respond"
+          }
+        ],
+        "containerId": "n2nnaaszf49p6h4ktinci9",
+        "_tempId": 1742910873051,
+        "isContainer": false,
+        "level": 0
+      }
+    ]
+  },
+  {
+    "container": {
+      "id": "7yafoql2y54z3a7rvkgsbc",
+      "controlName": "step-container",
+      "displayText": "Add Section",
+      "itemType": "container",
+      "heading": "Section",
+      "subHeading": "Neuro/Emotional/Behavioral"
+    },
+    "items": [
+      {
+        "id": "ba8eshkyr1vgc4y2dnfitu",
+        "questionCode": "C0300.A",
+        "controlName": "radio-group",
+        "displayText": "Radio",
+        "description": "Please tell me what year it is right now.",
+        "labelName": "Temporal Orientation (Orientation to year, month, and day)",
+        "itemType": "control",
+        "icon": {
+          "displayName": "Radio"
+        },
+        "required": false,
+        "items": [
+          {
+            "id": "ec6nin121vktfaacn5htd",
+            "value": "0",
+            "label": " 0. Missed by more than 5 years or no answer"
+          },
+          {
+            "id": "rt2ylkamcjx3xgodnmgy",
+            "value": "1",
+            "label": "1. Missed by 2-5 years"
+          },
+          {
+            "id": "4wjwoeh3vudbdah9zbpqtb",
+            "value": "2",
+            "label": "2. Missed by 1 year"
+          },
+          {
+            "id": "k9en65vtwkfdcbf7t8m35c",
+            "value": "4",
+            "label": "3. Correct"
+          }
+        ],
+        "containerId": "7yafoql2y54z3a7rvkgsbc",
+        "_tempId": 1743063900213,
+        "isContainer": false,
+        "level": 0
+      },
+      {
+        "id": "pxp63uyzzjn0ih76sb8jonl",
+        "questionCode": "C0300.B",
+        "controlName": "radio-group",
+        "displayText": "Radio",
+        "description": "What month are we in right now?",
+        "labelName": "Temporal Orientation (Orientation to year, month, and day)",
+        "itemType": "control",
+        "icon": {
+          "displayName": "Radio"
+        },
+        "required": false,
+        "items": [
+          {
+            "id": "ec6nin121vktfaacn5htd",
+            "value": "0",
+            "label": "0. Missed by more than 1 month or no answer"
+          },
+          {
+            "id": "rt2ylkamcjx3xgodnmgy",
+            "value": "1",
+            "label": "1. Missed by 6 days to 1 month"
+          },
+          {
+            "id": "mwqryyi6vp7qjjgyusnxq",
+            "value": "3",
+            "label": "2. Accurate within 5 days"
+          }
+        ],
+        "containerId": "7yafoql2y54z3a7rvkgsbc",
+        "_tempId": 1743063956629,
+        "isContainer": false,
+        "level": 0
+      },
+      {
+        "id": "o1e7f5v3o2jzewnnbhfso",
+        "questionCode": "C0300.C",
+        "controlName": "radio-group",
+        "displayText": "Radio",
+        "description": "What day of the week is today?",
+        "labelName": "Temporal Orientation",
+        "itemType": "control",
+        "icon": {
+          "displayName": "Radio"
+        },
+        "required": false,
+        "items": [
+          {
+            "id": "ec6nin121vktfaacn5htd",
+            "value": "0",
+            "label": "0. Incorrect or no answer"
+          },
+          {
+            "id": "rt2ylkamcjx3xgodnmgy",
+            "value": "1",
+            "label": "1. Correct"
+          }
+        ],
+        "containerId": "7yafoql2y54z3a7rvkgsbc",
+        "_tempId": 1743064031233,
+        "isContainer": false,
+        "level": 0
+      },
+
+      {
+        "id": "np6myl2s0tg19xkawqpye4",
+        "questionCode": "M1740",
+        "controlName": "checklist",
+        "displayText": "Checklist",
+        "description": "Cognitive, behavioral and psychiatric symptoms that are demonstrated atleast once a week (Reported or Observed): (Mark all that apply)",
+        "labelName": "Cognitive, behavioral and psychiatric",
+        "itemType": "control",
+        "icon": {
+          "displayName": "SquareCheckBig"
+        },
+        "required": false,
+        "items": [
+          {
+            "id": "visgx18sdcak4vanylz84",
+            "value": "1",
+            "label": "1 - Memory deficit: failure to recognize familiar persons/places, inability to recall events of past 24 hours, significant memory loss so that supervision is required"
+          },
+          {
+            "id": "rnsuq47nl3qwoyyhuxubc",
+            "value": "2",
+            "label": "2 - Impaired decision-making: failure to perform usual ADLs or IADLs, inability to appropriately stop activities, jeopardizes safety through actions"
+          },
+          {
+            "id": "8hmwhaj16ibufmpasdungc",
+            "value": "3",
+            "label": "3 - Verbal disruption: yelling, threatening, excessive profanity, sexual references, etc."
+          },
+          {
+            "id": "4evm8e9mvlumnf6lrz12b",
+            "value": "4",
+            "label": "4 - Physical aggression: aggressive or combative to self and others (e.g., hits self, throws objects, punches, dangerous maneuvers with wheelchair or other objects)"
+          },
+          {
+            "id": "gghhm1jbfcthwi0th2m0l4",
+            "value": "5",
+            "label": "5 - Disruptive, infantile, or socially inappropriate behavior (excludes verbal actions)"
+          },
+          {
+            "id": "41uelp87dbgcxkuo9u2un",
+            "value": "6",
+            "label": "6 - Delusional, hallucinatory, or paranoid behavior"
+          },
+          {
+            "id": "2dxhxduk11qpz6xsdh2g6r",
+            "value": "7",
+            "label": "7 - None of the above behaviors demonstrated"
+          }
+        ],
+        "containerId": "7yafoql2y54z3a7rvkgsbc",
+        "_tempId": 1743067748541,
+        "isContainer": false,
+        "level": 0
+      }
+    ]
+  },
+  {
+    "container": {
+      "id": "anr5e1slt4tcjn160zuack",
+      "controlName": "step-container",
+      "displayText": "Add Section",
+      "itemType": "container",
+      "heading": "Section",
+      "subHeading": "Cardiac Status"
+    },
+    "items": [
+      {
+        "id": "luzalx0oemdi8h3fclwxv",
+        "questionCode": "M1610",
+        "controlName": "radio-group",
+        "displayText": "Radio",
+        "description": "Does the patient experience urinary incontinence?",
+        "labelName": "Urinary Incontinence or Urinary Catheter Presence:",
+        "itemType": "control",
+        "icon": {
+          "displayName": "Radio"
+        },
+        "required": false,
+        "items": [
+          {
+            "id": "ec6nin121vktfaacn5htd",
+            "value": "0",
+            "label": "0 - No incontinence or catheter (includes anuria or ostomy for urinary drainage) "
+          },
+          {
+            "id": "rt2ylkamcjx3xgodnmgy",
+            "value": "1",
+            "label": "1 - Patient is incontinent"
+          },
+          {
+            "id": "8znn92jn3i1ocbo413ajd",
+            "value": "2",
+            "label": "2 - Patient requires a urinary catheter (specifically: external, indwelling, intermittent, suprapubic)"
+          }
+        ],
+        "containerId": "anr5e1slt4tcjn160zuack",
+        "_tempId": 1743039050113,
+        "isContainer": false,
+        "level": 0
+      }
+    ]
+  }
+]

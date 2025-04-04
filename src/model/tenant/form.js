@@ -7,6 +7,14 @@ const formSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    disciplineId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Discipline",
+    },
+    formTypeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Form_Type",
+    },
     assessmentForm: {
       type: Array,
     },
@@ -17,6 +25,14 @@ const formSchema = new mongoose.Schema(
     isDeleted: {
       type: Boolean,
       default: false,
+    },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }

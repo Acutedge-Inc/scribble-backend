@@ -6,6 +6,7 @@ const useragent = require("express-useragent");
 const helmet = require("helmet");
 const methodOverride = require("method-override");
 const { randomUUID } = require("crypto");
+const { sendAlertEmail } = require("./lib/emails.js");
 
 const routes = require("./routes/index.js");
 const { session } = require("./lib");
@@ -20,8 +21,9 @@ app.use(
     maxAge: 86400,
   })
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ limit: "500mb" }));
+app.use(express.urlencoded({ limit: "500mb", extended: true }));
+
 app.use(cookieParser());
 app.use(useragent.express());
 // Sets "X-Content-Type-Options: nosniff"
@@ -88,7 +90,7 @@ app.use((req, res, next) => {
 // error handler
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  // AG-741 (If we get "Invalid Content-Type" error from multer fileFilter)
+  sendAlertEmail(err, "Unhandled Error");
   if (err.message === "Invalid Content-Type")
     return res.status(err?.statusCode || 400).json({
       status: "error",

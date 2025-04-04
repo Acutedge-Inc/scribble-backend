@@ -1,0 +1,1044 @@
+{
+    "ClientID": "client_id-123456789",
+    "Responses": [
+        {
+            "question_code": "B0200",
+            "question_text": "Do you have difficulty hearing in a normal conversation, when socializing, or watching TV?",
+            "answer_context": "I think so.",
+            "answer_text": "Yes, I have some difficulty.",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "B1000",
+            "question_text": "Can you see fine details, like regular print in newspapers or books?",
+            "answer_context": "I can read and yeah.",
+            "answer_text": "Impaired - sees large print, but not regular print in newspapers/books.",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "B1300",
+            "question_text": "How often do you need to have someone help you when you read instructions, pamphlets, or other written material from your doctor or pharmacy?",
+            "answer_context": "Sometimes I don't feel like it.",
+            "answer_text": "Sometimes",
+            "answer_code": "2"
+        },
+        {
+            "question_code": "C0200",
+            "question_text": "Ask patient: 'I am going to say three words for you to remember. Please repeat the words after I have said all three. The words are: sock, blue, and bed. Now tell me the three words.",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "C0300.A",
+            "question_text": "Please tell me what year it is right now. - Able to report correct year",
+            "answer_context": "It is Friday today.",
+            "answer_text": "Correct",
+            "answer_code": "3"
+        },
+        {
+            "question_code": "C0300.B",
+            "question_text": "What month are we in right now? - Able to report correct month",
+            "answer_context": "It's, yeah, it's May five fifth month.",
+            "answer_text": "May",
+            "answer_code": "2"
+        },
+        {
+            "question_code": "C0300.C",
+            "question_text": "What day of the week is today? - Able to report correct day of the week",
+            "answer_context": "It is Friday today.",
+            "answer_text": "Friday",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "C0400.A",
+            "question_text": "Let's go back to an earlier question. What were those three words that I asked you to repeat? If unable to remember a word, give cue (something to wear; a color; a piece of furniture) for that word.- Able to recall 'sock'",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "C0400.B",
+            "question_text": "Let's go back to an earlier question. What were those three words that I asked you to repeat? If unable to remember a word, give cue (something to wear; a color; a piece of furniture) for that word. - Able to recall 'blue'",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "C0400.C",
+            "question_text": "Let's go back to an earlier question. What were those three words that I asked you to repeat? If unable to remember a word, give cue (something to wear; a color; a piece of furniture) for that word.- Able to recall 'bed'",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "C0500",
+            "question_text": "BIMS Summary Score - Add scores for questions C0200-C0400 and fill in total score (00-15) - Enter 99 if the patient was unable to complete the interview.",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "C1310.A",
+            "question_text": "Is there evidence of an acute change in mental status from the patient's baseline?",
+            "answer_context": "I don't feel good that I depend on people now to do things for me.",
+            "answer_text": "No",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "C1310.B",
+            "question_text": "Did the patient have difficulty focusing attention, for example, being easily distractible or having difficulty keeping track of what was being said?",
+            "answer_context": "If you were talking fast and saying a lot of words, then it might take me a little bit minute to process things.",
+            "answer_text": "Behavior present, fluctuates",
+            "answer_code": "2"
+        },
+        {
+            "question_code": "C1310.C",
+            "question_text": "Was the patient's thinking disorganized or incoherent (rambling or irrelevant conversation, unclear or illogical flow of ideas, or unpredictable switching from subject to subject)?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "C1310.D",
+            "question_text": "Did the patient have altered level of consciousness, as indicated by any of the following criteria?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "M1700",
+            "question_text": "Patient's current (day of assessment) level of alertness, orientation, comprehension, concentration, and immediate memory for simple commands.",
+            "answer_context": "I can read and yeah. Like, if you if you, you know, were talking fast and saying a lot of words, then it might might have trouble understanding. It takes me a little bit minute to process things.",
+            "answer_text": "Requires prompting under stressful conditions.",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "M1710",
+            "question_text": "When Confused - Reported or observed within the last 14 days.",
+            "answer_context": "Sometimes, I guess sometimes if, I don't know if it's confusing or if it's, being forgetful, but I'll come downstairs and forget my, forget my, glasses in the bedroom.",
+            "answer_text": "Often",
+            "answer_code": "3"
+        },
+        {
+            "question_code": "M1720",
+            "question_text": "When Anxious - Reported or observed within the last 14 days.",
+            "answer_context": "Only when I'm going out to see some family, like, sometimes when there's a lot of people. But no. Not regularly.",
+            "answer_text": "Less often than daily",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "D0150.A1",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Little interest or pleasure in doing things - Symptom Presence?",
+            "answer_context": "Yeah. I do get bored sometimes, So then I don't want to like, I don't sometimes I wanna go for a walk, but then I don't go.",
+            "answer_text": "Yes",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "D0150.A2",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Little interest or pleasure in doing things - Symptom Frequency?",
+            "answer_context": "I'd like to go, like, five days a week booking, but maybe some days some weeks, I only go once.",
+            "answer_text": "Half the time",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "D0150.B1",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Feeling down, depressed, or hopeless - Symptom Presence?",
+            "answer_context": "I wouldn't say hopeless, but sometimes I feel lonely.",
+            "answer_text": "Yes",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "D0150.B2",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Feeling down, depressed, or hopeless - Symptom Frequency?",
+            "answer_context": "You could say, like, maybe half time.",
+            "answer_text": "Half the time",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "D0150.C1",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Trouble falling or staying asleep, or sleeping too much - Symptom Presence?",
+            "answer_context": "I get up in the middle of the night, then it's hard to go back to sleep.",
+            "answer_text": "Yes",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "D0150.C2",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Trouble falling or staying asleep, or sleeping too much - Symptom Frequency?",
+            "answer_context": "I sleep most days, but sometimes I get up in the morning, like, middle of the night, two in the morning.",
+            "answer_text": "2-6 days (several days)",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "D0150.D1",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Feeling tired or having little energy - Symptom Presence?",
+            "answer_context": "I do feel tired a lot. Yeah.",
+            "answer_text": "Yes",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "D0150.D2",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Feeling tired or having little energy - Symptom Frequency?",
+            "answer_context": "I do feel tired a lot. Yeah.",
+            "answer_text": "3. 12-14 days (nearly every day)",
+            "answer_code": "3"
+        },
+        {
+            "question_code": "D0150.E1",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Poor appetite or overeating - Symptom Presence?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "D0150.E2",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Poor appetite or overeating - Symptom Frequency?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "D0150.F1",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Feeling bad about yourself - or that you are a failure or have let yourself or your family down - Symptom Presence?",
+            "answer_context": "I don't feel good that I depend on people now to do things for me.",
+            "answer_text": "Yes",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "D0150.F2",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Feeling bad about yourself - or that you are a failure or have let yourself or your family down - Symptom Frequency?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "D0150.G1",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Trouble concentrating on things, such as reading the newspaper or watching television - Symptom Presence?",
+            "answer_context": "No. Like, I can read and yeah. Like, if you if you, you know, were talking fast and saying a lot of words, then it might might have trouble understanding.",
+            "answer_text": "No",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "D0150.G2",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Trouble concentrating on things, such as reading the newspaper or watching television - Symptom Frequency?",
+            "answer_context": "It takes me a little bit minute to process things.",
+            "answer_text": "Not Available",
+            "answer_code": "9"
+        },
+        {
+            "question_code": "D0150.H1",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Moving or speaking so slowly that other people could have noticed. Or the opposite - being so fidgety or restless that you have been moving around a lot more than usual - Symptom Presence?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "D0150.H2",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Moving or speaking so slowly that other people could have noticed. Or the opposite - being so fidgety or restless that you have been moving around a lot more than usual - Symptom Frequency?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "D0150.I1",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Thoughts that you would be better off dead, or of hurting yourself in some way - Symptom Presence?",
+            "answer_context": "No. I don't think so.",
+            "answer_text": "No",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "D0150.I2",
+            "question_text": "Over the last 2 weeks, have you been bothered by any of the following problems? - Thoughts that you would be better off dead, or of hurting yourself in some way - Symptom Frequency?",
+            "answer_context": "No. I don't think so.",
+            "answer_text": "No",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "D0160",
+            "question_text": "Add scores for all frequency responses in Symptom Frequency. Total score must be between 02 and 27. Enter 99 if unable to complete interview (i.e., Symptom Frequency is blank for 3 or more required items)",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available"
+        },
+        {
+            "question_code": "D0700",
+            "question_text": "How often do you feel lonely or isolated from those around you?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available"
+        },
+        {
+            "question_code": "M1740",
+            "question_text": "Have you experienced any difficulties with cognitive, behavioral, or psychiatric symptoms?",
+            "answer_context": "Sometimes, like, I don't know if it's confusing or if it's, being forgetful, but I'll come downstairs and forget my, forget my, glasses in the bedroom.",
+            "answer_text": "Sometimes forgetful",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "M1745",
+            "question_text": "Any physical, verbal, or other disruptive/dangerous symptoms that are injurious to self or others or jeopardize personal safety.",
+            "answer_context": "I don't think so.",
+            "answer_text": "No",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1100",
+            "question_text": "Which of the following best describes the patient's residential circumstance and availability of assistance?",
+            "answer_context": "I live by myself, and my daughter visits me once a week.",
+            "answer_text": "Patient lives alone - Occasional/ Short-Term Assistance",
+            "answer_code": "04"
+        },
+        {
+            "question_code": "M2102",
+            "question_text": "Do you receive help from family, friends, or paid caregivers? What types of assistance do they provide? Are there any areas where your caregivers need more training or support?",
+            "answer_context": "My daughter checks in on me every now and then.",
+            "answer_text": "Non-agency caregiver(s) currently provide assistance",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "M1800",
+            "question_text": "Can you tell me about any help you need with grooming, such as brushing your teeth, combing your hair, or shaving?",
+            "answer_context": "I can get around pretty good.",
+            "answer_text": "Able to groom self unaided",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1810",
+            "question_text": "Current Ability to Dress Upper Body safely (with or without dressing aids) including undergarments, pullovers, frontopening shirts and blouses, managing zippers, buttons, and snaps.",
+            "answer_context": "Buttons, I don't like to wear shirts that have buttons.",
+            "answer_text": "Someone must help the patient put on upper body clothing.",
+            "answer_code": "2"
+        },
+        {
+            "question_code": "M1820",
+            "question_text": "Current Ability to Dress Lower Body safely (with or without dressing aids) including undergarments, slacks, socks or nylons, shoes.",
+            "answer_context": "I can put my pants on. I think, fairly good.",
+            "answer_text": "Able to obtain, put on, and remove clothing and shoes without assistance.",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1830",
+            "question_text": "Current ability to wash entire body safely. Excludes grooming (washing face, washing hands, and shampooing hair).",
+            "answer_context": "I can take my showers by myself.",
+            "answer_text": "Able to bathe self in shower or tub independently.",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1840",
+            "question_text": "Current ability to get to and from the toilet or bedside commode safely and transfer on and off toilet/commode.",
+            "answer_context": "I think so.",
+            "answer_text": "Able to get to and from the toilet and transfer independently.",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1845",
+            "question_text": "Current ability to maintain perineal hygiene safely, adjust clothes and/or incontinence pads before and after using toilet, commode, bedpan, urinal.",
+            "answer_context": "Yeah. Yeah.",
+            "answer_text": "Able to manage toileting hygiene and clothing management without assistance.",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1850",
+            "question_text": "Current ability to move safely from bed to chair, or ability to turn and position self in bed if patient is bedfast.",
+            "answer_context": "Just depends, like, how good I feel. Mhmm. But most days, I can do it on my own.",
+            "answer_text": "Able to independently transfer.",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1860",
+            "question_text": "How would you describe your ability to walk or get around, on an even or uneven surface? Do you use a wheelchair?",
+            "answer_context": "I have a wheelchair that I use sometimes.",
+            "answer_text": "Chairfast, unable to ambulate but is able to wheel self independently.",
+            "answer_code": "4"
+        },
+        {
+            "question_code": "GG0100.A",
+            "question_text": "Indicate the patient's usual ability with everyday activities prior to the current illness, exacerbation, or injury. - Code the patient's need for assistance with bathing, dressing, using the toilet, and eating prior to the current illness, exacerbation, or injury.",
+            "answer_context": "I can put my pants on. I think, fairly good. It just takes me a little bit longer, but I can do it.",
+            "answer_text": "Independent",
+            "answer_code": "3"
+        },
+        {
+            "question_code": "GG0100.B",
+            "question_text": "Indicate the patient's usual ability with everyday activities prior to the current illness, exacerbation, or injury. - Code the patient's need for assistance with walking from room to room (with or without a device such as cane, crutch or walker) prior to the current illness, exacerbation, or injury.",
+            "answer_context": "I have a wheelchair that I use sometimes. But sometimes? Okay. Yeah. I don't use it. Like, I'm feeling okay these days, so I'm not using it.",
+            "answer_text": "Independent",
+            "answer_code": "3"
+        },
+        {
+            "question_code": "GG0100.C",
+            "question_text": "Indicate the patient's usual ability with everyday activities prior to the current illness, exacerbation, or injury. - Code the patient's need for assistance with internal or external stairs (with or without a device such as cane, crutch, or walker) prior to the current illness, exacerbation or injury.",
+            "answer_context": "I just go by the wall. Oh. Just hang by the table, and I can get there. Yeah.",
+            "answer_text": "Independent",
+            "answer_code": "3"
+        },
+        {
+            "question_code": "GG0100.D",
+            "question_text": "Indicate the patient's usual ability with everyday activities prior to the current illness, exacerbation, or injury. - Code the patient's need for assistance with planning regular tasks, such as shopping or remembering to take medication prior to the current illness, exacerbation, or injury.",
+            "answer_context": "Well, my daughter just checks in on me every now and then. Not daily, but I think I can do it on my own.",
+            "answer_text": "Independent",
+            "answer_code": "3"
+        },
+        {
+            "question_code": "GG0110",
+            "question_text": "Indicate devices and aids used by the patient prior to the current illness, exacerbation, or injury.",
+            "answer_context": "I have a wheelchair that I use sometimes.",
+            "answer_text": "A. Manual wheelchair",
+            "answer_code": "A"
+        },
+        {
+            "question_code": "GG0130.A1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - The ability to use suitable utensils to bring food and/or liquid to the mouth and swallow food and/or liquid once the meal is placed before the patient - SOC/ROC Performance?",
+            "answer_context": "I can do it on my own.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0130.A2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - The ability to use suitable utensils to bring food and/or liquid to the mouth and swallow food and/or liquid once the meal is placed before the patient - Discharge Goal?",
+            "answer_context": "I can do it on my own.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0130.B1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - The ability to use suitable items to clean teeth. Dentures (if applicable): The ability to insert and remove dentures into and from mouth, and manage denture soaking and rinsing with use of equipment. - SOC/ROC Performance?",
+            "answer_context": "I think I can do it.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0130.B2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - The ability to use suitable items to clean teeth. Dentures (if applicable): The ability to insert and remove dentures into and from mouth, and manage denture soaking and rinsing with use of equipment. - Discharge Goal?",
+            "answer_context": "I think I can do it.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0130.C1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - The ability to maintain perineal hygiene, adjust clothes before and after voiding or having a bowel movement. If managing an ostomy, include wiping the opening but not managing equipment. - SOC/ROC Performance?",
+            "answer_context": "Yeah. Yeah.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0130.C2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - The ability to maintain perineal hygiene, adjust clothes before and after voiding or having a bowel movement. If managing an ostomy, include wiping the opening but not managing equipment. - Discharge Goal?",
+            "answer_context": "Yeah. Yeah.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0130.E1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - The ability to bathe self, including washing, rinsing, and drying self (excludes washing of back and hair). Does not include transferring in/out of tub/shower. - SOC/ROC Performance?",
+            "answer_context": "I can do that.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0130.E2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - The ability to bathe self, including washing, rinsing, and drying self (excludes washing of back and hair). Does not include transferring in/out of tub/shower. - Discharge Goal?",
+            "answer_context": "I can do that.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0130.F1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - The ability to dress and undress above the waist; including fasteners, if applicable. - SOC/ROC Performance?",
+            "answer_context": "I can put my pants on. I think, fairly good.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0130.F2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - The ability to dress and undress above the waist; including fasteners, if applicable. - Discharge Goal?",
+            "answer_context": "I can put my pants on. I think, fairly good.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0130.G1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - The ability to dress and undress below the waist, including fasteners; does not include footwear. - SOC/ROC Performance?",
+            "answer_context": "I can put my pants on. I think, fairly good. It just takes me a little bit longer, but I can do it.",
+            "answer_text": "06. Independent - Patient completes the activity by themself with no assistance from a helper.",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0130.G2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - The ability to dress and undress below the waist, including fasteners; does not include footwear. - Discharge Goal?",
+            "answer_context": "I can put my pants on. I think, fairly good. It just takes me a little bit longer, but I can do it.",
+            "answer_text": "06. Independent - Patient completes the activity by themself with no assistance from a helper.",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0130.H1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - The ability to put on and take off socks and shoes or other footwear that is appropriate for safe mobility; including fasteners, if applicable. - SOC/ROC Performance?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "GG0130.H2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - The ability to put on and take off socks and shoes or other footwear that is appropriate for safe mobility; including fasteners, if applicable. - Discharge Goal?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "GG0170.A1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Roll left and right: The ability to roll from lying on back to left and right side, and return to lying on back on the bed. - SOC/ROC Performance?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "GG0170.A2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Roll left and right: The ability to roll from lying on back to left and right side, and return to lying on back on the bed. - Discharge Goal?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "09"
+        },
+        {
+            "question_code": "GG0170.B1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Sit to lying: The ability to move from sitting on side of bed to lying flat on the bed. - SOC/ROC Performance?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "09"
+        },
+        {
+            "question_code": "GG0170.B2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Sit to lying: The ability to move from sitting on side of bed to lying flat on the bed. - Discharge Goal?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "09"
+        },
+        {
+            "question_code": "GG0170.C1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Lying to sitting on side of bed: The ability to move from lying on the back to sitting on the side of the bed with no back support. - SOC/ROC Performance?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "09"
+        },
+        {
+            "question_code": "GG0170.C2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Lying to sitting on side of bed: The ability to move from lying on the back to sitting on the side of the bed with no back support. - Discharge Goal?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "09"
+        },
+        {
+            "question_code": "GG0170.D1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Sit to stand: The ability to come to a standing position from sitting in a chair, wheelchair, or on the side of the bed. - SOC/ROC Performance?",
+            "answer_context": "I can do it on my own.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0170.D2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Sit to stand: The ability to come to a standing position from sitting in a chair, wheelchair, or on the side of the bed. - Discharge Goal?",
+            "answer_context": "I can do it on my own.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0170.E1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Chair/bed-to-chair transfer: The ability to transfer to and from a bed to a chair (or wheelchair). - SOC/ROC Performance?",
+            "answer_context": "I can do it on my own.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0170.E2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Chair/bed-to-chair transfer: The ability to transfer to and from a bed to a chair (or wheelchair). - Discharge Goal?",
+            "answer_context": "I can do it on my own.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0170.F1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Toilet transfer: The ability to get on and off a toilet or commode. - SOC/ROC Performance?",
+            "answer_context": "I think so.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0170.F2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Toilet transfer: The ability to get on and off a toilet or commode. - Discharge Goal?",
+            "answer_context": "I think so.",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "GG0170.G1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Car transfer: The ability to transfer in and out of a car or van on the passenger side. Does not include the ability to open/close door or fasten seat belt. - SOC/ROC Performance?",
+            "answer_context": "I have a wheelchair that I use sometimes.",
+            "answer_text": "Dependent",
+            "answer_code": "01"
+        },
+        {
+            "question_code": "GG0170.G2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Car transfer: The ability to transfer in and out of a car or van on the passenger side. Does not include the ability to open/close door or fasten seat belt. - Discharge Goal?",
+            "answer_context": "I think so.",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "GG0170.I1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Walk 10 feet: Once standing, the ability to walk at least 10 feet in a room, corridor, or similar space. If SOC/ROC performance is coded 07, 09, 10 or 88, - Skip to GG0170M, Mobility, 1 step (curb) - SOC/ROC Performance?",
+            "answer_context": "I just go by the wall.",
+            "answer_text": "Supervision or touching assistance",
+            "answer_code": "04"
+        },
+        {
+            "question_code": "GG0170.I2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Walk 10 feet: Once standing, the ability to walk at least 10 feet in a room, corridor, or similar space. If SOC/ROC performance is coded 07, 09, 10 or 88, - Skip to GG0170M, Mobility, 1 step (curb) - Discharge Goal?",
+            "answer_context": "I think so.",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "GG0170.J1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Walk 50 feet with two turns: Once standing, the ability to walk 50 feet and make two turns. - SOC/ROC Performance?",
+            "answer_context": "I would say I can go from here all the way up to my driveway to the end of the driveway. So that's maybe two hundred feet.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0170.J2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Walk 50 feet with two turns: Once standing, the ability to walk 50 feet and make two turns. - Discharge Goal?",
+            "answer_context": "I would say I can go from here all the way up to my driveway to the end of the driveway. So that's maybe two hundred feet.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0170.K1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Walk 150 feet: Once standing, the ability to walk at least 150 feet in a corridor or similar space. - SOC/ROC Performance?",
+            "answer_context": "I would say I can go from here all the way up to my driveway to the end of the driveway. So that's maybe two hundred feet.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0170.K2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Walk 150 feet: Once standing, the ability to walk at least 150 feet in a corridor or similar space. - Discharge Goal?",
+            "answer_context": "I would say I can go from here all the way up to my driveway to the end of the driveway. So that's maybe two hundred feet.",
+            "answer_text": "Independent",
+            "answer_code": "06"
+        },
+        {
+            "question_code": "GG0170.L1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Walking 10 feet on uneven surfaces: The ability to walk 10 feet on uneven or sloping surfaces (indoor or outdoor), such as turf or gravel. - SOC/ROC Performance?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available"
+        },
+        {
+            "question_code": "GG0170.L2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Walking 10 feet on uneven surfaces: The ability to walk 10 feet on uneven or sloping surfaces (indoor or outdoor), such as turf or gravel. - Discharge Goal?",
+            "answer_context": "I would say I can go from here all the way up to my driveway to the end of the driveway. So that's maybe two hundred feet.",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "GG0170.M1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - 1 step (curb): The ability to go up and down a curb or up and down one step. If SOC/ROC performance is coded 07, 09, 10 or 88, - Skip to GG0170P, Mobility, Picking up object. - SOC/ROC Performance?",
+            "answer_context": "It's a little hard with my knees, but, you know, I can I can do it.",
+            "answer_text": "Partial/moderate assistance",
+            "answer_code": "03"
+        },
+        {
+            "question_code": "GG0170.M2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - 1 step (curb): The ability to go up and down a curb or up and down one step. If SOC/ROC performance is coded 07, 09, 10 or 88, - Skip to GG0170P, Mobility, Picking up object. - Discharge Goal?",
+            "answer_context": "It's a little hard with my knees, but, you know, I can I can do it.",
+            "answer_text": "Partial/moderate assistance",
+            "answer_code": "03"
+        },
+        {
+            "question_code": "GG0170.N1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - 4 steps: The ability to go up and down four steps with or without a rail. If SOC/ROC performance is coded 07, 09, 10 or 88, - Skip to GG0170P, Mobility, Picking up object. - SOC/ROC Performance?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "GG0170.N2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - 4 steps: The ability to go up and down four steps with or without a rail. If SOC/ROC performance is coded 07, 09, 10 or 88, - Skip to GG0170P, Mobility, Picking up object. - Discharge Goal?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "GG0170.O1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - 12 steps: The ability to go up and down 12 steps with or without a rail. - SOC/ROC Performance?",
+            "answer_context": "I can do it, but it's a little hard with my knees.",
+            "answer_text": "A little hard with knees",
+            "answer_code": "04"
+        },
+        {
+            "question_code": "GG0170.O2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - 12 steps: The ability to go up and down 12 steps with or without a rail. - Discharge Goal?",
+            "answer_context": "I can do it, but it's a little hard with my knees.",
+            "answer_text": "A little hard with knees",
+            "answer_code": "04"
+        },
+        {
+            "question_code": "GG0170.P1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Picking up object: The ability to bend/stoop from a standing position to pick up a small object, such as a spoon, from the floor. - SOC/ROC Performance?",
+            "answer_context": "I can do it, but it just takes me a little bit longer.",
+            "answer_text": "Takes a little longer",
+            "answer_code": "05"
+        },
+        {
+            "question_code": "GG0170.P2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Picking up object: The ability to bend/stoop from a standing position to pick up a small object, such as a spoon, from the floor. - Discharge Goal?",
+            "answer_context": "I can do it, but it just takes me a little bit longer.",
+            "answer_text": "Takes a little longer",
+            "answer_code": "05"
+        },
+        {
+            "question_code": "GG0170.Q",
+            "question_text": "Does patient use wheelchair and/or scooter?",
+            "answer_context": "I have a wheelchair that I use sometimes.",
+            "answer_text": "Yes, sometimes",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "GG0170.R1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Wheel 50 feet with two turns: Once seated in wheelchair/scooter, the ability to wheel at least 50 feet and make two turns. - SOC/ROC Performance?",
+            "answer_context": "I have a wheelchair that I use sometimes.",
+            "answer_text": "Sometimes uses a wheelchair.",
+            "answer_code": "09"
+        },
+        {
+            "question_code": "GG0170.R2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Wheel 50 feet with two turns: Once seated in wheelchair/scooter, the ability to wheel at least 50 feet and make two turns. - Discharge Goal?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "GG0170.RR1",
+            "question_text": "Wheel 50 feet with two turns: Once seated in wheelchair/scooter, the ability to wheel at least 50 feet and make two turns. Indicate the type of wheelchair or scooter used?",
+            "answer_context": "I have a wheelchair that I use sometimes.",
+            "answer_text": "Wheelchair",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "GG0170.S1",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Wheel 150 feet: Once seated in wheelchair/scooter, the ability to wheel at least 150 feet in a corridor or similar space. - SOC/ROC Performance?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "GG0170.S2",
+            "question_text": "Code the patient's usual performance at SOC/ROC for each activity using the 6-point scale. If activity was not attempted at SOC/ROC, code the reason. Code the patient's discharge goal(s) using the 6-point scale. Use of codes 07, 09, 10 or 88 is permissible to code discharge goal(s). - Wheel 150 feet: Once seated in wheelchair/scooter, the ability to wheel at least 150 feet in a corridor or similar space. - Discharge Goal?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "GG0170.SS1",
+            "question_text": "Wheel 150 feet: Once seated in wheelchair/scooter, the ability to wheel at least 150 feet in a corridor or similar space. Indicate the type of wheelchair or scooter used?",
+            "answer_context": "I have a wheelchair that I use sometimes.",
+            "answer_text": "Manual",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "M1600",
+            "question_text": "Has this patient been treated for a Urinary Tract Infection in the past 14 days?",
+            "answer_context": "I don't know.",
+            "answer_text": "Not Available",
+            "answer_code": "UK"
+        },
+        {
+            "question_code": "M1610",
+            "question_text": "Have you been experiencing any issues with urinary leakage or incontinence? Do you currently use a urinary catheter?",
+            "answer_context": "No. No. It no. I can be okay.",
+            "answer_text": "No incontinence or catheter",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1620",
+            "question_text": "Bowel Incontinence Frequency",
+            "answer_context": "I think I'm okay there. Yeah.",
+            "answer_text": "Very rarely or never has bowel incontinence",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1630",
+            "question_text": "Does this patient have an ostomy for bowel elimination that (within the last 14 days): a) was related to an inpatient facility stay; or b) necessitated a change in medical or treatment regimen?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1021.A",
+            "question_text": "Primary Diagnosis - Diagnoses (Sequencing of diagnoses should reflect the seriousness of each condition and support the disciplines and services provided)",
+            "answer_context": "So here we have your diagnosis, hypertension, high cholesterol.",
+            "answer_text": "Hypertension, high cholesterol",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "M1021.B",
+            "question_text": "Primary Diagnosis - ICD-10-CM and symptom control rating for each condition. Note that the sequencing of these ratings may not match the sequencing of the diagnoses",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "M1023.A",
+            "question_text": "Other Diagnoses - Diagnoses (Sequencing of diagnoses should reflect the seriousness of each condition and support the disciplines and services provided)",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "M1023.B",
+            "question_text": "Other Diagnoses - ICD-10-CM and symptom control rating for each condition. Note that the sequencing of these ratings may not match the sequencing of the diagnoses",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "M1028",
+            "question_text": "Do you have any other active health conditions that we should be aware of?",
+            "answer_context": "Not really. Okay.",
+            "answer_text": "No other active health conditions",
+            "answer_code": "3"
+        },
+        {
+            "question_code": "M1033",
+            "question_text": "Which of the following signs or symptoms characterize this patient as at risk for hospitalization?",
+            "answer_context": "I think I had maybe two times.",
+            "answer_text": "History of falls (2 or more falls - or any fall with an injury - in the past 12 months)",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "J0510",
+            "question_text": "Over the past 5 days, how much of the time has pain made it hard for you to sleep at night",
+            "answer_context": "Not really. No.",
+            "answer_text": "Rarely or not at all",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "J0520",
+            "question_text": "Over the past 5 days, how often have you limited your participation in rehabilitation therapy sessions due to pain?",
+            "answer_context": "Depends on what they were asking me to do.",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "J0530",
+            "question_text": "Over the past 5 days, how often you have limited your day-to-day activities (excluding rehabilitation therapy session) because of pain?",
+            "answer_context": "I'd say frequently.",
+            "answer_text": "Frequently",
+            "answer_code": "3"
+        },
+        {
+            "question_code": "M1400",
+            "question_text": "When is the patient dyspneic or noticeably Short of Breath?",
+            "answer_context": "Just, walking. I get short of breath sometimes if I'm going far.",
+            "answer_text": "When walking more than 20 feet, climbing stairs",
+            "answer_code": "1"
+        },
+        {
+            "question_code": "M1060.A",
+            "question_text": "Height (in inches). Record most recent height measure since the most recent SOC/ROC",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "M1060.B",
+            "question_text": "Weight (in pounds). Base weight on most recent measure in last 30 days; measure weight consistently, according to standard agency practice (for example, in a.m. after voiding, before meal, with shoes off, etc.)",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "K0520",
+            "question_text": "Check all of the nutritional approaches that apply on admission",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "M1870",
+            "question_text": "Current ability to feed self meals and snacks safely. Note: This refers only to the process of eating, chewing, and swallowing, not preparing the food to be eaten.",
+            "answer_context": "You're able to feed yourself.",
+            "answer_text": "Able to independently feed self",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1306",
+            "question_text": "Do you have any open wounds or sores that have not healed?",
+            "answer_context": "Just in my back, there's a mole that hurts sometimes, but when I sleep. Mhmm. But but not I wouldn't say it's too bad.",
+            "answer_text": "No significant open wounds",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1311.A1",
+            "question_text": "Current Number of Unhealed Pressure Ulcers/Injuries at Each Stage - Stage 2: Partial thickness loss of dermis presenting as a shallow open ulcer with a red or pink wound bed, without slough. May also present as an intact or open/ruptured blister. Number of Stage 2 pressure ulcers",
+            "answer_context": "No ulcers.",
+            "answer_text": "0",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1311.B1",
+            "question_text": "Current Number of Unhealed Pressure Ulcers/Injuries at Each Stage - Stage 3: Full thickness tissue loss. Subcutaneous fat may be visible but bone, tendon, or muscle is not exposed. Slough may be present but does not obscure the depth of tissue loss. May include undermining and tunneling. Number of Stage 3 pressure ulcers",
+            "answer_context": "No ulcers.",
+            "answer_text": "0",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1311.C1",
+            "question_text": "Current Number of Unhealed Pressure Ulcers/Injuries at Each Stage - Stage 4: Full thickness tissue loss with exposed bone, tendon, or muscle. Slough or eschar may be present on some parts of the wound bed. Often includes undermining and tunneling. Number of Stage 4 pressure ulcers",
+            "answer_context": "No ulcers.",
+            "answer_text": "0",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1311.D1",
+            "question_text": "Current Number of Unhealed Pressure Ulcers/Injuries at Each Stage - Unstageable: Non-removable dressing/device: Known but not stageable due to non-removable dressing/device Number of unstageable pressure ulcers/injuries due to non-removable dressing/device",
+            "answer_context": "No ulcers.",
+            "answer_text": "0",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1311.E1",
+            "question_text": "Current Number of Unhealed Pressure Ulcers/Injuries at Each Stage - Unstageable: Slough and/or eschar: Known but not stageable due to coverage of wound bed by slough and/or eschar Number of unstageable pressure ulcers due to coverage of wound bed by slough and/or eschar",
+            "answer_context": "No ulcers.",
+            "answer_text": "0",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1311.F1",
+            "question_text": "Current Number of Unhealed Pressure Ulcers/Injuries at Each Stage - Unstageable: Deep tissue injury Number of unstageable pressure injuries presenting as deep tissue injury",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "M1322",
+            "question_text": "Current Number of Stage 1 Pressure Injuries - Intact skin with non-blanchable redness of a localized area usually over a bony prominence. Darkly pigmented skin may not have a visible blanching; in dark skin tones only it may appear with persistent blue or purple hues",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "M1324",
+            "question_text": "Stage of Most Problematic Unhealed Pressure Ulcer/Injury that is Stageable - Excludes pressure ulcer/injury that cannot be staged due to a non-removable dressing/device, coverage of wound bed by slough and/or eschar, or deep tissue injury.",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "M1330",
+            "question_text": "Does this patient have a Stasis Ulcer?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1332",
+            "question_text": "Current Number of Stasis Ulcer(s) that are Observable",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "M1334",
+            "question_text": "Status of Most Problematic Stasis Ulcer that is Observable",
+            "answer_context": "So no ulcers. The lower portion of your feet, I would say the shin area, ankle ankle area. Do you have any discoloration, like the darker color skin or no? No. No.",
+            "answer_text": "No ulcers",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1340",
+            "question_text": "Does this patient have a Surgical Wound?",
+            "answer_context": "Good. So you don't have any surgical wounds. Right? Because we're here for high blood pressure.",
+            "answer_text": "No",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M1342",
+            "question_text": "Status of Most Problematic Surgical Wound that is Observable",
+            "answer_context": "Good. So you don't have any surgical wounds. Right? Because we're here for high blood pressure.",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "N0415.1",
+            "question_text": "High-Risk Drug Classes: Use and Indication - Check if the patient is taking any medications by pharmacological classification, not how it is used, in the following classes. (can check multiple options)",
+            "answer_context": "I take Tylenol and then, the emlodipine. And then the other name that I don't remember, the simvastatin.",
+            "answer_text": "Not high risk medications",
+            "answer_code": "Z"
+        },
+        {
+            "question_code": "N0415.2",
+            "question_text": "High-Risk Drug Classes: Use and Indication - If Column-1(s Taking) is checked, check if there is an indication noted for all medications in the drug class. (can check multiple options)",
+            "answer_context": "Not high risk medications",
+            "answer_text": "Not Available",
+            "answer_code": "Not Available"
+        },
+        {
+            "question_code": "M2001",
+            "question_text": "Did a complete drug regimen review identify potential clinically significant medication issues?",
+            "answer_context": "Drug regimen, medication issues, no medication issues, follow-up. That's me.",
+            "answer_text": "No issues found during review",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M2003",
+            "question_text": "Did the agency contact a physician (or physician-designee) by midnight of the next calendar day and complete prescribed/recommended actions in response to the identified potential clinically significant medication issues?",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available"
+        },
+        {
+            "question_code": "M2010",
+            "question_text": "Has the patient/caregiver received instruction on special precautions for all high-risk medications (such as hypoglycemics, anticoagulants, etc.) and how and when to report problems that may occur?",
+            "answer_context": "So you do not really have any high risk medications that you're taking.",
+            "answer_text": "Not applicable, no high-risk medications",
+            "answer_code": "NA"
+        },
+        {
+            "question_code": "M2020",
+            "question_text": "Patient's current ability to prepare and take all oral medications reliably and safely, including administration of the correct dosage at the appropriate times/intervals. Excludes injectable and IV medications.",
+            "answer_context": "Well, my daughter just checks in on me every now and then. Not daily, but I think I can do it on my own.",
+            "answer_text": "Able to take medication on my own",
+            "answer_code": "0"
+        },
+        {
+            "question_code": "M2030",
+            "question_text": "Patient's current ability to prepare and take all prescribed injectable medications reliably and safely, including administration of correct dosage at the appropriate times/intervals. Excludes IV medications.",
+            "answer_context": "No. I don't take any injectable medications, don't you?",
+            "answer_text": "No injectable medications prescribed",
+            "answer_code": "NA"
+        },
+        {
+            "question_code": "O0110.1",
+            "question_text": "Check all of the following treatments, procedures, and programs that apply on admission. - Cancer Treatments",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Z1"
+        },
+        {
+            "question_code": "O0110.2",
+            "question_text": "Check all of the following treatments, procedures, and programs that apply on admission. - Respiratory Therapies",
+            "answer_context": "No. I don't think so.",
+            "answer_text": "No respiratory therapies.",
+            "answer_code": "Z1"
+        },
+        {
+            "question_code": "O0110.3",
+            "question_text": "Check all of the following treatments, procedures, and programs that apply on admission. - Other",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "Z1"
+        },
+        {
+            "question_code": "M2200",
+            "question_text": "In the home health plan of care for the Medicare payment episode for which this assessment will define a case mix group, what is the indicated need for therapy visits (total of reasonable and necessary physical, occupational, and speech-language pathology visits combined)? (Enter zero ['000'] if no therapy visits indicated.)",
+            "answer_context": "Not Available",
+            "answer_text": "Not Available",
+            "answer_code": "NA"
+        }
+    ]
+}
