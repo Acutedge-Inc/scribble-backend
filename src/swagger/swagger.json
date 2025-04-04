@@ -537,6 +537,14 @@
             },
             "required": false,
             "description": "Tenant ID (optional)"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "example": "67eb5eb3c3d820ec805c8e8d"
+            }
           }
         ],
         "description": "Change new password",
