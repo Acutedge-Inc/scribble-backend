@@ -964,27 +964,27 @@ const updateAssessment = async (req, res) => {
 
 const processAIOutput = async (err, data) => {
   // Sample message
-  //  {
-  //     "id":null,
-  //     "user_id":"clinician@test.com",
-  //     "client_id":"67d1c251cc8d031a8a070b2a",
-  //     "assessment_id":"67d551267e49f4aed9a2d8eb",
-  //     "company_id":"haggiehealth",
-  //     "visit_id":"67d551267e49f4aed9a2d8e6",
-  //     "transcribe_type":"deepgram",
-  //     "status":"completed",
-  //     "started":1742114503,
-  //     "completed":1742114520,
-  //     "answer_files":[
-  //        "haggiehealth/67d551267e49f4aed9a2d8e6/67d551267e49f4aed9a2d8eb/output/answers.json"
-  //     ],
-  //     "transcription_files":[
-  //        "haggiehealth/67d551267e49f4aed9a2d8e6/67d551267e49f4aed9a2d8eb/output/transcription.json"
-  //     ],
-  //     "conversation_files":[
-  //        "haggiehealth/67d551267e49f4aed9a2d8e6/67d551267e49f4aed9a2d8eb/output/conversation.json"
-  //     ]
-  //  }
+  // let b = {
+  //   "id": null,
+  //   "user_id": "thillai@clinician.com",
+  //   "client_id": "67ef3410abe5fd7a0a8bc750",
+  //   "assessment_id": "67ef34baabe5fd7a0a8bc8e8",
+  //   "company_id": "haggaihealth",
+  //   "visit_id": "67ef34baabe5fd7a0a8bc8da",
+  //   "transcribe_type": "deepgram",
+  //   "status": "completed",
+  //   "started": 1742114503,
+  //   "completed": 1742114520,
+  //   "answer_files": [
+  //     "haggaihealth/67ef34bbabe5fd7a0a8bc8f8/67ef34bbabe5fd7a0a8bc906/output/answers.json"
+  //   ],
+  //   "transcription_files": [
+  //     "haggiehealth/67d551267e49f4aed9a2d8e6/67d551267e49f4aed9a2d8eb/output/transcription.json"
+  //   ],
+  //   "conversation_files": [
+  //     "haggiehealth/67d551267e49f4aed9a2d8e6/67d551267e49f4aed9a2d8eb/output/conversation.json"
+  //   ]
+  // };
 
   let msg;
 

@@ -554,6 +554,8 @@ const register = async (req, res) => {
           roleId,
           tenantId,
           isFirstLogin: true,
+          createdBy: req.user.id,
+          updatedBy: req.user.id,
         },
       ],
       { session }
@@ -761,6 +763,27 @@ const updateProfile = async (req, res) => {
     res
       .status(err.statusCode || 500)
       .json(new ErrorResponse(err, err.errorCode, req?.apiId, err.data));
+  }
+};
+
+const updateUser = async (req, res) => {
+  logger.debug(`Update user: ${req.user.id}`);
+  try {
+    if (!req.params.id) {
+      return res
+        .status(500)
+        .json(new ErrorResponse("Please specify id in parameter"));
+    }
+    const { connection, session } = await startDatabaseSession(req.tenantDb);
+    const UserModel = User(connection);
+    req.body.updatedBy = req.user.id;
+    const user = await UserModel.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    return res.status(200).json(new SuccessResponse(user));
+  } catch (error) {
+    logger.error(`Error on updating user: ${error.toString()}`);
+    return res.status(500).json(new ErrorResponse(error.message));
   }
 };
 
@@ -1011,4 +1034,5 @@ module.exports = {
   getRoles,
   logout,
   updateProfile,
+  updateUser,
 };
