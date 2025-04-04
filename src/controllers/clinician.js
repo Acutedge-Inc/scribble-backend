@@ -137,6 +137,7 @@ const processAudio = async (req, res) => {
       user_id: req.user.email,
       client_id: visitDetails.clientId,
       visit_id: visit._id,
+      id: visit._id,
       assessment_id: assessmentId,
       company_id: req.tenantDb,
       transcribe_type: "deepgram",
