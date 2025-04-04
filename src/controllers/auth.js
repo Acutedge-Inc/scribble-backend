@@ -774,7 +774,7 @@ const updateUser = async (req, res) => {
         .status(500)
         .json(new ErrorResponse("Please specify id in parameter"));
     }
-    const { connection, session } = await startDatabaseSession(req.tenantDb);
+    const connection = await getTenantDB(req.tenantDb);
     const UserModel = User(connection);
     req.body.updatedBy = req.user.id;
     const user = await UserModel.findByIdAndUpdate(req.params.id, req.body, {
