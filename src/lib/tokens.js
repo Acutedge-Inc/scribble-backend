@@ -27,15 +27,15 @@ async function verifyToken(token) {
           moment(err.expiredAt).unix() >
           moment().subtract(nconf.get("JWT_VALIDITY"), "seconds").unix()
         ) {
-          throw new HTTPError(401, "Token expired", ERROR_CODES.EXPIRED_TOKEN);
+          throw new HTTPError(419, "Token expired", ERROR_CODES.EXPIRED_TOKEN);
         } else {
-          throw new HTTPError(403, "Token invalid", ERROR_CODES.INVALID_TOKEN);
+          throw new HTTPError(419, "Token invalid", ERROR_CODES.INVALID_TOKEN);
         }
 
       case "JsonWebTokenError":
-        throw new HTTPError(401, "Token invalid", ERROR_CODES.INVALID_TOKEN);
+        throw new HTTPError(419, "Token invalid", ERROR_CODES.INVALID_TOKEN);
       case "NotBeforeError":
-        throw new HTTPError(403, "Token invalid", ERROR_CODES.INVALID_TOKEN);
+        throw new HTTPError(419, "Token invalid", ERROR_CODES.INVALID_TOKEN);
 
       default:
         throw new HTTPError(500, err.message, ERROR_CODES.GENERAL);
@@ -55,7 +55,7 @@ async function verifyRefreshToken(token) {
   } catch (err) {
     switch (err.name) {
       case "TokenExpiredError":
-        throw new HTTPError(401, "Token expired", ERROR_CODES.EXPIRED_TOKEN);
+        throw new HTTPError(419, "Token expired", ERROR_CODES.EXPIRED_TOKEN);
       case "JsonWebTokenError":
       case "NotBeforeError":
         throw new HTTPError(403, err.message, ERROR_CODES.INVALID_TOKEN);

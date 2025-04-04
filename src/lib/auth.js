@@ -52,13 +52,13 @@ async function verifyToken(token) {
           moment(err.expiredAt).unix() >
           moment().subtract(+nconf.get("JWT_VALIDITY"), "seconds").unix()
         ) {
-          throw new HTTPError(401, "Token expired", ERROR_CODES.EXPIRED_TOKEN);
+          throw new HTTPError(419, "Token expired", ERROR_CODES.EXPIRED_TOKEN);
         } else {
           throw new HTTPError(403, "Token invalid", ERROR_CODES.INVALID_TOKEN);
         }
 
       case "JsonWebTokenError":
-        throw new HTTPError(401, "Token invalid", ERROR_CODES.INVALID_TOKEN);
+        throw new HTTPError(419, "Token invalid", ERROR_CODES.INVALID_TOKEN);
       case "NotBeforeError":
         throw new HTTPError(403, "Token invalid", ERROR_CODES.INVALID_TOKEN);
 
@@ -72,7 +72,7 @@ const throwErrorIfMissingRequiredScopes = (requiredScopes, userScopes) => {
   const missingScopes = _.difference(requiredScopes, userScopes);
   if (missingScopes.length !== 0) {
     throw new HTTPError(
-      401,
+      403,
       `Missing required scopes ${missingScopes.join(", ")}`,
       ERROR_CODES.MISSING_REQUIRED_SCOPES
     );
@@ -198,7 +198,7 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
       }
       if (err.message.startsWith("Missing required scopes"))
         return res
-          .status(401)
+          .status(403)
           .json(
             new ErrorResponse(
               "Missing required scopes",
@@ -207,7 +207,7 @@ function protect(requiredScopes = [], ignoreExpiration = false) {
             )
           );
       return res
-        .status(401)
+        .status(419)
         .json(
           new ErrorResponse(
             err?.message || "Invalid token",

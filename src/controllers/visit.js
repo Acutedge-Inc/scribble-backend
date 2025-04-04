@@ -58,7 +58,7 @@ const createForm = async (req, res) => {
     logger.debug(`Found existing assessment forms: ${form.length}`);
     if (form.length) {
       return res
-        .status(401)
+        .status(400)
         .json(new ErrorResponse("Assessment Form already available"));
     }
     form = await FormModel.create({

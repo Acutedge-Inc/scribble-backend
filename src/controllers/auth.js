@@ -621,7 +621,7 @@ const getAccessToken = async (req, res) => {
     if (!response || response !== refreshToken) {
       logger.warn(`Session expired for user: ${req.user.id}`);
       throw new HTTPError(
-        401,
+        419,
         "Session expired! Login again",
         ERROR_CODES.EXPIRED_TOKEN
       );
@@ -981,7 +981,7 @@ const logout = async (req, res) => {
     // Validate if it exists in session store
     if (!response || response !== refreshToken) {
       throw new HTTPError(
-        401,
+        419,
         "Session expired! Login again",
         ERROR_CODES.EXPIRED_TOKEN
       );
